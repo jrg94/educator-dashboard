@@ -1,5 +1,6 @@
 import dash
 from dash import html
+from numpy import show_config
 import pandas as pd
 import plotly.express as px
 from dash import dcc
@@ -12,13 +13,13 @@ review_count = "Number of Reviews"
 app = dash.Dash(__name__)
 
 # Loading and managing assignment data
-grading_data = pd.read_csv(r'logistics\feedback-forms\assignment-survey\data\assignment-survey-data.csv')
+grading_data = pd.read_csv(r'viz\data\assignment-survey-data.csv')
 grading_data[avg_time] = grading_data.groupby(review_col)[time_col].transform(lambda x: x.mean())
 grading_data[review_count] = grading_data.groupby(review_col)[time_col].transform(lambda x: x.count())
 
 to_plot = grading_data.drop_duplicates(subset=[review_col]).sort_values(by=review_col)
 project_fig = px.bar(to_plot, x=review_col, y=avg_time, color=review_count)
-project_fig.write_html(r'diagram-renders\project_fig.html')
+project_fig.write_html(r'renders\diagram\project_fig.html')
 
 rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
 satisfaction_mapping = {1: 'Very Dissatisfied', 2: 'Dissatisfied', 3: 'Neutral', 4: 'Satisfied', 5: 'Very Satisfied'}
@@ -30,7 +31,7 @@ rubric_fig = px.histogram(
   category_orders={rubric_heading: list(satisfaction_mapping.values())},
     labels={rubric_heading: 'Response'}
 )
-rubric_fig.write_html(r'diagram-renders\rubric_fig.html')
+rubric_fig.write_html(r'renders\diagram\rubric_fig.html')
 
 rubric_breakdown_fig = px.histogram(
   grading_data, 
@@ -48,10 +49,10 @@ rubric_breakdown_fig = px.histogram(
   }
 )
 rubric_breakdown_fig.for_each_annotation(lambda a: a.update(text=f'Project {a.text.split("=")[-1]}'))
-rubric_breakdown_fig.write_html(r'diagram-renders\rubric_breakdown_fig.html')
+rubric_breakdown_fig.write_html(r'renders\diagram\rubric_breakdown_fig.html')
 
 # Loading and managing course evaluation data
-course_eval_data = pd.read_csv(r'logistics\feedback-forms\course-evaluation-survey\data\eval-data.csv')
+course_eval_data = pd.read_csv(r'viz\data\eval-data.csv')
 
 course_content = course_eval_data.melt(
   id_vars=[item for item in course_eval_data.columns if "Course content" not in item],
@@ -87,10 +88,23 @@ contribution_to_learning_fig = px.histogram(contribution_to_learning, x="Respons
 contribution_to_learning_fig.for_each_annotation(lambda a: a.update(text=a.text[a.text.find("[")+1:a.text.find("]")]))
 
 # Loading and managing course evaluation data
-sei_data = pd.read_csv(r'logistics\feedback-forms\student-evaluation-of-instruction-survey\data\sei-data.csv')
+sei_data = pd.read_csv(r'viz\data\sei-data.csv')
 sei_data["Date"] = pd.to_datetime(sei_data["Date"])
 sei_fig = px.line(sei_data, x="Date", y="Mean", color="Group", facet_col="Question", facet_col_wrap=2, markers=True, height=800)
 sei_fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
+
+# Loading and managing grades
+grade_data = pd.read_csv(r'viz\data\au-2021-cse-2221-grades.csv')
+projects = [name for name in grade_data.columns if "Project" in name]
+project_means = grade_data[projects].mean()
+project_means_fig = px.bar(
+  project_means,
+  labels={
+    "index": "Project Name",
+    "value": "Average Grade/10"
+  }
+)
+project_means_fig.update_layout(showlegend=False)
 
 app.layout = html.Div(children=[
   html.H1(children='CSE 2221 Visualization'),
@@ -122,7 +136,10 @@ app.layout = html.Div(children=[
   dcc.Graph(figure=contribution_to_learning_fig),
   html.H2(children='Student Evaluation of Instruction Data'),
   html.P(children='Each semester, the university asks students to fill out a survey about instruction.'),
-  dcc.Graph(figure=sei_fig)
+  dcc.Graph(figure=sei_fig),
+  html.H2(children='Grades'),
+  html.P(children='The grades for each project are shown below.'),
+  dcc.Graph(figure=project_means_fig),
 ])
 
 if __name__ == '__main__':
