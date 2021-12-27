@@ -1,0 +1,10 @@
+p {
+    font-size: 1.25em;
+}
+
+.dash-graph {
+    padding: 10px;
+    border: 3px solid #77aaff;
+    border-radius: 25px;
+    margin: 20px 0px;
+}
