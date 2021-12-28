@@ -10,12 +10,15 @@ def create_assignment_fig(grade_data, assignment, total):
   assignment_calculations_fig = px.bar(
     assignment_calculations,
     labels={
-    "index": "Project Name",
-    "value": f"Grade/{total}",
-    "variable": "Calculation"
+      "index": "Project Name",
+      "value": f"Grade/{total}",
+      "variable": "Calculation",
+      "mean": "Average",
+      "median": "Median"
     },
     barmode='group',
-    text_auto=".2s"
+    text_auto=".2s",
+    title=f"Average and Median {assignment} Grades".title()
   )
   return assignment_calculations_fig
 
@@ -34,7 +37,8 @@ def create_course_eval_fig(course_eval_data, question):
     facet_col="Question", 
     facet_col_wrap=2, 
     category_orders=dict(Response=axes_labels),
-    text_auto=True
+    text_auto=True,
+    title=f"{question} by Subquestion".title()
   )
   question_fig.for_each_annotation(lambda a: a.update(text=a.text[a.text.find("[")+1:a.text.find("]")]))
   return question_fig
@@ -49,7 +53,8 @@ def create_sei_fig(sei_data):
     facet_col="Question", 
     facet_col_wrap=2, 
     markers=True, 
-    height=800
+    height=800,
+    title="Student Evaluation of Instruction Trends by Cohort"
   )
   sei_fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
   return sei_fig
@@ -84,7 +89,7 @@ def create_rubric_scores_fig(assignment_survey_data):
       "count": "Number of Reviews"
     },
     text_auto=".3s",
-    title="Avergage Project Rubric Scores"
+    title="Average Project Rubric Scores"
   )
   return rubric_scores_fig
 
