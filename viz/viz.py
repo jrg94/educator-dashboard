@@ -69,16 +69,19 @@ rubric_breakdown_fig.write_html(r'renders\diagram\rubric_breakdown_fig.html')
 # Loading and managing course evaluation data
 course_eval_data = pd.read_csv(r'viz\data\eval-data.csv')
 
-course_content = course_eval_data.melt(
-  id_vars=[item for item in course_eval_data.columns if "Course content" not in item],
-  var_name="Question", 
-  value_name="Response"
-)
-course_content = course_content[course_content["Response"].notna()]
+def create_course_eval_fig(course_eval_data, question):
+  axes_labels = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]
+  question = course_eval_data.melt(
+    id_vars=[item for item in course_eval_data.columns if question not in item],
+    var_name="Question",
+    value_name="Response"
+  )
+  question = question[question["Response"].notna()]
+  question_fig = px.histogram(question, x="Response", color="Response", facet_col="Question", facet_col_wrap=2, category_orders=dict(Response=axes_labels))
+  question_fig.for_each_annotation(lambda a: a.update(text=a.text[a.text.find("[")+1:a.text.find("]")]))
+  return question_fig
 
-axes_labels = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]
-course_content_fig = px.histogram(course_content, x="Response", color="Response", facet_col="Question", facet_col_wrap=2, category_orders=dict(Response=axes_labels))
-course_content_fig.for_each_annotation(lambda a: a.update(text=a.text[a.text.find("[")+1:a.text.find("]")]))
+course_content_fig = create_course_eval_fig(course_eval_data, "Course content")
 
 skill_and_responsiveness = course_eval_data.melt(
   id_vars=[item for item in course_eval_data.columns if "Skill and responsiveness of the instructor" not in item],
