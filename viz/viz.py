@@ -7,12 +7,13 @@ from dash import dcc
 def create_assignment_fig(grade_data, assignment, total):
   assgnment_data = [name for name in grade_data.columns if assignment in name]
   assignment_calculations = grade_data[assgnment_data].agg(["mean", "median"]).T
+  assignment_calculations.rename(columns={'mean': 'Average', 'median': 'Median'}, inplace=True)
   assignment_calculations_fig = px.bar(
     assignment_calculations,
     labels={
       "index": "Project Name",
       "value": f"Grade/{total}",
-      "variable": "Calculation",
+      "variable": "Metric",
       "mean": "Average",
       "median": "Median"
     },
@@ -89,9 +90,43 @@ def create_rubric_scores_fig(assignment_survey_data):
       "count": "Number of Reviews"
     },
     text_auto=".3s",
-    title="Average Project Rubric Scores"
+    title="Project Rubric Satisfaction Scores"
   )
   return rubric_scores_fig
+
+def create_rubric_overview_fig(assignment_survey_data):
+  rubric_fig = px.histogram(
+    assignment_survey_data, 
+    x=rubric_heading, 
+    color=rubric_heading, 
+    category_orders={rubric_heading: list(satisfaction_mapping.values())},
+    labels={rubric_heading: 'Response'},
+    text_auto=".3s",
+    title="Project Rubric Satisfaction Overview"
+  )
+  rubric_fig.write_html(r'renders\diagram\rubric_fig.html')
+  return rubric_fig
+
+def create_rubric_breakdown_fig(assignment_survey_data):
+  rubric_breakdown_fig = px.histogram(
+    assignment_survey_data, 
+    x=rubric_heading, 
+    color=rubric_heading,
+    facet_col=review_col, 
+    facet_col_wrap=2,
+    height=800, 
+    category_orders={
+      rubric_heading: list(satisfaction_mapping.values()),
+      review_col: list(range(1, 12))
+    },
+    labels={
+      rubric_heading: 'Response',
+    },
+    title="Rubric Satisfaction By Project"
+  )
+  rubric_breakdown_fig.for_each_annotation(lambda a: a.update(text=f'Project {a.text.split("=")[-1]}'))
+  rubric_breakdown_fig.write_html(r'renders\diagram\rubric_breakdown_fig.html')
+  return rubric_breakdown_fig
 
 rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
 review_col = "Which project are you reviewing (enter a # between 1 and 11)?"
@@ -99,6 +134,13 @@ time_col = "How much time did you spend on this assignment in hours?"
 avg_time = "Average Time (hours)"
 median_time = "Median Time (hours)"
 review_count = "Number of Reviews"
+satisfaction_mapping = {
+  1: 'Very Dissatisfied', 
+  2: 'Dissatisfied', 
+  3: 'Neutral', 
+  4: 'Satisfied', 
+  5: 'Very Satisfied'
+}
 
 app = dash.Dash(__name__)
 
@@ -109,36 +151,9 @@ assignment_survey_data[median_time] = assignment_survey_data.groupby(review_col)
 assignment_survey_data[review_count] = assignment_survey_data.groupby(review_col)[time_col].transform(lambda x: x.count())
 project_time_fig = create_time_fig(assignment_survey_data)
 rubric_scores_fig = create_rubric_scores_fig(assignment_survey_data)
-
-satisfaction_mapping = {1: 'Very Dissatisfied', 2: 'Dissatisfied', 3: 'Neutral', 4: 'Satisfied', 5: 'Very Satisfied'}
 assignment_survey_data[rubric_heading] = assignment_survey_data[rubric_heading].map(satisfaction_mapping)
-rubric_fig = px.histogram(
-  assignment_survey_data, 
-  x=rubric_heading, 
-  color=rubric_heading, 
-  category_orders={rubric_heading: list(satisfaction_mapping.values())},
-  labels={rubric_heading: 'Response'},
-  text_auto=".3s"
-)
-rubric_fig.write_html(r'renders\diagram\rubric_fig.html')
-
-rubric_breakdown_fig = px.histogram(
-  assignment_survey_data, 
-  x=rubric_heading, 
-  color=rubric_heading,
-  facet_col=review_col, 
-  facet_col_wrap=2,
-  height=800, 
-  category_orders={
-    rubric_heading: list(satisfaction_mapping.values()),
-    review_col: list(range(1, 12))
-  },
-  labels={
-    rubric_heading: 'Response',
-  }
-)
-rubric_breakdown_fig.for_each_annotation(lambda a: a.update(text=f'Project {a.text.split("=")[-1]}'))
-rubric_breakdown_fig.write_html(r'renders\diagram\rubric_breakdown_fig.html')
+rubric_fig = create_rubric_overview_fig(assignment_survey_data)
+rubric_breakdown_fig = create_rubric_breakdown_fig(assignment_survey_data)
 
 # SEI figures
 sei_data = pd.read_csv(r'viz\data\sei-data.csv')
@@ -155,6 +170,8 @@ grade_data = pd.read_csv(r'viz\data\au-2021-cse-2221-grades.csv')
 project_calculations_fig = create_assignment_fig(grade_data, "Project", 10)
 homework_calculations_fig = create_assignment_fig(grade_data, "Homework", 2)
 exams_calculations_fig = create_assignment_fig(grade_data, "Exam", 100)
+
+print((grade_data == 0).sum())
 
 app.layout = html.Div(children=[
   html.H1(children='CSE 2221 Visualization'),
