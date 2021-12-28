@@ -128,6 +128,20 @@ def create_rubric_breakdown_fig(assignment_survey_data):
   rubric_breakdown_fig.write_html(r'renders\diagram\rubric_breakdown_fig.html')
   return rubric_breakdown_fig
 
+def create_missing_assignment_fig(grade_data, assignment):
+  missing_assignment_data = (grade_data == 0).sum() / len(grade_data) * 100
+  missing_assignment_data = missing_assignment_data.reset_index()
+  missing_assignment_data.rename(columns={'index': 'Assignment', 0: 'Percent Missing'}, inplace=True)
+  missing_assignment_data = missing_assignment_data.loc[missing_assignment_data["Assignment"].str.contains(assignment)]
+  missing_assignment_fig = px.bar(
+    missing_assignment_data, 
+    x="Assignment", 
+    y="Percent Missing", 
+    text_auto=".2s", 
+    title=f"Percent of Missing {assignment}s"
+  )
+  return missing_assignment_fig
+
 rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
 review_col = "Which project are you reviewing (enter a # between 1 and 11)?"
 time_col = "How much time did you spend on this assignment in hours?"
@@ -170,8 +184,9 @@ grade_data = pd.read_csv(r'viz\data\au-2021-cse-2221-grades.csv')
 project_calculations_fig = create_assignment_fig(grade_data, "Project", 10)
 homework_calculations_fig = create_assignment_fig(grade_data, "Homework", 2)
 exams_calculations_fig = create_assignment_fig(grade_data, "Exam", 100)
-
-print((grade_data == 0).sum())
+missing_project_fig = create_missing_assignment_fig(grade_data, "Project")
+missing_homework_fig = create_missing_assignment_fig(grade_data, "Homework")
+missing_exam_fig = create_missing_assignment_fig(grade_data, "Exam")
 
 app.layout = html.Div(children=[
   html.H1(children='CSE 2221 Visualization'),
@@ -206,10 +221,16 @@ app.layout = html.Div(children=[
   html.P(children='Each semester, the university asks students to fill out a survey about instruction.'),
   dcc.Graph(figure=sei_fig),
   html.H2(children='Grades'),
-  html.P(children='The grades for each project are shown below.'),
+  html.P(children='All course grades have been aggregated and provided in groups by projects, homeworks, and exams.'),
+  html.H3(children='Project Grades'),
   dcc.Graph(figure=project_calculations_fig),
+  dcc.Graph(figure=missing_project_fig),
+  html.H3(children='Homework Grades'),
   dcc.Graph(figure=homework_calculations_fig),
-  dcc.Graph(figure=exams_calculations_fig)
+  dcc.Graph(figure=missing_homework_fig),
+  html.H3(children='Exam Grades'),
+  dcc.Graph(figure=exams_calculations_fig),
+  dcc.Graph(figure=missing_exam_fig),
 ])
 
 if __name__ == '__main__':
