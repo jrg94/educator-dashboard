@@ -1,6 +1,5 @@
 import dash
 from dash import html
-from numpy import show_config
 import pandas as pd
 import plotly.express as px
 from dash import dcc
@@ -8,6 +7,7 @@ from dash import dcc
 review_col = "Which project are you reviewing (enter a # between 1 and 11)?"
 time_col = "How much time did you spend on this assignment in hours?"
 avg_time = "Average Time (hours)"
+median_time = "Median Time (hours)"
 review_count = "Number of Reviews"
 
 app = dash.Dash(__name__)
@@ -15,11 +15,13 @@ app = dash.Dash(__name__)
 # Loading and managing assignment data
 grading_data = pd.read_csv(r'viz\data\assignment-survey-data.csv')
 grading_data[avg_time] = grading_data.groupby(review_col)[time_col].transform(lambda x: x.mean())
+grading_data[median_time] = grading_data.groupby(review_col)[time_col].transform(lambda x: x.median())
 grading_data[review_count] = grading_data.groupby(review_col)[time_col].transform(lambda x: x.count())
 
 to_plot = grading_data.drop_duplicates(subset=[review_col]).sort_values(by=review_col)
-project_fig = px.bar(to_plot, x=review_col, y=avg_time, color=review_count)
-project_fig.write_html(r'renders\diagram\project_fig.html')
+project_mean_fig = px.bar(to_plot, x=review_col, y=avg_time, color=review_count, text_auto=".2s")
+project_mean_fig.write_html(r'renders\diagram\project_fig.html')
+project_median_fig = px.bar(to_plot, x=review_col, y=median_time, color=review_count, text_auto=".2s")
 
 rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
 
@@ -31,7 +33,8 @@ rubric_scores_fig = px.bar(
   labels={
     "mean": "Average Score (out of 5)",
     "count": "Number of Reviews"
-  }
+  },
+  text_auto=".3s"
 )
 
 satisfaction_mapping = {1: 'Very Dissatisfied', 2: 'Dissatisfied', 3: 'Neutral', 4: 'Satisfied', 5: 'Very Satisfied'}
@@ -151,7 +154,8 @@ app.layout = html.Div(children=[
   html.P(children='Throughout the course, I asked students to give me feedback on the assignments.'),
   html.H3(children='Time Spent Working on Assignments'),
   html.P(children='One of the questions I asked was how long students spent on each project.'),
-  dcc.Graph(figure=project_fig),
+  dcc.Graph(figure=project_mean_fig),
+  dcc.Graph(figure=project_median_fig),
   html.H3(children='Rubric Evaluation'),
   html.P(children="""
     The rubric for each project was used to evaluate students\' performance. I asked students to rate their satisfaction with the rubric.
