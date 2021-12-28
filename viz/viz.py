@@ -4,6 +4,56 @@ import pandas as pd
 import plotly.express as px
 from dash import dcc
 
+def create_assignment_fig(grade_data, assignment, total):
+  assgnment_data = [name for name in grade_data.columns if assignment in name]
+  assignment_calculations = grade_data[assgnment_data].agg(["mean", "median"]).T
+  assignment_calculations_fig = px.bar(
+    assignment_calculations,
+    labels={
+    "index": "Project Name",
+    "value": f"Grade/{total}",
+    "variable": "Calculation"
+    },
+    barmode='group',
+    text_auto=".2s"
+  )
+  return assignment_calculations_fig
+
+def create_course_eval_fig(course_eval_data, question):
+  axes_labels = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]
+  question_data = course_eval_data.melt(
+    id_vars=[item for item in course_eval_data.columns if question not in item],
+    var_name="Question",
+    value_name="Response"
+  )
+  question_data = question_data[question_data["Response"].notna()]
+  question_fig = px.histogram(
+    question_data, 
+    x="Response", 
+    color="Response", 
+    facet_col="Question", 
+    facet_col_wrap=2, 
+    category_orders=dict(Response=axes_labels),
+    text_auto=True
+  )
+  question_fig.for_each_annotation(lambda a: a.update(text=a.text[a.text.find("[")+1:a.text.find("]")]))
+  return question_fig
+
+def create_sei_fig(sei_data):
+  sei_data["Date"] = pd.to_datetime(sei_data["Date"])
+  sei_fig = px.line(
+    sei_data, 
+    x="Date", 
+    y="Mean", 
+    color="Group", 
+    facet_col="Question", 
+    facet_col_wrap=2, 
+    markers=True, 
+    height=800
+  )
+  sei_fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
+  return sei_fig
+
 review_col = "Which project are you reviewing (enter a # between 1 and 11)?"
 time_col = "How much time did you spend on this assignment in hours?"
 avg_time = "Average Time (hours)"
@@ -66,57 +116,18 @@ rubric_breakdown_fig = px.histogram(
 rubric_breakdown_fig.for_each_annotation(lambda a: a.update(text=f'Project {a.text.split("=")[-1]}'))
 rubric_breakdown_fig.write_html(r'renders\diagram\rubric_breakdown_fig.html')
 
-# Loading and managing course evaluation data
+# SEI figures
+sei_data = pd.read_csv(r'viz\data\sei-data.csv')
+sei_fig = create_sei_fig(sei_data)
+
+# Course evaluation figures
 course_eval_data = pd.read_csv(r'viz\data\eval-data.csv')
-
-def create_course_eval_fig(course_eval_data, question):
-  axes_labels = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]
-  question_data = course_eval_data.melt(
-    id_vars=[item for item in course_eval_data.columns if question not in item],
-    var_name="Question",
-    value_name="Response"
-  )
-  question_data = question_data[question_data["Response"].notna()]
-  question_fig = px.histogram(
-    question_data, 
-    x="Response", 
-    color="Response", 
-    facet_col="Question", 
-    facet_col_wrap=2, 
-    category_orders=dict(Response=axes_labels),
-    text_auto=True
-  )
-  question_fig.for_each_annotation(lambda a: a.update(text=a.text[a.text.find("[")+1:a.text.find("]")]))
-  return question_fig
-
 course_content_fig = create_course_eval_fig(course_eval_data, "Course content")
 skill_and_responsiveness_fig = create_course_eval_fig(course_eval_data, "Skill and responsiveness")
 contribution_to_learning_fig = create_course_eval_fig(course_eval_data, "Contribution to learning")
 
-# Loading and managing course evaluation data
-sei_data = pd.read_csv(r'viz\data\sei-data.csv')
-sei_data["Date"] = pd.to_datetime(sei_data["Date"])
-sei_fig = px.line(sei_data, x="Date", y="Mean", color="Group", facet_col="Question", facet_col_wrap=2, markers=True, height=800)
-sei_fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
-
-# Loading and managing grades
+# Assignment figures
 grade_data = pd.read_csv(r'viz\data\au-2021-cse-2221-grades.csv')
-
-def create_assignment_fig(grade_data, assignment, total):
-  assgnment_data = [name for name in grade_data.columns if assignment in name]
-  assignment_calculations = grade_data[assgnment_data].agg(["mean", "median"]).T
-  assignment_calculations_fig = px.bar(
-    assignment_calculations,
-    labels={
-    "index": "Project Name",
-    "value": f"Grade/{total}",
-    "variable": "Calculation"
-    },
-    barmode='group',
-    text_auto=".2s"
-  )
-  return assignment_calculations_fig
-
 project_calculations_fig = create_assignment_fig(grade_data, "Project", 10)
 homework_calculations_fig = create_assignment_fig(grade_data, "Homework", 2)
 exams_calculations_fig = create_assignment_fig(grade_data, "Exam", 100)
