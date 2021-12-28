@@ -106,6 +106,28 @@ project_means_fig = px.bar(
 )
 project_means_fig.update_layout(showlegend=False)
 
+homework = [name for name in grade_data.columns if "Homework" in name]
+homework_means = grade_data[homework].mean()
+homework_means_fig = px.bar(
+  homework_means,
+  labels={
+    "index": "Homework Name",
+    "value": "Average Grade/2"
+  }
+)
+homework_means_fig.update_layout(showlegend=False)
+
+exams = [name for name in grade_data.columns if "Exam" in name]
+exams_means = grade_data[exams].mean()
+exams_means_fig = px.bar(
+  exams_means,
+  labels={
+    "index": "Exam Name",
+    "value": "Average Grade/100"
+  }
+)
+exams_means_fig.update_layout(showlegend=False)
+
 app.layout = html.Div(children=[
   html.H1(children='CSE 2221 Visualization'),
   html.Hr(),
@@ -140,6 +162,8 @@ app.layout = html.Div(children=[
   html.H2(children='Grades'),
   html.P(children='The grades for each project are shown below.'),
   dcc.Graph(figure=project_means_fig),
+  dcc.Graph(figure=homework_means_fig),
+  dcc.Graph(figure=exams_means_fig)
 ])
 
 if __name__ == '__main__':
