@@ -54,6 +54,18 @@ def create_sei_fig(sei_data):
   sei_fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
   return sei_fig
 
+def create_time_fig(assignment_survey_data):
+  to_plot = assignment_survey_data.drop_duplicates(subset=[review_col]).sort_values(by=review_col)
+  to_plot = to_plot.melt(
+    id_vars=[item for item in to_plot.columns if item not in [avg_time, median_time]], 
+    var_name="Metric", 
+    value_name="Value"
+  )
+  time_fig = px.bar(to_plot, x=review_col, y="Value", color="Metric", text_auto=".2s", barmode='group')
+  time_fig.write_html(r'renders\diagram\project_fig.html')
+  return time_fig
+
+rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
 review_col = "Which project are you reviewing (enter a # between 1 and 11)?"
 time_col = "How much time did you spend on this assignment in hours?"
 avg_time = "Average Time (hours)"
@@ -62,20 +74,14 @@ review_count = "Number of Reviews"
 
 app = dash.Dash(__name__)
 
-# Loading and managing assignment data
-grading_data = pd.read_csv(r'viz\data\assignment-survey-data.csv')
-grading_data[avg_time] = grading_data.groupby(review_col)[time_col].transform(lambda x: x.mean())
-grading_data[median_time] = grading_data.groupby(review_col)[time_col].transform(lambda x: x.median())
-grading_data[review_count] = grading_data.groupby(review_col)[time_col].transform(lambda x: x.count())
+# Assignment survey figures
+assignment_survey_data = pd.read_csv(r'viz\data\assignment-survey-data.csv')
+assignment_survey_data[avg_time] = assignment_survey_data.groupby(review_col)[time_col].transform(lambda x: x.mean())
+assignment_survey_data[median_time] = assignment_survey_data.groupby(review_col)[time_col].transform(lambda x: x.median())
+assignment_survey_data[review_count] = assignment_survey_data.groupby(review_col)[time_col].transform(lambda x: x.count())
+project_time_fig = create_time_fig(assignment_survey_data)
 
-to_plot = grading_data.drop_duplicates(subset=[review_col]).sort_values(by=review_col)
-project_mean_fig = px.bar(to_plot, x=review_col, y=avg_time, color=review_count, text_auto=".2s")
-project_mean_fig.write_html(r'renders\diagram\project_fig.html')
-project_median_fig = px.bar(to_plot, x=review_col, y=median_time, color=review_count, text_auto=".2s")
-
-rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
-
-rubric_scores = grading_data.groupby(review_col)[rubric_heading].agg(["mean", "count"])
+rubric_scores = assignment_survey_data.groupby(review_col)[rubric_heading].agg(["mean", "count"])
 rubric_scores_fig = px.bar(
   rubric_scores, 
   y="mean", 
@@ -88,18 +94,19 @@ rubric_scores_fig = px.bar(
 )
 
 satisfaction_mapping = {1: 'Very Dissatisfied', 2: 'Dissatisfied', 3: 'Neutral', 4: 'Satisfied', 5: 'Very Satisfied'}
-grading_data[rubric_heading] = grading_data[rubric_heading].map(satisfaction_mapping)
+assignment_survey_data[rubric_heading] = assignment_survey_data[rubric_heading].map(satisfaction_mapping)
 rubric_fig = px.histogram(
-  grading_data, 
+  assignment_survey_data, 
   x=rubric_heading, 
   color=rubric_heading, 
   category_orders={rubric_heading: list(satisfaction_mapping.values())},
-    labels={rubric_heading: 'Response'}
+  labels={rubric_heading: 'Response'},
+  text_auto=".3s"
 )
 rubric_fig.write_html(r'renders\diagram\rubric_fig.html')
 
 rubric_breakdown_fig = px.histogram(
-  grading_data, 
+  assignment_survey_data, 
   x=rubric_heading, 
   color=rubric_heading,
   facet_col=review_col, 
@@ -140,8 +147,7 @@ app.layout = html.Div(children=[
   html.P(children='Throughout the course, I asked students to give me feedback on the assignments.'),
   html.H3(children='Time Spent Working on Assignments'),
   html.P(children='One of the questions I asked was how long students spent on each project.'),
-  dcc.Graph(figure=project_mean_fig),
-  dcc.Graph(figure=project_median_fig),
+  dcc.Graph(figure=project_time_fig),
   html.H3(children='Rubric Evaluation'),
   html.P(children="""
     The rubric for each project was used to evaluate students\' performance. I asked students to rate their satisfaction with the rubric.
