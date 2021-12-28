@@ -71,39 +71,27 @@ course_eval_data = pd.read_csv(r'viz\data\eval-data.csv')
 
 def create_course_eval_fig(course_eval_data, question):
   axes_labels = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]
-  question = course_eval_data.melt(
+  question_data = course_eval_data.melt(
     id_vars=[item for item in course_eval_data.columns if question not in item],
     var_name="Question",
     value_name="Response"
   )
-  question = question[question["Response"].notna()]
-  question_fig = px.histogram(question, x="Response", color="Response", facet_col="Question", facet_col_wrap=2, category_orders=dict(Response=axes_labels))
+  question_data = question_data[question_data["Response"].notna()]
+  question_fig = px.histogram(
+    question_data, 
+    x="Response", 
+    color="Response", 
+    facet_col="Question", 
+    facet_col_wrap=2, 
+    category_orders=dict(Response=axes_labels),
+    text_auto=True
+  )
   question_fig.for_each_annotation(lambda a: a.update(text=a.text[a.text.find("[")+1:a.text.find("]")]))
   return question_fig
 
 course_content_fig = create_course_eval_fig(course_eval_data, "Course content")
-
-skill_and_responsiveness = course_eval_data.melt(
-  id_vars=[item for item in course_eval_data.columns if "Skill and responsiveness of the instructor" not in item],
-  var_name="Question", 
-  value_name="Response"
-)
-skill_and_responsiveness = skill_and_responsiveness[skill_and_responsiveness["Response"].notna()]
-
-axes_labels = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]
-skill_and_responsiveness_fig = px.histogram(skill_and_responsiveness, x="Response", color="Response", facet_col="Question", facet_col_wrap=2, category_orders=dict(Response=axes_labels))
-skill_and_responsiveness_fig.for_each_annotation(lambda a: a.update(text=a.text[a.text.find("[")+1:a.text.find("]")]))
-
-contribution_to_learning = course_eval_data.melt(
-  id_vars=[item for item in course_eval_data.columns if "Contribution to learning" not in item],
-  var_name="Question", 
-  value_name="Response"
-)
-contribution_to_learning = contribution_to_learning[contribution_to_learning["Response"].notna()]
-
-axes_labels = ["Poor", "Fair", "Satisfactory", "Very good", "Excellent"]
-contribution_to_learning_fig = px.histogram(contribution_to_learning, x="Response", color="Response", facet_col="Question", facet_col_wrap=2, category_orders=dict(Response=axes_labels))
-contribution_to_learning_fig.for_each_annotation(lambda a: a.update(text=a.text[a.text.find("[")+1:a.text.find("]")]))
+skill_and_responsiveness_fig = create_course_eval_fig(course_eval_data, "Skill and responsiveness")
+contribution_to_learning_fig = create_course_eval_fig(course_eval_data, "Contribution to learning")
 
 # Loading and managing course evaluation data
 sei_data = pd.read_csv(r'viz\data\sei-data.csv')
@@ -113,41 +101,25 @@ sei_fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
 
 # Loading and managing grades
 grade_data = pd.read_csv(r'viz\data\au-2021-cse-2221-grades.csv')
-projects = [name for name in grade_data.columns if "Project" in name]
-project_means = grade_data[projects].agg(["mean", "median"]).T
-project_means_fig = px.bar(
-  project_means,
-  labels={
+
+def create_assignment_fig(grade_data, assignment, total):
+  assgnment_data = [name for name in grade_data.columns if assignment in name]
+  assignment_calculations = grade_data[assgnment_data].agg(["mean", "median"]).T
+  assignment_calculations_fig = px.bar(
+    assignment_calculations,
+    labels={
     "index": "Project Name",
-    "value": "Grade/10",
+    "value": f"Grade/{total}",
     "variable": "Calculation"
-  },
-  barmode='group'
-)
+    },
+    barmode='group',
+    text_auto=".2s"
+  )
+  return assignment_calculations_fig
 
-homework = [name for name in grade_data.columns if "Homework" in name]
-homework_calculations = grade_data[homework].agg(["mean", "median"]).T
-homework_calculations_fig = px.bar(
-  homework_calculations,
-  labels={
-    "index": "Homework Name",
-    "value": "Grade/2",
-    "variable": "Calculation"
-  },
-  barmode='group'
-)
-
-exams = [name for name in grade_data.columns if "Exam" in name]
-exams_calculations = grade_data[exams].agg(["mean", "median"]).T
-exams_calculations_fig = px.bar(
-  exams_calculations,
-  labels={
-    "index": "Exam Name",
-    "value": "Grade/100",
-    "variable": "Calculation"
-  },
-  barmode='group'
-)
+project_calculations_fig = create_assignment_fig(grade_data, "Project", 10)
+homework_calculations_fig = create_assignment_fig(grade_data, "Homework", 2)
+exams_calculations_fig = create_assignment_fig(grade_data, "Exam", 100)
 
 app.layout = html.Div(children=[
   html.H1(children='CSE 2221 Visualization'),
@@ -184,7 +156,7 @@ app.layout = html.Div(children=[
   dcc.Graph(figure=sei_fig),
   html.H2(children='Grades'),
   html.P(children='The grades for each project are shown below.'),
-  dcc.Graph(figure=project_means_fig),
+  dcc.Graph(figure=project_calculations_fig),
   dcc.Graph(figure=homework_calculations_fig),
   dcc.Graph(figure=exams_calculations_fig)
 ])
