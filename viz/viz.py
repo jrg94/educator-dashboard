@@ -22,6 +22,18 @@ project_fig = px.bar(to_plot, x=review_col, y=avg_time, color=review_count)
 project_fig.write_html(r'renders\diagram\project_fig.html')
 
 rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
+
+rubric_scores = grading_data.groupby(review_col)[rubric_heading].agg(["mean", "count"])
+rubric_scores_fig = px.bar(
+  rubric_scores, 
+  y="mean", 
+  color="count",
+  labels={
+    "mean": "Average Score (out of 5)",
+    "count": "Number of Reviews"
+  }
+)
+
 satisfaction_mapping = {1: 'Very Dissatisfied', 2: 'Dissatisfied', 3: 'Neutral', 4: 'Satisfied', 5: 'Very Satisfied'}
 grading_data[rubric_heading] = grading_data[rubric_heading].map(satisfaction_mapping)
 rubric_fig = px.histogram(
@@ -148,6 +160,7 @@ app.layout = html.Div(children=[
   ),
   dcc.Graph(figure=rubric_fig),
   dcc.Graph(figure=rubric_breakdown_fig),
+  dcc.Graph(figure=rubric_scores_fig),
   html.H2(children='Course Evaluation Survey Data'),
   html.P(children='At the end of the course, I ask students to give me feedback on it.'),
   html.H3(children='Course Content'),
