@@ -59,11 +59,34 @@ def create_time_fig(assignment_survey_data):
   to_plot = to_plot.melt(
     id_vars=[item for item in to_plot.columns if item not in [avg_time, median_time]], 
     var_name="Metric", 
-    value_name="Value"
+    value_name="Time (hours)"
   )
-  time_fig = px.bar(to_plot, x=review_col, y="Value", color="Metric", text_auto=".2s", barmode='group')
+  time_fig = px.bar(
+    to_plot, 
+    x=review_col, 
+    y="Time (hours)", 
+    color="Metric", 
+    text_auto=".2s", 
+    barmode='group',
+    title="Average and Median Project Time"
+  )
   time_fig.write_html(r'renders\diagram\project_fig.html')
   return time_fig
+
+def create_rubric_scores_fig(assignment_survey_data):
+  rubric_scores = assignment_survey_data.groupby(review_col)[rubric_heading].agg(["mean", "count"])
+  rubric_scores_fig = px.bar(
+    rubric_scores, 
+    y="mean", 
+    color="count",
+    labels={
+      "mean": "Average Score (out of 5)",
+      "count": "Number of Reviews"
+    },
+    text_auto=".3s",
+    title="Avergage Project Rubric Scores"
+  )
+  return rubric_scores_fig
 
 rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
 review_col = "Which project are you reviewing (enter a # between 1 and 11)?"
@@ -80,18 +103,7 @@ assignment_survey_data[avg_time] = assignment_survey_data.groupby(review_col)[ti
 assignment_survey_data[median_time] = assignment_survey_data.groupby(review_col)[time_col].transform(lambda x: x.median())
 assignment_survey_data[review_count] = assignment_survey_data.groupby(review_col)[time_col].transform(lambda x: x.count())
 project_time_fig = create_time_fig(assignment_survey_data)
-
-rubric_scores = assignment_survey_data.groupby(review_col)[rubric_heading].agg(["mean", "count"])
-rubric_scores_fig = px.bar(
-  rubric_scores, 
-  y="mean", 
-  color="count",
-  labels={
-    "mean": "Average Score (out of 5)",
-    "count": "Number of Reviews"
-  },
-  text_auto=".3s"
-)
+rubric_scores_fig = create_rubric_scores_fig(assignment_survey_data)
 
 satisfaction_mapping = {1: 'Very Dissatisfied', 2: 'Dissatisfied', 3: 'Neutral', 4: 'Satisfied', 5: 'Very Satisfied'}
 assignment_survey_data[rubric_heading] = assignment_survey_data[rubric_heading].map(satisfaction_mapping)
