@@ -4,6 +4,26 @@ import pandas as pd
 import plotly.express as px
 from dash import dcc
 
+def create_value_fig(grade_data, assignment_survey_data):
+  assignment_score_data = [name for name in grade_data.columns if "Project" in name]
+  assignment_calculations = grade_data[assignment_score_data].agg(["mean", "median"]).T
+  assignment_time_data = assignment_survey_data.drop_duplicates(subset=[review_col]).sort_values(by=review_col)
+  assignment_time_data["Project #"] = "Project #" + assignment_time_data[review_col].astype(str)
+  assignment_time_data = assignment_time_data.set_index("Project #")[median_time]
+  assignment_aggregate_data = assignment_calculations.join(assignment_time_data)
+  assignment_aggregate_data = assignment_aggregate_data.rename(columns={'mean': 'Average Score/10', 'median': 'Median Score/10'})
+  assignment_aggregate_data_fig = px.bar(
+    assignment_aggregate_data["Median Score/10"] / assignment_aggregate_data["Median Time (hours)"],
+    labels={
+      "index": "Project Name",
+      "value": "Median Points/Hour of Work",
+    },
+    text_auto=".2s",
+    title="Expected Points per Hour of Work by Project"
+  )
+  assignment_aggregate_data_fig.update_layout(showlegend=False)
+  return assignment_aggregate_data_fig
+
 def create_assignment_fig(grade_data, assignment, total):
   assignment_data = [name for name in grade_data.columns if assignment in name]
   assignment_calculations = grade_data[assignment_data].agg(["mean", "median"]).T
@@ -209,6 +229,7 @@ missing_exam_fig = create_missing_assignment_fig(grade_data, "Exam")
 project_trend_fig = create_project_trend_fig(grade_data, "Project")
 homework_trend_fig = create_project_trend_fig(grade_data, "Homework")
 exam_trend_fig = create_project_trend_fig(grade_data, "Exam")
+value_fig = create_value_fig(grade_data, assignment_survey_data)
 
 app.layout = html.Div(children=[
   html.H1(children='CSE 2221 Visualization'),
@@ -220,10 +241,11 @@ app.layout = html.Div(children=[
   html.P(children='One of the questions I asked was how long students spent on each project.'),
   dcc.Graph(figure=project_time_fig),
   html.H3(children='Rubric Evaluation'),
-  html.P(children="""
+  html.P(children=
+    """
     The rubric for each project was used to evaluate students\' performance. I asked students to rate their satisfaction with the rubric.
     The first plot gives the overview of the rubric ratings over all 11 projects. The following plot gives a per project breakdown. 
-  """
+    """
   ),
   dcc.Graph(figure=rubric_fig),
   dcc.Graph(figure=rubric_breakdown_fig),
@@ -248,6 +270,7 @@ app.layout = html.Div(children=[
   dcc.Graph(figure=project_calculations_fig),
   dcc.Graph(figure=missing_project_fig),
   dcc.Graph(figure=project_trend_fig),
+  dcc.Graph(figure=value_fig),
   html.H3(children='Homework Grades'),
   dcc.Graph(figure=homework_calculations_fig),
   dcc.Graph(figure=missing_homework_fig),
