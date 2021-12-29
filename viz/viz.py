@@ -5,8 +5,8 @@ import plotly.express as px
 from dash import dcc
 
 def create_assignment_fig(grade_data, assignment, total):
-  assgnment_data = [name for name in grade_data.columns if assignment in name]
-  assignment_calculations = grade_data[assgnment_data].agg(["mean", "median"]).T
+  assignment_data = [name for name in grade_data.columns if assignment in name]
+  assignment_calculations = grade_data[assignment_data].agg(["mean", "median"]).T
   assignment_calculations.rename(columns={'mean': 'Average', 'median': 'Median'}, inplace=True)
   assignment_calculations_fig = px.bar(
     assignment_calculations,
@@ -142,6 +142,13 @@ def create_missing_assignment_fig(grade_data, assignment):
   )
   return missing_assignment_fig
 
+def create_project_trend_fig(grade_data, assignment):
+  trend_fig = px.line(
+    grade_data.groupby("Date").mean()[[item for item in grade_data if assignment in item]],
+    markers=True,
+  )
+  return trend_fig
+
 rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
 review_col = "Which project are you reviewing (enter a # between 1 and 11)?"
 time_col = "How much time did you spend on this assignment in hours?"
@@ -181,12 +188,16 @@ contribution_to_learning_fig = create_course_eval_fig(course_eval_data, "Contrib
 
 # Assignment figures
 grade_data = pd.read_csv(r'viz\data\au-2021-cse-2221-grades.csv')
+grade_data["Date"] = pd.to_datetime(grade_data["Date"])
 project_calculations_fig = create_assignment_fig(grade_data, "Project", 10)
 homework_calculations_fig = create_assignment_fig(grade_data, "Homework", 2)
 exams_calculations_fig = create_assignment_fig(grade_data, "Exam", 100)
 missing_project_fig = create_missing_assignment_fig(grade_data, "Project")
 missing_homework_fig = create_missing_assignment_fig(grade_data, "Homework")
 missing_exam_fig = create_missing_assignment_fig(grade_data, "Exam")
+project_trend_fig = create_project_trend_fig(grade_data, "Project")
+homework_trend_fig = create_project_trend_fig(grade_data, "Homework")
+exam_trend_fig = create_project_trend_fig(grade_data, "Exam")
 
 app.layout = html.Div(children=[
   html.H1(children='CSE 2221 Visualization'),
@@ -225,12 +236,15 @@ app.layout = html.Div(children=[
   html.H3(children='Project Grades'),
   dcc.Graph(figure=project_calculations_fig),
   dcc.Graph(figure=missing_project_fig),
+  dcc.Graph(figure=project_trend_fig),
   html.H3(children='Homework Grades'),
   dcc.Graph(figure=homework_calculations_fig),
   dcc.Graph(figure=missing_homework_fig),
+  dcc.Graph(figure=homework_trend_fig),
   html.H3(children='Exam Grades'),
   dcc.Graph(figure=exams_calculations_fig),
   dcc.Graph(figure=missing_exam_fig),
+  dcc.Graph(figure=exam_trend_fig),
 ])
 
 if __name__ == '__main__':
