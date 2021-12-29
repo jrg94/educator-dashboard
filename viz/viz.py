@@ -12,15 +12,20 @@ def create_value_fig(grade_data, assignment_survey_data):
   assignment_time_data = assignment_time_data.set_index("Project #")[median_time]
   assignment_aggregate_data = assignment_calculations.join(assignment_time_data)
   assignment_aggregate_data = assignment_aggregate_data.rename(columns={'mean': 'Average Score/10', 'median': 'Median Score/10'})
+  assignment_aggregate_data["Ratio"] = assignment_aggregate_data["Median Score/10"] / assignment_aggregate_data["Median Time (hours)"]
+  assignment_aggregate_data = assignment_aggregate_data.reset_index()
   assignment_aggregate_data_fig = px.bar(
-    assignment_aggregate_data["Median Score/10"] / assignment_aggregate_data["Median Time (hours)"],
+    assignment_aggregate_data,
+    x="index",
+    y="Ratio",
     labels={
       "index": "Project Name",
-      "value": "Median Points/Hour of Work",
+      "Ratio": "Median Points/Hour of Work",
     },
     text_auto=".2s",
     title="Expected Points per Hour of Work by Project"
   )
+  print(assignment_aggregate_data["Median Score/10"] / assignment_aggregate_data["Median Time (hours)"])
   assignment_aggregate_data_fig.update_layout(showlegend=False)
   return assignment_aggregate_data_fig
 
