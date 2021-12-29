@@ -12,22 +12,35 @@ def create_value_fig(grade_data, assignment_survey_data):
   assignment_time_data = assignment_time_data.set_index("Project #")[median_time]
   assignment_aggregate_data = assignment_calculations.join(assignment_time_data)
   assignment_aggregate_data = assignment_aggregate_data.rename(columns={'mean': 'Average Score/10', 'median': 'Median Score/10'})
-  assignment_aggregate_data["Ratio"] = assignment_aggregate_data["Median Score/10"] / assignment_aggregate_data["Median Time (hours)"]
+  assignment_aggregate_data["Points per Hour"] = assignment_aggregate_data["Median Score/10"] / assignment_aggregate_data["Median Time (hours)"]
+  assignment_aggregate_data["Hours per Point"] = assignment_aggregate_data["Median Time (hours)"] / assignment_aggregate_data["Median Score/10"]
   assignment_aggregate_data = assignment_aggregate_data.reset_index()
-  assignment_aggregate_data_fig = px.bar(
+  assignment_expected_time_fig = px.bar(
     assignment_aggregate_data,
     x="index",
-    y="Ratio",
+    y="Points per Hour",
     labels={
       "index": "Project Name",
-      "Ratio": "Median Points/Hour of Work",
+      "Points per Hour": "Median Points/Hour of Work",
     },
     text_auto=".2s",
-    title="Expected Points per Hour of Work by Project"
+    title="Expected Value Per Project"
   )
-  print(assignment_aggregate_data["Median Score/10"] / assignment_aggregate_data["Median Time (hours)"])
-  assignment_aggregate_data_fig.update_layout(showlegend=False)
-  return assignment_aggregate_data_fig
+  assignment_expected_time_fig.update_layout(showlegend=False)
+  assignment_expected_effort_fig = px.bar(
+    assignment_aggregate_data,
+    x="index",
+    y="Hours per Point",
+    labels={
+      "index": "Project Name",
+      "Hours per Point": "Median Hours of Work/Point",
+    },
+    text_auto=".2f",
+    title="Expected Effort Per Project"
+  )
+  assignment_expected_effort_fig.update_layout(showlegend=False)
+  return assignment_expected_time_fig, assignment_expected_effort_fig
+
 
 def create_assignment_fig(grade_data, assignment, total):
   assignment_data = [name for name in grade_data.columns if assignment in name]
@@ -234,7 +247,7 @@ missing_exam_fig = create_missing_assignment_fig(grade_data, "Exam")
 project_trend_fig = create_project_trend_fig(grade_data, "Project")
 homework_trend_fig = create_project_trend_fig(grade_data, "Homework")
 exam_trend_fig = create_project_trend_fig(grade_data, "Exam")
-value_fig = create_value_fig(grade_data, assignment_survey_data)
+points_per_hour_fig, hours_per_point_fig = create_value_fig(grade_data, assignment_survey_data)
 
 app.layout = html.Div(children=[
   html.H1(children='CSE 2221 Visualization'),
@@ -275,7 +288,8 @@ app.layout = html.Div(children=[
   dcc.Graph(figure=project_calculations_fig),
   dcc.Graph(figure=missing_project_fig),
   dcc.Graph(figure=project_trend_fig),
-  dcc.Graph(figure=value_fig),
+  dcc.Graph(figure=points_per_hour_fig),
+  dcc.Graph(figure=hours_per_point_fig),
   html.H3(children='Homework Grades'),
   dcc.Graph(figure=homework_calculations_fig),
   dcc.Graph(figure=missing_homework_fig),
