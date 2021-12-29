@@ -143,8 +143,18 @@ def create_missing_assignment_fig(grade_data, assignment):
   return missing_assignment_fig
 
 def create_project_trend_fig(grade_data, assignment):
+  trend_data = grade_data.groupby("Date").mean()[[item for item in grade_data if assignment in item]]
+  trend_data = trend_data.reset_index().melt(
+    id_vars="Date",
+    var_name="Assignment", 
+    value_name="Average Score"
+  ).dropna()
+  
   trend_fig = px.line(
-    grade_data.groupby("Date").mean()[[item for item in grade_data if assignment in item]],
+    trend_data,
+    x="Date",
+    y="Average Score",
+    color="Assignment",
     markers=True,
   )
   return trend_fig
