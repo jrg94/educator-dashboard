@@ -156,6 +156,7 @@ def create_project_trend_fig(grade_data, assignment):
     y="Average Score",
     color="Assignment",
     markers=True,
+    title=f"Average {assignment} Score by Date"
   )
   return trend_fig
 
@@ -197,7 +198,7 @@ skill_and_responsiveness_fig = create_course_eval_fig(course_eval_data, "Skill a
 contribution_to_learning_fig = create_course_eval_fig(course_eval_data, "Contribution to learning")
 
 # Assignment figures
-grade_data = pd.read_csv(r'viz\data\au-2021-cse-2221-grades.csv')
+grade_data = pd.read_csv(r'viz\data\cse-2221-grades.csv')
 grade_data["Date"] = pd.to_datetime(grade_data["Date"])
 project_calculations_fig = create_assignment_fig(grade_data, "Project", 10)
 homework_calculations_fig = create_assignment_fig(grade_data, "Homework", 2)
