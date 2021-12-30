@@ -8,3 +8,8 @@ p {
     border-radius: 25px;
     margin: 20px 0px;
 }
+
+body {
+    max-width: 70%;
+    margin: 0 auto;
+}

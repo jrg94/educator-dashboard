@@ -133,26 +133,38 @@ def create_rubric_scores_fig(assignment_survey_data):
   return rubric_scores_fig
 
 def create_rubric_overview_fig(assignment_survey_data):
-  rubric_fig = px.histogram(
-    assignment_survey_data, 
-    x=rubric_heading, 
-    color=rubric_heading, 
-    category_orders={rubric_heading: list(satisfaction_mapping.values())},
-    labels={rubric_heading: 'Response'},
-    text_auto=".3s",
+  data = assignment_survey_data[rubric_heading].value_counts()
+  rubric_fig = px.bar(
+    data, 
+    color=data.index,
+    category_orders={"index": list(satisfaction_mapping.values())},
+    labels={
+      "index": 'Response',
+      "value": 'Number of Reviews',
+      "color": 'Response'
+    },
+    text_auto=True,
     title="Project Rubric Satisfaction Overview"
   )
   rubric_fig.write_html(r'renders\diagram\rubric_fig.html')
   return rubric_fig
 
 def create_rubric_breakdown_fig(assignment_survey_data):
-  rubric_breakdown_fig = px.histogram(
-    assignment_survey_data, 
-    x=rubric_heading, 
-    color=rubric_heading,
+  data = assignment_survey_data.groupby(review_col)[rubric_heading] \
+    .value_counts() \
+    .unstack() \
+    .reset_index() \
+    .melt(id_vars=[review_col], var_name="Response", value_name="Number of Reviews") \
+    .dropna()
+  rubric_breakdown_fig = px.bar(
+    data, 
+    x="Response",
+    y="Number of Reviews",
+    color="Response",
     facet_col=review_col, 
     facet_col_wrap=2,
-    height=800, 
+    height=1000, 
+    text_auto=True,
     category_orders={
       rubric_heading: list(satisfaction_mapping.values()),
       review_col: list(range(1, 12))
@@ -253,51 +265,61 @@ app.layout = html.Div(children=[
   html.H1(children='CSE 2221 Visualization'),
   html.Hr(),
   html.P(children='A collection of visualizations related to course data for CSE 2221.'),
-  html.H2(children='Assignment Survey Data'),
-  html.P(children='Throughout the course, I asked students to give me feedback on the assignments.'),
-  html.H3(children='Time Spent Working on Assignments'),
-  html.P(children='One of the questions I asked was how long students spent on each project.'),
-  dcc.Graph(figure=project_time_fig),
-  html.H3(children='Rubric Evaluation'),
-  html.P(children=
-    """
-    The rubric for each project was used to evaluate students\' performance. I asked students to rate their satisfaction with the rubric.
-    The first plot gives the overview of the rubric ratings over all 11 projects. The following plot gives a per project breakdown. 
-    """
-  ),
-  dcc.Graph(figure=rubric_fig),
-  dcc.Graph(figure=rubric_breakdown_fig),
-  dcc.Graph(figure=rubric_scores_fig),
-  html.H2(children='Course Evaluation Survey Data'),
-  html.P(children='At the end of the course, I ask students to give me feedback on it.'),
-  html.H3(children='Course Content'),
-  html.P(children='One way the course was evaluated by asking students to rate their satisfaction with the course content.'),
-  dcc.Graph(figure=course_content_fig),
-  html.H3(children='Skill and Responsiveness of the Instructor'),
-  html.P(children='Another way the course was evaluated by asking students to rate their satisfaction with the instructor.'),
-  dcc.Graph(figure=skill_and_responsiveness_fig),
-  html.H3(children='Contribution to Learning'),
-  html.P(children='Another way the course was evaluated by asking students how much they felt the course contributed to their.'),
-  dcc.Graph(figure=contribution_to_learning_fig),
-  html.H2(children='Student Evaluation of Instruction Data'),
-  html.P(children='Each semester, the university asks students to fill out a survey about instruction.'),
-  dcc.Graph(figure=sei_fig),
-  html.H2(children='Grades'),
-  html.P(children='All course grades have been aggregated and provided in groups by projects, homeworks, and exams.'),
-  html.H3(children='Project Grades'),
-  dcc.Graph(figure=project_calculations_fig),
-  dcc.Graph(figure=missing_project_fig),
-  dcc.Graph(figure=project_trend_fig),
-  dcc.Graph(figure=project_points_per_hour_fig),
-  dcc.Graph(figure=project_hours_per_point_fig),
-  html.H3(children='Homework Grades'),
-  dcc.Graph(figure=homework_calculations_fig),
-  dcc.Graph(figure=missing_homework_fig),
-  dcc.Graph(figure=homework_trend_fig),
-  html.H3(children='Exam Grades'),
-  dcc.Graph(figure=exams_calculations_fig),
-  dcc.Graph(figure=missing_exam_fig),
-  dcc.Graph(figure=exam_trend_fig),
+  dcc.Tabs([
+    dcc.Tab(label="Assignment Survey", children=[
+      html.H2(children='Assignment Survey Data'),
+      html.P(children='Throughout the course, I asked students to give me feedback on the assignments.'),
+      html.H3(children='Time Spent Working on Assignments'),
+      html.P(children='One of the questions I asked was how long students spent on each project.'),
+      dcc.Graph(figure=project_time_fig),
+      html.H3(children='Rubric Evaluation'),
+      html.P(children=
+        """
+        The rubric for each project was used to evaluate students\' performance. I asked students to rate their satisfaction with the rubric.
+        The first plot gives the overview of the rubric ratings over all 11 projects. The following plot gives a per project breakdown. 
+        """
+      ),
+      dcc.Graph(figure=rubric_fig),
+      dcc.Graph(figure=rubric_breakdown_fig),
+      dcc.Graph(figure=rubric_scores_fig),
+    ]),
+    dcc.Tab(label="Course Evaluation Survey Data", children=[
+      html.H2(children='Course Evaluation Survey Data'),
+      html.P(children='At the end of the course, I ask students to give me feedback on it.'),
+      html.H3(children='Course Content'),
+      html.P(children='One way the course was evaluated by asking students to rate their satisfaction with the course content.'),
+      dcc.Graph(figure=course_content_fig),
+      html.H3(children='Skill and Responsiveness of the Instructor'),
+      html.P(children='Another way the course was evaluated by asking students to rate their satisfaction with the instructor.'),
+      dcc.Graph(figure=skill_and_responsiveness_fig),
+      html.H3(children='Contribution to Learning'),
+      html.P(children='Another way the course was evaluated by asking students how much they felt the course contributed to their.'),
+      dcc.Graph(figure=contribution_to_learning_fig),
+    ]),
+    dcc.Tab(label="SEI Data", children=[
+      html.H2(children='Student Evaluation of Instruction Data'),
+      html.P(children='Each semester, the university asks students to fill out a survey about instruction.'),
+      dcc.Graph(figure=sei_fig),
+    ]),
+    dcc.Tab(label="Grade Data", children=[
+      html.H2(children='Grade Data'),
+      html.P(children='All course grades have been aggregated and provided in groups by projects, homeworks, and exams.'),
+      html.H3(children='Project Grades'),
+      dcc.Graph(figure=project_calculations_fig),
+      dcc.Graph(figure=missing_project_fig),
+      dcc.Graph(figure=project_trend_fig),
+      dcc.Graph(figure=project_points_per_hour_fig),
+      dcc.Graph(figure=project_hours_per_point_fig),
+      html.H3(children='Homework Grades'),
+      dcc.Graph(figure=homework_calculations_fig),
+      dcc.Graph(figure=missing_homework_fig),
+      dcc.Graph(figure=homework_trend_fig),
+      html.H3(children='Exam Grades'),
+      dcc.Graph(figure=exams_calculations_fig),
+      dcc.Graph(figure=missing_exam_fig),
+      dcc.Graph(figure=exam_trend_fig),
+    ]),
+  ])
 ])
 
 if __name__ == '__main__':
