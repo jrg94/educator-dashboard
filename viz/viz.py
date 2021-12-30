@@ -4,16 +4,16 @@ import pandas as pd
 import plotly.express as px
 from dash import dcc
 
-def create_value_fig(grade_data, assignment_survey_data):
-  assignment_score_data = [name for name in grade_data.columns if "Project" in name]
+def create_value_fig(grade_data, assignment_survey_data, assignment, max_score):
+  assignment_score_data = [name for name in grade_data.columns if assignment in name]
   assignment_calculations = grade_data[assignment_score_data].agg(["mean", "median"]).T
   assignment_time_data = assignment_survey_data.drop_duplicates(subset=[review_col]).sort_values(by=review_col)
   assignment_time_data["Project #"] = "Project #" + assignment_time_data[review_col].astype(str)
-  assignment_time_data = assignment_time_data.set_index("Project #")[median_time]
+  assignment_time_data = assignment_time_data.set_index(f"{assignment} #")[median_time]
   assignment_aggregate_data = assignment_calculations.join(assignment_time_data)
-  assignment_aggregate_data = assignment_aggregate_data.rename(columns={'mean': 'Average Score/10', 'median': 'Median Score/10'})
-  assignment_aggregate_data["Points per Hour"] = assignment_aggregate_data["Median Score/10"] / assignment_aggregate_data["Median Time (hours)"]
-  assignment_aggregate_data["Hours per Point"] = assignment_aggregate_data["Median Time (hours)"] / assignment_aggregate_data["Median Score/10"]
+  assignment_aggregate_data = assignment_aggregate_data.rename(columns={'mean': f'Average Score/{max_score}', 'median': f'Median Score/{max_score}'})
+  assignment_aggregate_data["Points per Hour"] = assignment_aggregate_data[f"Median Score/{max_score}"] / assignment_aggregate_data["Median Time (hours)"]
+  assignment_aggregate_data["Minutes per Point"] = assignment_aggregate_data["Median Time (hours)"] / assignment_aggregate_data[f"Median Score/{max_score}"] * 60
   assignment_aggregate_data = assignment_aggregate_data.reset_index()
   assignment_expected_time_fig = px.bar(
     assignment_aggregate_data,
@@ -30,12 +30,12 @@ def create_value_fig(grade_data, assignment_survey_data):
   assignment_expected_effort_fig = px.bar(
     assignment_aggregate_data,
     x="index",
-    y="Hours per Point",
+    y="Minutes per Point",
     labels={
       "index": "Project Name",
-      "Hours per Point": "Median Hours of Work/Point",
+      "Minutes per Point": "Median Minutes of Work/Point",
     },
-    text_auto=".2f",
+    text_auto=".2s",
     title="Expected Effort Per Project"
   )
   assignment_expected_effort_fig.update_layout(showlegend=False)
@@ -247,7 +247,7 @@ missing_exam_fig = create_missing_assignment_fig(grade_data, "Exam")
 project_trend_fig = create_project_trend_fig(grade_data, "Project")
 homework_trend_fig = create_project_trend_fig(grade_data, "Homework")
 exam_trend_fig = create_project_trend_fig(grade_data, "Exam")
-points_per_hour_fig, hours_per_point_fig = create_value_fig(grade_data, assignment_survey_data)
+project_points_per_hour_fig, project_hours_per_point_fig = create_value_fig(grade_data, assignment_survey_data, "Project", 10)
 
 app.layout = html.Div(children=[
   html.H1(children='CSE 2221 Visualization'),
@@ -288,8 +288,8 @@ app.layout = html.Div(children=[
   dcc.Graph(figure=project_calculations_fig),
   dcc.Graph(figure=missing_project_fig),
   dcc.Graph(figure=project_trend_fig),
-  dcc.Graph(figure=points_per_hour_fig),
-  dcc.Graph(figure=hours_per_point_fig),
+  dcc.Graph(figure=project_points_per_hour_fig),
+  dcc.Graph(figure=project_hours_per_point_fig),
   html.H3(children='Homework Grades'),
   dcc.Graph(figure=homework_calculations_fig),
   dcc.Graph(figure=missing_homework_fig),
