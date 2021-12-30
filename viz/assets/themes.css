@@ -17,7 +17,7 @@ body {
     margin: 0 auto;  
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, span {
     clear: both;
     font-family: "Roboto Condensed", "Arial Narrow", Arial, Helvetica, sans-serif;
     letter-spacing: 1px;

@@ -262,7 +262,7 @@ exam_trend_fig = create_project_trend_fig(grade_data, "Exam")
 project_points_per_hour_fig, project_hours_per_point_fig = create_value_fig(grade_data, assignment_survey_data, "Project", 10)
 
 app.layout = html.Div(children=[
-  html.H1(children='CSE 2221 Visualization'),
+  html.H1(children='CSE 2221 Data Dashboard'),
   html.Hr(),
   html.P(children='A collection of visualizations related to course data for CSE 2221.'),
   dcc.Tabs([
@@ -289,8 +289,9 @@ app.layout = html.Div(children=[
       html.H3(children='Rubric Evaluation'),
       html.P(children=
         """
-        The rubric for each project was used to evaluate students\' performance. I asked students to rate their satisfaction with each rubric.
-        The following plot gives the overview of the rubric ratings over all 11 projects. 
+        Another question I asked my students was about their satisfaction with the rubrics for each project. 
+        The following plot gives the overview of the rubric ratings over all 11 projects. In general,
+        it appears students are fairly satisfied with the rubrics.
         """
       ),
       dcc.Graph(figure=rubric_fig),
