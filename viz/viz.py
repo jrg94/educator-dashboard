@@ -268,14 +268,28 @@ app.layout = html.Div(children=[
   dcc.Tabs([
     dcc.Tab(label="Assignment Survey", children=[
       html.H2(children='Assignment Survey Data'),
-      html.P(children='Throughout the course, I asked students to give me feedback on the assignments.'),
+      html.P(children=
+        '''
+        Throughout the course, I asked students to give me feedback on the assignments. Originally,
+        these data were collected through a Carmen quiz (Autumn 2021). However, I found the Carmen 
+        quiz format to be limiting, so later iterations of the quiz were administered through a Google
+        Form. 
+        '''
+      ),
       html.H3(children='Time Spent Working on Assignments'),
-      html.P(children='One of the questions I asked was how long students spent on each project.'),
+      html.P(children=
+        '''
+        One of the questions I asked my students was how long they spent on each project. Based on the responses,
+        I found that students spent between 2 and 7.5 hours on each project on average. In general, these values
+        trend up as the semester progresses. If we assume that students then spend an average of 4 hours on each
+        project, they will conduct roughly 44 hours of work over the course of the semester. 
+        '''
+      ), # TODO: use an f-string to include the min and max average here
       dcc.Graph(figure=project_time_fig),
       html.H3(children='Rubric Evaluation'),
       html.P(children=
         """
-        The rubric for each project was used to evaluate students\' performance. I asked students to rate their satisfaction with the rubric.
+        The rubric for each project was used to evaluate students\' performance. I asked students to rate their satisfaction with each rubric.
         The following plot gives the overview of the rubric ratings over all 11 projects. 
         """
       ),
@@ -288,6 +302,15 @@ app.layout = html.Div(children=[
         """
       ),
       dcc.Graph(figure=rubric_breakdown_fig),
+      dcc.Markdown(
+        """
+        And just to be perfectly explicit, I also computed average scores for each rubric over all 11 projects.
+        These scores are computed by assigning Very Dissatisfied (1) to the lowest score and Very Satisfied (5) 
+        to the highest score. Then, we sum up all the values and divide by the number of reviews. As a result,
+        you can see that students are generally the least satisfied with the project 1 rubric and most satisfied
+        with the project 3 rubric. 
+        """
+      ),
       dcc.Graph(figure=rubric_scores_fig),
     ]),
     dcc.Tab(label="Course Evaluation Survey Data", children=[
