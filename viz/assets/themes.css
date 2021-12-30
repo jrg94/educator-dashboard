@@ -1,5 +1,8 @@
 p {
-    font-size: 1.25em;
+    font-size: 1.25em;    
+    color: #363940;
+    font-family: "Libre Franklin", Arial, Helvetica, sans-serif;
+    line-height: 1.9;
 }
 
 .dash-graph {
@@ -11,5 +14,15 @@ p {
 
 body {
     max-width: 70%;
-    margin: 0 auto;
+    margin: 0 auto;  
 }
+
+h1, h2, h3, h4, h5, h6 {
+    clear: both;
+    font-family: "Roboto Condensed", "Arial Narrow", Arial, Helvetica, sans-serif;
+    letter-spacing: 1px;
+    font-weight: 800;
+    margin-bottom: 2px;
+    color: #c90229;
+}
+

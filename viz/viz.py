@@ -276,10 +276,17 @@ app.layout = html.Div(children=[
       html.P(children=
         """
         The rubric for each project was used to evaluate students\' performance. I asked students to rate their satisfaction with the rubric.
-        The first plot gives the overview of the rubric ratings over all 11 projects. The following plot gives a per project breakdown. 
+        The following plot gives the overview of the rubric ratings over all 11 projects. 
         """
       ),
       dcc.Graph(figure=rubric_fig),
+      dcc.Markdown(
+        """
+        In case you were curious about each project individually, here is a breakdown of the rubric scores for each project.
+        **Note**: there is currently a bug which causes this plot to render too small after clicking to another tab. Refresh
+        the page to resize the plot. 
+        """
+      ),
       dcc.Graph(figure=rubric_breakdown_fig),
       dcc.Graph(figure=rubric_scores_fig),
     ]),
