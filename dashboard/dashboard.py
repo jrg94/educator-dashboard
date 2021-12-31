@@ -234,7 +234,7 @@ app = dash.Dash(__name__)
 server = app.server
 
 # Assignment survey figures
-assignment_survey_data = pd.read_csv(r'data\assignment-survey-data.csv')
+assignment_survey_data = pd.read_csv(r'dashboard\data\assignment-survey-data.csv')
 assignment_survey_data[avg_time] = assignment_survey_data.groupby(review_col)[time_col].transform(lambda x: x.mean())
 assignment_survey_data[median_time] = assignment_survey_data.groupby(review_col)[time_col].transform(lambda x: x.median())
 assignment_survey_data[review_count] = assignment_survey_data.groupby(review_col)[time_col].transform(lambda x: x.count())
@@ -245,17 +245,17 @@ rubric_fig = create_rubric_overview_fig(assignment_survey_data)
 rubric_breakdown_fig = create_rubric_breakdown_fig(assignment_survey_data)
 
 # SEI figures
-sei_data = pd.read_csv(r'data\sei-data.csv')
+sei_data = pd.read_csv(r'dashboard\data\sei-data.csv')
 sei_fig = create_sei_fig(sei_data)
 
 # Course evaluation figures
-course_eval_data = pd.read_csv(r'data\eval-data.csv')
+course_eval_data = pd.read_csv(r'dashboard\data\eval-data.csv')
 course_content_fig = create_course_eval_fig(course_eval_data, "Course content", likert_scale)
 skill_and_responsiveness_fig = create_course_eval_fig(course_eval_data, "Skill and responsiveness", likert_scale)
 contribution_to_learning_fig = create_course_eval_fig(course_eval_data, "Contribution to learning", likert_scale_alt)
 
 # Assignment figures
-grade_data = pd.read_csv(r'data\cse-2221-grades.csv')
+grade_data = pd.read_csv(r'dashboard\data\cse-2221-grades.csv')
 grade_data["Date"] = pd.to_datetime(grade_data["Date"])
 project_calculations_fig = create_assignment_fig(grade_data, "Project", 10)
 homework_calculations_fig = create_assignment_fig(grade_data, "Homework", 2)
