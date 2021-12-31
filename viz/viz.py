@@ -353,7 +353,16 @@ app.layout = html.Div(children=[
       ),
       dcc.Graph(figure=skill_and_responsiveness_fig),
       html.H3(children='Contribution to Learning'),
-      html.P(children='Another way the course was evaluated by asking students how much they felt the course contributed to their.'),
+      dcc.Markdown(
+        '''
+        Yet another way the course was evaluated was by asking students how much they felt the course contributed to 
+        their learning. In this section of the survey, I ask students four questions that attempt to chart how much
+        students felt they learned over the course of the semester. In general, students believe they learned a great
+        deal, with most students reporting only a fair amount of knowledge coming into the course and a very good
+        amount of knowledge at the end of the course. **TODO**: I should add a plot showing the scores for all four
+        questions with an additional plot showing the trajectory of learning over the semester.
+        '''
+      ),
       dcc.Graph(figure=contribution_to_learning_fig),
     ]),
     dcc.Tab(label="SEI Data", children=[
