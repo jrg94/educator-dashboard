@@ -231,6 +231,8 @@ satisfaction_colors = dict(zip(satisfaction_mapping.values(), px.colors.sequenti
 
 app = dash.Dash(__name__)
 
+server = app.server
+
 # Assignment survey figures
 assignment_survey_data = pd.read_csv(r'viz\data\assignment-survey-data.csv')
 assignment_survey_data[avg_time] = assignment_survey_data.groupby(review_col)[time_col].transform(lambda x: x.mean())
