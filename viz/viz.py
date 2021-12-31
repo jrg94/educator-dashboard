@@ -367,7 +367,15 @@ app.layout = html.Div(children=[
     ]),
     dcc.Tab(label="SEI Data", children=[
       html.H2(children='Student Evaluation of Instruction Data'),
-      html.P(children='Each semester, the university asks students to fill out a survey about instruction.'),
+      html.P(children=
+        '''
+        Each semester, the university asks students to fill out a survey about the instruction for the course.
+        These data are anonymized and provided as averages for each question. Here is the breakdown of my scores
+        against the scores for various cohorts including my department, my college, and my university. In general,
+        I outperform all three cohorts, but I'm noticing a downward trend in course organization. Otherwise, there's
+        not much to say!
+        '''
+      ),
       dcc.Graph(figure=sei_fig),
     ]),
     dcc.Tab(label="Grade Data", children=[
