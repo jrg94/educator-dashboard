@@ -93,7 +93,6 @@ def create_sei_fig(sei_data):
     facet_col="Question", 
     facet_col_wrap=2, 
     markers=True, 
-    height=800,
     title="Student Evaluation of Instruction Trends by Cohort"
   )
   sei_fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
@@ -166,7 +165,6 @@ def create_rubric_breakdown_fig(assignment_survey_data):
     color="Response",
     facet_col=review_col, 
     facet_col_wrap=2,
-    height=1000, 
     text_auto=True,
     category_orders={
       rubric_heading: list(satisfaction_mapping.values()),
@@ -304,12 +302,10 @@ app.layout = html.Div(children=[
       dcc.Graph(figure=rubric_fig),
       dcc.Markdown(
         """
-        In case you were curious about each project individually, here is a breakdown of the rubric scores for each project.
-        **Note**: there is currently a bug which causes this plot to render too small after clicking to another tab. Refresh
-        the page to resize the plot. 
+        In case you were curious about each project individually, here is a breakdown of the rubric scores for each project. 
         """
       ),
-      dcc.Graph(figure=rubric_breakdown_fig),
+      dcc.Graph(id="bad-scale-2", figure=rubric_breakdown_fig),
       dcc.Markdown(
         """
         And just to be perfectly explicit, I also computed average scores for each rubric over all 11 projects.
@@ -376,7 +372,7 @@ app.layout = html.Div(children=[
         not much to say!
         '''
       ),
-      dcc.Graph(figure=sei_fig),
+      dcc.Graph(id="bad-scale-1", figure=sei_fig),
     ]),
     dcc.Tab(label="Grade Data", children=[
       html.H2(children='Grade Data'),

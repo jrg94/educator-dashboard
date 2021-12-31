@@ -29,3 +29,11 @@ h1, h2, h3, h4, h5, h6, span {
 span {
     font-size: 1.1em;
 }
+
+#bad-scale-1 {
+    height: 800px;
+}
+
+#bad-scale-2 {
+    height: 1000px;
+}
