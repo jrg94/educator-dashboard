@@ -269,7 +269,7 @@ exam_trend_fig = create_project_trend_fig(grade_data, "Exam")
 project_points_per_hour_fig, project_hours_per_point_fig = create_value_fig(grade_data, assignment_survey_data, "Project", 10)
 
 app.layout = html.Div(children=[
-  html.H1(children='The Educator\'s Dashboard'),
+  html.H1(children='The Educator Dashboard'),
   html.Hr(),
   html.P(children=
   '''
