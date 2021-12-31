@@ -61,8 +61,8 @@ def create_assignment_fig(grade_data, assignment, total):
   )
   return assignment_calculations_fig
 
-def create_course_eval_fig(course_eval_data, question):
-  axes_labels = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]
+def create_course_eval_fig(course_eval_data, question, axes_labels):
+  colors = dict(zip(axes_labels, satisfaction_colors.values()))
   question_data = course_eval_data.melt(
     id_vars=[item for item in course_eval_data.columns if question not in item],
     var_name="Question",
@@ -77,7 +77,8 @@ def create_course_eval_fig(course_eval_data, question):
     facet_col_wrap=2, 
     category_orders=dict(Response=axes_labels),
     text_auto=True,
-    title=f"{question} by Subquestion".title()
+    title=f"{question} by Subquestion".title(),
+    color_discrete_map=colors
   )
   question_fig.for_each_annotation(lambda a: a.update(text=a.text[a.text.find("[")+1:a.text.find("]")]))
   return question_fig
@@ -128,7 +129,8 @@ def create_rubric_scores_fig(assignment_survey_data):
       "count": "Number of Reviews"
     },
     text_auto=".3s",
-    title="Project Rubric Satisfaction Scores"
+    title="Project Rubric Satisfaction Scores",
+    color_continuous_scale=px.colors.sequential.Viridis
   )
   return rubric_scores_fig
 
@@ -144,7 +146,8 @@ def create_rubric_overview_fig(assignment_survey_data):
       "color": 'Response'
     },
     text_auto=True,
-    title="Project Rubric Satisfaction Overview"
+    title="Project Rubric Satisfaction Overview",
+    color_discrete_map=satisfaction_colors
   )
   rubric_fig.write_html(r'renders\diagram\rubric_fig.html')
   return rubric_fig
@@ -155,7 +158,7 @@ def create_rubric_breakdown_fig(assignment_survey_data):
     .unstack() \
     .reset_index() \
     .melt(id_vars=[review_col], var_name="Response", value_name="Number of Reviews") \
-    .dropna()
+    .dropna() 
   rubric_breakdown_fig = px.bar(
     data, 
     x="Response",
@@ -172,7 +175,8 @@ def create_rubric_breakdown_fig(assignment_survey_data):
     labels={
       rubric_heading: 'Response',
     },
-    title="Rubric Satisfaction By Project"
+    title="Rubric Satisfaction By Project",
+    color_discrete_map=satisfaction_colors
   )
   rubric_breakdown_fig.for_each_annotation(lambda a: a.update(text=f'Project {a.text.split("=")[-1]}'))
   rubric_breakdown_fig.write_html(r'renders\diagram\rubric_breakdown_fig.html')
@@ -223,6 +227,9 @@ satisfaction_mapping = {
   4: 'Satisfied', 
   5: 'Very Satisfied'
 }
+likert_scale = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]
+likert_scale_alt = ["Poor", "Fair", "Satisfactory", "Very good", "Excellent"]
+satisfaction_colors = dict(zip(satisfaction_mapping.values(), px.colors.sequential.Viridis[::2]))
 
 app = dash.Dash(__name__)
 
@@ -243,9 +250,9 @@ sei_fig = create_sei_fig(sei_data)
 
 # Course evaluation figures
 course_eval_data = pd.read_csv(r'viz\data\eval-data.csv')
-course_content_fig = create_course_eval_fig(course_eval_data, "Course content")
-skill_and_responsiveness_fig = create_course_eval_fig(course_eval_data, "Skill and responsiveness")
-contribution_to_learning_fig = create_course_eval_fig(course_eval_data, "Contribution to learning")
+course_content_fig = create_course_eval_fig(course_eval_data, "Course content", likert_scale)
+skill_and_responsiveness_fig = create_course_eval_fig(course_eval_data, "Skill and responsiveness", likert_scale)
+contribution_to_learning_fig = create_course_eval_fig(course_eval_data, "Contribution to learning", likert_scale_alt)
 
 # Assignment figures
 grade_data = pd.read_csv(r'viz\data\cse-2221-grades.csv')
@@ -316,12 +323,34 @@ app.layout = html.Div(children=[
     ]),
     dcc.Tab(label="Course Evaluation Survey Data", children=[
       html.H2(children='Course Evaluation Survey Data'),
-      html.P(children='At the end of the course, I ask students to give me feedback on it.'),
+      dcc.Markdown(
+        '''
+        At the end of each semester, I ask students to give me feedback on the course. These data are collected
+        through a Google Form. Questions are broken down into different areas which include feedback on
+        course content, my skill and responsiveness, and the course's contribution to learning. **Note**:
+        future work is being done to ensure the following plots feature review counts as seen in the assignment
+        survey data. 
+        '''
+      ),
       html.H3(children='Course Content'),
-      html.P(children='One way the course was evaluated by asking students to rate their satisfaction with the course content.'),
+      html.P(children=
+        '''
+        One way the course was evaluated was by asking students to rate their satisfaction with the course content.
+        In short, there are four questions that I ask that cover topics that range from learning objectives to
+        organization. Generally, the students that choose to fill out the course survey seem to be satisfied with 
+        the course content. For example, at this time, there have been no "strongly disagree" responses. 
+        '''
+      ),
       dcc.Graph(figure=course_content_fig),
       html.H3(children='Skill and Responsiveness of the Instructor'),
-      html.P(children='Another way the course was evaluated by asking students to rate their satisfaction with the instructor.'),
+      html.P(children=
+        '''
+        Another way the course was evaluated was by asking students to rate their satisfaction with the instructor, me.
+        This time around, I ask six questions which range from satisfaction with time usage to satisfaction
+        with grading. Again, students are generally happy with my instruction. In fact, they're often more happy
+        with my instruction than the course content itself. 
+        '''
+      ),
       dcc.Graph(figure=skill_and_responsiveness_fig),
       html.H3(children='Contribution to Learning'),
       html.P(children='Another way the course was evaluated by asking students how much they felt the course contributed to their.'),
