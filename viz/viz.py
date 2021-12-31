@@ -376,12 +376,62 @@ app.layout = html.Div(children=[
     ]),
     dcc.Tab(label="Grade Data", children=[
       html.H2(children='Grade Data'),
-      html.P(children='All course grades have been aggregated and provided in groups by projects, homeworks, and exams.'),
+      html.P(children=
+        '''
+        Each semester, I collect grades for 22 homework assignments, 11 projects, and 3 exams. Fortunately,
+        I have graders for the bulk of it, but I grade the exams. Recently, I decided to put together a
+        database of grades which allows me to generate some pretty interesting plots.
+        '''
+      ),
       html.H3(children='Project Grades'),
+      html.P(children=
+        '''
+        To start, I'd like to talk about the 11 projects. Specifically, I'll share the average and median grade
+        for each project. The key takeaway here is that project 1 is a slam dunk while project 8 is a bit rough.
+        '''
+      ),
       dcc.Graph(figure=project_calculations_fig),
+      html.P(children=
+        '''
+        While medians and averages are helpful, I also think it's useful to look at just how many students
+        actually complete the projects. Or rather, what percentage of students skip out on projects, and
+        is there a trend to observe? If so (spoiler alert: students turn in less work as the semester 
+        progresses), that could potentially explain the low averages for certain projects. 
+        '''
+      ),
       dcc.Graph(figure=missing_project_fig),
+      dcc.Markdown(
+        '''
+        Unfortunately, one of the drawbacks of the plots above is that they aggregate the data for every
+        semester I've taught the course. Personally, I like to see trends, right? For example, it's 
+        helpful to know if project grades are getting better over time. What I'm finding is that's not
+        the case. Frankly, I think most of this is due to grader influences, but I have not investigated
+        that. **TODO**: I should include grader influences in the plot. 
+        '''
+      ),
       dcc.Graph(figure=project_trend_fig),
+      dcc.Markdown(
+        '''
+        Next, we get into the "advanced" metrics. In this case, I thought it would be interesting to combine
+        some of the data found in the assignment survey with the grade data. For instance, remember how
+        I previously shared the amount of time students spent on each project on average? Well, I figured
+        it would be interesting to see how many points a student could expect to earn per hour on average.
+        Ultimately, I ended up calling this metric "Expected Value" because it gives us a sense of how
+        much value a student could get out of their time. With this metric, we're able to clearly see that 
+        project 1 offers the most bang for your buck. Meanwhile, Project 8 offers very little in terms of
+        value for your time. 
+        '''
+      ),
       dcc.Graph(figure=project_points_per_hour_fig),
+      dcc.Markdown(
+        '''
+        Interestingly, if we invert the previous plot, we get what I'm calling the "Expected Effort" metric.
+        Rather than describing the amount of points we expect to get for an hour of work, we begin talking
+        about how much time we expect to give for a point. The distinction is fairly minor, but it allows
+        us to see which projects require the most effort. In this case, the roles are reversed. Project 1
+        requires the least amount of effort, while project 8 requires the most.
+        '''
+      ),
       dcc.Graph(figure=project_hours_per_point_fig),
       html.H3(children='Homework Grades'),
       dcc.Graph(figure=homework_calculations_fig),
