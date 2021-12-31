@@ -1,1 +1,1 @@
-web: gunicorn dashboard.dashboard:server
+web: gunicorn dashboard.dashboard:server --preload
