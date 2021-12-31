@@ -61,8 +61,8 @@ def create_assignment_fig(grade_data, assignment, total):
   )
   return assignment_calculations_fig
 
-def create_course_eval_fig(course_eval_data, question):
-  axes_labels = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]
+def create_course_eval_fig(course_eval_data, question, axes_labels):
+  colors = dict(zip(axes_labels, satisfaction_colors.values()))
   question_data = course_eval_data.melt(
     id_vars=[item for item in course_eval_data.columns if question not in item],
     var_name="Question",
@@ -77,7 +77,8 @@ def create_course_eval_fig(course_eval_data, question):
     facet_col_wrap=2, 
     category_orders=dict(Response=axes_labels),
     text_auto=True,
-    title=f"{question} by Subquestion".title()
+    title=f"{question} by Subquestion".title(),
+    color_discrete_map=colors
   )
   question_fig.for_each_annotation(lambda a: a.update(text=a.text[a.text.find("[")+1:a.text.find("]")]))
   return question_fig
@@ -92,7 +93,6 @@ def create_sei_fig(sei_data):
     facet_col="Question", 
     facet_col_wrap=2, 
     markers=True, 
-    height=800,
     title="Student Evaluation of Instruction Trends by Cohort"
   )
   sei_fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
@@ -128,7 +128,8 @@ def create_rubric_scores_fig(assignment_survey_data):
       "count": "Number of Reviews"
     },
     text_auto=".3s",
-    title="Project Rubric Satisfaction Scores"
+    title="Project Rubric Satisfaction Scores",
+    color_continuous_scale=px.colors.sequential.Viridis
   )
   return rubric_scores_fig
 
@@ -144,7 +145,8 @@ def create_rubric_overview_fig(assignment_survey_data):
       "color": 'Response'
     },
     text_auto=True,
-    title="Project Rubric Satisfaction Overview"
+    title="Project Rubric Satisfaction Overview",
+    color_discrete_map=satisfaction_colors
   )
   rubric_fig.write_html(r'renders\diagram\rubric_fig.html')
   return rubric_fig
@@ -155,7 +157,7 @@ def create_rubric_breakdown_fig(assignment_survey_data):
     .unstack() \
     .reset_index() \
     .melt(id_vars=[review_col], var_name="Response", value_name="Number of Reviews") \
-    .dropna()
+    .dropna() 
   rubric_breakdown_fig = px.bar(
     data, 
     x="Response",
@@ -163,7 +165,6 @@ def create_rubric_breakdown_fig(assignment_survey_data):
     color="Response",
     facet_col=review_col, 
     facet_col_wrap=2,
-    height=1000, 
     text_auto=True,
     category_orders={
       rubric_heading: list(satisfaction_mapping.values()),
@@ -172,7 +173,8 @@ def create_rubric_breakdown_fig(assignment_survey_data):
     labels={
       rubric_heading: 'Response',
     },
-    title="Rubric Satisfaction By Project"
+    title="Rubric Satisfaction By Project",
+    color_discrete_map=satisfaction_colors
   )
   rubric_breakdown_fig.for_each_annotation(lambda a: a.update(text=f'Project {a.text.split("=")[-1]}'))
   rubric_breakdown_fig.write_html(r'renders\diagram\rubric_breakdown_fig.html')
@@ -223,6 +225,9 @@ satisfaction_mapping = {
   4: 'Satisfied', 
   5: 'Very Satisfied'
 }
+likert_scale = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]
+likert_scale_alt = ["Poor", "Fair", "Satisfactory", "Very good", "Excellent"]
+satisfaction_colors = dict(zip(satisfaction_mapping.values(), px.colors.sequential.Viridis[::2]))
 
 app = dash.Dash(__name__)
 
@@ -243,9 +248,9 @@ sei_fig = create_sei_fig(sei_data)
 
 # Course evaluation figures
 course_eval_data = pd.read_csv(r'viz\data\eval-data.csv')
-course_content_fig = create_course_eval_fig(course_eval_data, "Course content")
-skill_and_responsiveness_fig = create_course_eval_fig(course_eval_data, "Skill and responsiveness")
-contribution_to_learning_fig = create_course_eval_fig(course_eval_data, "Contribution to learning")
+course_content_fig = create_course_eval_fig(course_eval_data, "Course content", likert_scale)
+skill_and_responsiveness_fig = create_course_eval_fig(course_eval_data, "Skill and responsiveness", likert_scale)
+contribution_to_learning_fig = create_course_eval_fig(course_eval_data, "Contribution to learning", likert_scale_alt)
 
 # Assignment figures
 grade_data = pd.read_csv(r'viz\data\cse-2221-grades.csv')
@@ -262,12 +267,75 @@ exam_trend_fig = create_project_trend_fig(grade_data, "Exam")
 project_points_per_hour_fig, project_hours_per_point_fig = create_value_fig(grade_data, assignment_survey_data, "Project", 10)
 
 app.layout = html.Div(children=[
-  html.H1(children='CSE 2221 Data Dashboard'),
+  html.H1(children='The Educator\'s Dashboard'),
   html.Hr(),
-  html.P(children='A collection of visualizations related to course data for CSE 2221.'),
+  html.P(children=
+  '''
+  A collection of visualizations related to courses taught by myself, Jeremy Grifski, with the first two tabs dedicated
+  to an overview of my ability as an instructor and the last two tabs dedicated to one of my courses. 
+  '''
+  ),
   dcc.Tabs([
-    dcc.Tab(label="Assignment Survey", children=[
-      html.H2(children='Assignment Survey Data'),
+    dcc.Tab(label="Student Evaluation of Instruction", children=[
+      html.H2(children='Student Evaluation of Instruction'),
+      html.P(children=
+        '''
+        Each semester, the university asks students to fill out a survey about the instruction for the course.
+        These data are anonymized and provided as averages for each question. Here is the breakdown of my scores
+        against the scores for various cohorts including my department, my college, and my university. In general,
+        I outperform all three cohorts, but I'm noticing a downward trend in course organization. For context,
+        I taught CSE 1223 in the Fall of 2018 and the Spring of 2019. I've been teaching CSE 2221 ever since, with
+        a year gap for research. 
+        '''
+      ),
+      dcc.Graph(id="bad-scale-1", figure=sei_fig),
+    ]),
+    dcc.Tab(label="Course Evaluation Survey", children=[
+      html.H2(children='Course Evaluation Survey Data'),
+      dcc.Markdown(
+        '''
+        At the end of each semester, I ask students to give me feedback on the course. These data are collected
+        through a Google Form. Questions are broken down into different areas which include feedback on
+        course content, my skill and responsiveness, and the course's contribution to learning. **Note**:
+        future work is being done to ensure the following plots feature review counts as seen in the assignment
+        survey data. 
+        '''
+      ),
+      html.H3(children='Course Content'),
+      html.P(children=
+        '''
+        One way the course was evaluated was by asking students to rate their satisfaction with the course content.
+        In short, there are four questions that I ask that cover topics that range from learning objectives to
+        organization. Generally, the students that choose to fill out the course survey seem to be satisfied with 
+        the course content. For example, at this time, there have been no "strongly disagree" responses. 
+        '''
+      ),
+      dcc.Graph(figure=course_content_fig),
+      html.H3(children='Skill and Responsiveness of the Instructor'),
+      html.P(children=
+        '''
+        Another way the course was evaluated was by asking students to rate their satisfaction with the instructor, me.
+        This time around, I ask six questions which range from satisfaction with time usage to satisfaction
+        with grading. Again, students are generally happy with my instruction. In fact, they're often more happy
+        with my instruction than the course content itself. 
+        '''
+      ),
+      dcc.Graph(figure=skill_and_responsiveness_fig),
+      html.H3(children='Contribution to Learning'),
+      dcc.Markdown(
+        '''
+        Yet another way the course was evaluated was by asking students how much they felt the course contributed to 
+        their learning. In this section of the survey, I ask students four questions that attempt to chart how much
+        students felt they learned over the course of the semester. In general, students believe they learned a great
+        deal, with most students reporting only a fair amount of knowledge coming into the course and a very good
+        amount of knowledge at the end of the course. **TODO**: I should add a plot showing the scores for all four
+        questions with an additional plot showing the trajectory of learning over the semester.
+        '''
+      ),
+      dcc.Graph(figure=contribution_to_learning_fig),
+    ]),
+    dcc.Tab(label="Assignment Survey [CSE 2221]", children=[
+      html.H2(children='Assignment Survey Data [CSE 2221]'),
       html.P(children=
         '''
         Throughout the course, I asked students to give me feedback on the assignments. Originally,
@@ -297,12 +365,10 @@ app.layout = html.Div(children=[
       dcc.Graph(figure=rubric_fig),
       dcc.Markdown(
         """
-        In case you were curious about each project individually, here is a breakdown of the rubric scores for each project.
-        **Note**: there is currently a bug which causes this plot to render too small after clicking to another tab. Refresh
-        the page to resize the plot. 
+        In case you were curious about each project individually, here is a breakdown of the rubric scores for each project. 
         """
       ),
-      dcc.Graph(figure=rubric_breakdown_fig),
+      dcc.Graph(id="bad-scale-2", figure=rubric_breakdown_fig),
       dcc.Markdown(
         """
         And just to be perfectly explicit, I also computed average scores for each rubric over all 11 projects.
@@ -314,40 +380,123 @@ app.layout = html.Div(children=[
       ),
       dcc.Graph(figure=rubric_scores_fig),
     ]),
-    dcc.Tab(label="Course Evaluation Survey Data", children=[
-      html.H2(children='Course Evaluation Survey Data'),
-      html.P(children='At the end of the course, I ask students to give me feedback on it.'),
-      html.H3(children='Course Content'),
-      html.P(children='One way the course was evaluated by asking students to rate their satisfaction with the course content.'),
-      dcc.Graph(figure=course_content_fig),
-      html.H3(children='Skill and Responsiveness of the Instructor'),
-      html.P(children='Another way the course was evaluated by asking students to rate their satisfaction with the instructor.'),
-      dcc.Graph(figure=skill_and_responsiveness_fig),
-      html.H3(children='Contribution to Learning'),
-      html.P(children='Another way the course was evaluated by asking students how much they felt the course contributed to their.'),
-      dcc.Graph(figure=contribution_to_learning_fig),
-    ]),
-    dcc.Tab(label="SEI Data", children=[
-      html.H2(children='Student Evaluation of Instruction Data'),
-      html.P(children='Each semester, the university asks students to fill out a survey about instruction.'),
-      dcc.Graph(figure=sei_fig),
-    ]),
-    dcc.Tab(label="Grade Data", children=[
-      html.H2(children='Grade Data'),
-      html.P(children='All course grades have been aggregated and provided in groups by projects, homeworks, and exams.'),
+    dcc.Tab(label="Grades [CSE 2221]", children=[
+      html.H2(children='Grades [CSE 2221]'),
+      html.P(children=
+        '''
+        Each semester, I collect grades for 22 homework assignments, 11 projects, and 3 exams. Fortunately,
+        I have graders for the bulk of it, but I grade the exams. Recently, I decided to put together a
+        database of grades which allows me to generate some pretty interesting plots.
+        '''
+      ),
       html.H3(children='Project Grades'),
+      html.P(children=
+        '''
+        To start, I'd like to talk about the 11 projects. Specifically, I'll share the average and median grade
+        for each project. The key takeaway here is that project 1 is a slam dunk while project 8 is a bit rough.
+        '''
+      ),
       dcc.Graph(figure=project_calculations_fig),
+      html.P(children=
+        '''
+        While medians and averages are helpful, I also think it's useful to look at just how many students
+        actually complete the projects. Or rather, what percentage of students skip out on projects, and
+        is there a trend to observe? If so (spoiler alert: students turn in less work as the semester 
+        progresses), that could potentially explain the low averages for certain projects. 
+        '''
+      ),
       dcc.Graph(figure=missing_project_fig),
+      dcc.Markdown(
+        '''
+        Unfortunately, one of the drawbacks of the plots above is that they aggregate the data for every
+        semester I've taught the course. Personally, I like to see trends, right? For example, it's 
+        helpful to know if project grades are getting better over time. What I'm finding is that's not
+        the case. Frankly, I think most of this is due to grader influences, but I have not investigated
+        that. **TODO**: I should include grader influences in the plot. 
+        '''
+      ),
       dcc.Graph(figure=project_trend_fig),
+      dcc.Markdown(
+        '''
+        Next, we get into the "advanced" metrics. In this case, I thought it would be interesting to combine
+        some of the data found in the assignment survey with the grade data. For instance, remember how
+        I previously shared the amount of time students spent on each project on average? Well, I figured
+        it would be interesting to see how many points a student could expect to earn per hour on average.
+        Ultimately, I ended up calling this metric "Expected Value" because it gives us a sense of how
+        much value a student could get out of their time. With this metric, we're able to clearly see that 
+        project 1 offers the most bang for your buck. Meanwhile, Project 8 offers very little in terms of
+        value for your time. 
+        '''
+      ),
       dcc.Graph(figure=project_points_per_hour_fig),
+      dcc.Markdown(
+        '''
+        Interestingly, if we invert the previous plot, we get what I'm calling the "Expected Effort" metric.
+        Rather than describing the amount of points we expect to get for an hour of work, we begin talking
+        about how much time we expect to give for a point. The distinction is fairly minor, but it allows
+        us to see which projects require the most effort. In this case, the roles are reversed. Project 1
+        requires the least amount of effort, while project 8 requires the most.
+        '''
+      ),
       dcc.Graph(figure=project_hours_per_point_fig),
       html.H3(children='Homework Grades'),
+      dcc.Markdown(
+        '''
+        In addition to 11 projects, we also assign 22 homework assignments. These assignments are graded
+        on completion for a maximum of 2 points each. Naturally, here's the breakdown of average and median
+        scores for each assignment. As you can see, students generally get full credit, but there are some
+        students who pull the average down with incomplete assignments (more on that later).
+        '''
+      ),
       dcc.Graph(figure=homework_calculations_fig),
+      dcc.Markdown(
+        '''
+        As promised, here's a look at the trend of homework completion. As with projects, students tend
+        to submit fewer assignments as the semester progresses. Though, I find it interesting that there
+        are spikes in missing assignments at various points throughout the semester. I suspect that the 
+        assignments that students submit least often are tied to larger review assignments before exams.
+        **TODO**: I should look into this more.
+        '''
+      ),
       dcc.Graph(figure=missing_homework_fig),
+      dcc.Markdown(
+        '''
+        Finally, here's a look at the trend of grades for the homework assignments. I find this plot really
+        interesting because it shows the spread of homework grades against each semester. For instance,
+        there is quite the spread of homework averages in Autumn 2021. 
+        '''
+      ),
       dcc.Graph(figure=homework_trend_fig),
       html.H3(children='Exam Grades'),
+      dcc.Markdown(
+        '''
+        At this point, all that is left to discuss are the exams. In total, there are three exams, and the
+        general trend tends to be that scores go down as the semester progresses. I haven't quite figured
+        out why. 
+        '''
+      ),
       dcc.Graph(figure=exams_calculations_fig),
+      dcc.Markdown(
+        '''
+        As with projects and homework assignments, I find it important to also track the percentage of students
+        who skip exams. In general, it's pretty rare for a student to skip an exam, and it's usually due to some
+        extreme circumstance. That said, the trend remains the same for exams as well (i.e., fewer students attend
+        the exams as the semester progresses).
+        '''
+      ),
       dcc.Graph(figure=missing_exam_fig),
+      dcc.Markdown(
+        '''
+        All that is left to talk about is the exam score trend over time. One thing that is worth noting is that
+        the exams were not consistent from semester to semester. For example, you'll notice that exams 2 and 3
+        are missing data points. The reason for this is that we eventually converted those exams to online quizzes
+        due to COVID. As a result, those quiz scores are omitted. It's also worth noting that the data points in
+        Summer 2019 are from before I started teaching the course (i.e., I was training to teach it at the time).
+        As a result, the first time I taught the course, my exam scores were quite low. Since then, things have
+        improved considerably. Well, except for the final exam. I'll be looking to provide more ways for
+        students to practice ahead of time. 
+        '''
+      ),
       dcc.Graph(figure=exam_trend_fig),
     ]),
   ])
