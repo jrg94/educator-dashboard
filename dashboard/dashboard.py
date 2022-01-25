@@ -213,9 +213,21 @@ def create_project_trend_fig(grade_data, assignment):
   )
   return trend_fig
 
+def create_emotions_fig(assignment_survey_data, review_column):
+  emotions_data = assignment_survey_data.explode(post_emotions_column)
+  emotions_data = emotions_data.groupby(review_column)[post_emotions_column].value_counts() #.index.get_level_values(0))
+  emotions_figure = px.bar(
+    emotions_data,
+    x=emotions_data.index.get_level_values(0),
+    y=list(emotions_data),
+    color=emotions_data.index.get_level_values(1),
+  )
+  return emotions_figure
+
 rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
 project_review_col = "Which project are you reviewing (enter a # between 1 and 11)?"
 homework_review_col = "Which homework assignment are you reviewing (enter a # between 1 and 22)?"
+post_emotions_column = "Which of the following emotions did you experience **after** completing this project (select all that apply)?"
 time_col = "How much time did you spend on this assignment in hours?"
 avg_time = "Average Time (hours)"
 median_time = "Median Time (hours)"
@@ -247,12 +259,14 @@ homework_time_count = assignment_survey_data.groupby(homework_review_col)[time_c
 assignment_survey_data.loc[homework_time_mean.index, avg_time] = homework_time_mean
 assignment_survey_data.loc[homework_time_median.index, median_time] = homework_time_median
 assignment_survey_data.loc[homework_time_count.index, review_count] = homework_time_count
+assignment_survey_data[post_emotions_column] = assignment_survey_data[post_emotions_column].astype(str).apply(lambda x: x.split(";"))
 project_time_fig = create_time_fig(assignment_survey_data, col=project_review_col)
 homework_time_fig = create_time_fig(assignment_survey_data, col=homework_review_col)
 rubric_scores_fig = create_rubric_scores_fig(assignment_survey_data)
 assignment_survey_data[rubric_heading] = assignment_survey_data[rubric_heading].map(satisfaction_mapping)
 rubric_fig = create_rubric_overview_fig(assignment_survey_data)
 rubric_breakdown_fig = create_rubric_breakdown_fig(assignment_survey_data)
+emotions_fig = create_emotions_fig(assignment_survey_data, review_column=homework_review_col)
 
 # SEI figures
 sei_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/sei-data.csv')
@@ -375,6 +389,8 @@ app.layout = html.Div(children=[
         '''
       ),
       dcc.Graph(figure=homework_time_fig),
+      html.H3(children='Emotions Experienced After Assignments'),
+      dcc.Graph(figure=emotions_fig),
       html.H3(children='Rubric Evaluation'),
       html.P(children=
         """
