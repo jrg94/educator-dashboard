@@ -218,9 +218,15 @@ def create_emotions_fig(assignment_survey_data, review_column):
   emotions_data = emotions_data.groupby(review_column)[post_emotions_column].value_counts() #.index.get_level_values(0))
   emotions_figure = px.bar(
     emotions_data,
-    x=emotions_data.index.get_level_values(0),
+    x=emotions_data.index.get_level_values(1),
     y=list(emotions_data),
     color=emotions_data.index.get_level_values(1),
+    facet_col=emotions_data.index.get_level_values(0),
+    facet_col_wrap=2,
+    labels={
+      "x": 'Emotion After Assignment',
+      "y": 'Count'
+    }
   )
   return emotions_figure
 
