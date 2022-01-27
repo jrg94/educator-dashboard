@@ -7,8 +7,9 @@ from dash import dcc
 def create_value_fig(grade_data, assignment_survey_data, assignment, max_score):
   assignment_score_data = [name for name in grade_data.columns if assignment in name]
   assignment_calculations = grade_data[assignment_score_data].agg(["mean", "median"]).T
-  assignment_time_data = assignment_survey_data.drop_duplicates(subset=[review_col]).sort_values(by=review_col)
-  assignment_time_data["Project #"] = "Project #" + assignment_time_data[review_col].astype(str)
+  assignment_time_data = assignment_survey_data[assignment_survey_data[assignment_type] == "Project"]
+  assignment_time_data = assignment_time_data.drop_duplicates(subset=[project_review_col]).sort_values(by=project_review_col)
+  assignment_time_data["Project #"] = "Project #" + assignment_time_data[project_review_col].astype(int).astype(str)
   assignment_time_data = assignment_time_data.set_index(f"{assignment} #")[median_time]
   assignment_aggregate_data = assignment_calculations.join(assignment_time_data)
   assignment_aggregate_data = assignment_aggregate_data.rename(columns={'mean': f'Average Score/{max_score}', 'median': f'Median Score/{max_score}'})
@@ -98,8 +99,8 @@ def create_sei_fig(sei_data):
   sei_fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
   return sei_fig
 
-def create_time_fig(assignment_survey_data):
-  to_plot = assignment_survey_data.drop_duplicates(subset=[review_col]).sort_values(by=review_col)
+def create_time_fig(assignment_survey_data, col):
+  to_plot = assignment_survey_data.drop_duplicates(subset=[col]).sort_values(by=col)
   to_plot = to_plot.melt(
     id_vars=[item for item in to_plot.columns if item not in [avg_time, median_time]], 
     var_name="Metric", 
@@ -107,18 +108,18 @@ def create_time_fig(assignment_survey_data):
   )
   time_fig = px.bar(
     to_plot, 
-    x=review_col, 
+    x=col, 
     y="Time (hours)", 
     color="Metric", 
     text_auto=".2s", 
     barmode='group',
-    title="Average and Median Project Time"
+    title="Average and Median Assignment Time"
   )
   time_fig.write_html(r'renders\diagram\project_fig.html')
   return time_fig
 
 def create_rubric_scores_fig(assignment_survey_data):
-  rubric_scores = assignment_survey_data.groupby(review_col)[rubric_heading].agg(["mean", "count"])
+  rubric_scores = assignment_survey_data.groupby(project_review_col)[rubric_heading].agg(["mean", "count"])
   rubric_scores_fig = px.bar(
     rubric_scores, 
     y="mean", 
@@ -152,23 +153,23 @@ def create_rubric_overview_fig(assignment_survey_data):
   return rubric_fig
 
 def create_rubric_breakdown_fig(assignment_survey_data):
-  data = assignment_survey_data.groupby(review_col)[rubric_heading] \
+  data = assignment_survey_data.groupby(project_review_col)[rubric_heading] \
     .value_counts() \
     .unstack() \
     .reset_index() \
-    .melt(id_vars=[review_col], var_name="Response", value_name="Number of Reviews") \
+    .melt(id_vars=[project_review_col], var_name="Response", value_name="Number of Reviews") \
     .dropna() 
   rubric_breakdown_fig = px.bar(
     data, 
     x="Response",
     y="Number of Reviews",
     color="Response",
-    facet_col=review_col, 
+    facet_col=project_review_col, 
     facet_col_wrap=2,
     text_auto=True,
     category_orders={
       rubric_heading: list(satisfaction_mapping.values()),
-      review_col: list(range(1, 12))
+      project_review_col: list(range(1, 12))
     },
     labels={
       rubric_heading: 'Response',
@@ -212,12 +213,44 @@ def create_project_trend_fig(grade_data, assignment):
   )
   return trend_fig
 
+def create_emotions_fig(assignment_survey_data, review_column):
+  emotions_data = assignment_survey_data.explode(pre_emotions_column)
+  emotions_data = emotions_data.explode(during_emotions_column)
+  emotions_data = emotions_data.explode(post_emotions_column)
+  emotions_data = emotions_data[emotions_data[pre_emotions_column].isin(["Joy", "Hope", "Hopelessness", "Relief", "Anxiety"])]
+  emotions_data = emotions_data[emotions_data[during_emotions_column].isin(["Enjoyment", "Anger", "Frustration", "Boredom"])]
+  emotions_data = emotions_data[emotions_data[post_emotions_column].isin(["Joy", "Pride", "Gratitude", "Sadness", "Shame", "Anger"])]
+  emotions_data = emotions_data.groupby(review_column)[[pre_emotions_column, during_emotions_column, post_emotions_column]].value_counts() 
+  emotions_data = emotions_data.reset_index().melt(id_vars=review_column, value_vars=[pre_emotions_column, during_emotions_column, post_emotions_column])
+  emotions_data = emotions_data.replace({
+    pre_emotions_column: "Pre-Assignment",
+    during_emotions_column: "During Assignment",
+    post_emotions_column: "Post-Assignment"
+  })
+  emotions_figure = px.histogram(
+    emotions_data,
+    x="value",
+    color="variable",
+    facet_col=review_column,
+    facet_col_wrap=2,
+    labels={
+      "value": 'Emotion'    
+    }
+  )
+  emotions_figure.for_each_annotation(lambda a: a.update(text=f'Homework {a.text.split("=")[-1].split(".")[0]}'))
+  return emotions_figure
+
 rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
-review_col = "Which project are you reviewing (enter a # between 1 and 11)?"
+project_review_col = "Which project are you reviewing (enter a # between 1 and 11)?"
+homework_review_col = "Which homework assignment are you reviewing (enter a # between 1 and 22)?"
+pre_emotions_column = "Which of the following emotions did you experience **before** starting this project (select all that apply)?"
+during_emotions_column = "Which of the following emotions did you experience while completing this project (select all that apply)?"
+post_emotions_column = "Which of the following emotions did you experience **after** completing this project (select all that apply)?"
 time_col = "How much time did you spend on this assignment in hours?"
 avg_time = "Average Time (hours)"
 median_time = "Median Time (hours)"
 review_count = "Number of Reviews"
+assignment_type = "Are you reviewing a project or a homework assignment?"
 satisfaction_mapping = {
   1: 'Very Dissatisfied', 
   2: 'Dissatisfied', 
@@ -235,14 +268,25 @@ server = app.server
 
 # Assignment survey figures
 assignment_survey_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/assignment-survey-data.csv')
-assignment_survey_data[avg_time] = assignment_survey_data.groupby(review_col)[time_col].transform(lambda x: x.mean())
-assignment_survey_data[median_time] = assignment_survey_data.groupby(review_col)[time_col].transform(lambda x: x.median())
-assignment_survey_data[review_count] = assignment_survey_data.groupby(review_col)[time_col].transform(lambda x: x.count())
-project_time_fig = create_time_fig(assignment_survey_data)
+assignment_survey_data[avg_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.mean())
+assignment_survey_data[median_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.median())
+assignment_survey_data[review_count] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.count())
+homework_time_mean = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.mean())
+homework_time_median = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.median())
+homework_time_count = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.count())
+assignment_survey_data.loc[homework_time_mean.index, avg_time] = homework_time_mean
+assignment_survey_data.loc[homework_time_median.index, median_time] = homework_time_median
+assignment_survey_data.loc[homework_time_count.index, review_count] = homework_time_count
+assignment_survey_data[pre_emotions_column] = assignment_survey_data[pre_emotions_column].astype(str).apply(lambda x: x.split(";"))
+assignment_survey_data[during_emotions_column] = assignment_survey_data[during_emotions_column].astype(str).apply(lambda x: x.split(";"))
+assignment_survey_data[post_emotions_column] = assignment_survey_data[post_emotions_column].astype(str).apply(lambda x: x.split(";"))
+project_time_fig = create_time_fig(assignment_survey_data, col=project_review_col)
+homework_time_fig = create_time_fig(assignment_survey_data, col=homework_review_col)
 rubric_scores_fig = create_rubric_scores_fig(assignment_survey_data)
 assignment_survey_data[rubric_heading] = assignment_survey_data[rubric_heading].map(satisfaction_mapping)
 rubric_fig = create_rubric_overview_fig(assignment_survey_data)
 rubric_breakdown_fig = create_rubric_breakdown_fig(assignment_survey_data)
+emotions_fig = create_emotions_fig(assignment_survey_data, review_column=homework_review_col)
 
 # SEI figures
 sei_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/sei-data.csv')
@@ -346,7 +390,7 @@ app.layout = html.Div(children=[
         Form. 
         '''
       ),
-      html.H3(children='Time Spent Working on Assignments'),
+      html.H3(children='Time Spent Working on Projects'),
       html.P(children=
         '''
         One of the questions I asked my students was how long they spent on each project. Based on the responses,
@@ -356,6 +400,26 @@ app.layout = html.Div(children=[
         '''
       ), # TODO: use an f-string to include the min and max average here
       dcc.Graph(figure=project_time_fig),
+      html.H3(children='Time Spent Working on Homework Assignments'),
+      html.P(children=
+        '''
+        Similarly, I asked students to tell me how much time they spent on the homework assignments.
+        The data is fairly preliminary, so I only have the first few homework assignments. That
+        said, I am finding that students spend multiple hours a week on each written assignment.
+        '''
+      ),
+      dcc.Graph(figure=homework_time_fig),
+      html.H3(children='Emotional Experience with Assignments'),
+      html.P(children=
+        '''
+        Something new I tried in 2022 was asking students about the emotions they experienced
+        before, during, and after assignments. For this, I borrowed the emotions from
+        Control Value Theory and asked students retrospectively about their emotions. As it
+        is early in the semester, I decided to only plot the homework assignments. Later,
+        I'll update this dashboard to include the project assignments as well. 
+        '''
+      ),
+      dcc.Graph(figure=emotions_fig),
       html.H3(children='Rubric Evaluation'),
       html.P(children=
         """
