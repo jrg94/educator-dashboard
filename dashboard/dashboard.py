@@ -214,25 +214,37 @@ def create_project_trend_fig(grade_data, assignment):
   return trend_fig
 
 def create_emotions_fig(assignment_survey_data, review_column):
-  emotions_data = assignment_survey_data.explode(post_emotions_column)
-  emotions_data = emotions_data.groupby(review_column)[post_emotions_column].value_counts() #.index.get_level_values(0))
-  emotions_figure = px.bar(
+  emotions_data = assignment_survey_data.explode(pre_emotions_column)
+  emotions_data = emotions_data.explode(during_emotions_column)
+  emotions_data = emotions_data.explode(post_emotions_column)
+  emotions_data = emotions_data[emotions_data[pre_emotions_column].isin(["Joy", "Hope", "Hopelessness", "Relief", "Anxiety"])]
+  emotions_data = emotions_data[emotions_data[during_emotions_column].isin(["Enjoyment", "Anger", "Frustration", "Boredom"])]
+  emotions_data = emotions_data[emotions_data[post_emotions_column].isin(["Joy", "Pride", "Gratitude", "Sadness", "Shame", "Anger"])]
+  emotions_data = emotions_data.groupby(review_column)[[pre_emotions_column, during_emotions_column, post_emotions_column]].value_counts() 
+  emotions_data = emotions_data.reset_index().melt(id_vars=review_column, value_vars=[pre_emotions_column, during_emotions_column, post_emotions_column])
+  emotions_data = emotions_data.replace({
+    pre_emotions_column: "Pre-Assignment",
+    during_emotions_column: "During Assignment",
+    post_emotions_column: "Post-Assignment"
+  })
+  emotions_figure = px.histogram(
     emotions_data,
-    x=emotions_data.index.get_level_values(1),
-    y=list(emotions_data),
-    color=emotions_data.index.get_level_values(1),
-    facet_col=emotions_data.index.get_level_values(0),
+    x="value",
+    color="variable",
+    facet_col=review_column,
     facet_col_wrap=2,
     labels={
-      "x": 'Emotion After Assignment',
-      "y": 'Count'
+      "value": 'Emotion'    
     }
   )
+  emotions_figure.for_each_annotation(lambda a: a.update(text=f'Homework {a.text.split("=")[-1].split(".")[0]}'))
   return emotions_figure
 
 rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
 project_review_col = "Which project are you reviewing (enter a # between 1 and 11)?"
 homework_review_col = "Which homework assignment are you reviewing (enter a # between 1 and 22)?"
+pre_emotions_column = "Which of the following emotions did you experience **before** starting this project (select all that apply)?"
+during_emotions_column = "Which of the following emotions did you experience while completing this project (select all that apply)?"
 post_emotions_column = "Which of the following emotions did you experience **after** completing this project (select all that apply)?"
 time_col = "How much time did you spend on this assignment in hours?"
 avg_time = "Average Time (hours)"
@@ -265,6 +277,8 @@ homework_time_count = assignment_survey_data.groupby(homework_review_col)[time_c
 assignment_survey_data.loc[homework_time_mean.index, avg_time] = homework_time_mean
 assignment_survey_data.loc[homework_time_median.index, median_time] = homework_time_median
 assignment_survey_data.loc[homework_time_count.index, review_count] = homework_time_count
+assignment_survey_data[pre_emotions_column] = assignment_survey_data[pre_emotions_column].astype(str).apply(lambda x: x.split(";"))
+assignment_survey_data[during_emotions_column] = assignment_survey_data[during_emotions_column].astype(str).apply(lambda x: x.split(";"))
 assignment_survey_data[post_emotions_column] = assignment_survey_data[post_emotions_column].astype(str).apply(lambda x: x.split(";"))
 project_time_fig = create_time_fig(assignment_survey_data, col=project_review_col)
 homework_time_fig = create_time_fig(assignment_survey_data, col=homework_review_col)
@@ -395,7 +409,16 @@ app.layout = html.Div(children=[
         '''
       ),
       dcc.Graph(figure=homework_time_fig),
-      html.H3(children='Emotions Experienced After Assignments'),
+      html.H3(children='Emotional Experience with Assignments'),
+      html.P(children=
+        '''
+        Something new I tried in 2022 was asking students about the emotions they experienced
+        before, during, and after assignments. For this, I borrowed the emotions from
+        Control Value Theory and asked students retrospectively about their emotions. As it
+        is early in the semester, I decided to only plot the homework assignments. Later,
+        I'll update this dashboard to include the project assignments as well. 
+        '''
+      ),
       dcc.Graph(figure=emotions_fig),
       html.H3(children='Rubric Evaluation'),
       html.P(children=
