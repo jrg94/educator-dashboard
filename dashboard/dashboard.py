@@ -114,7 +114,8 @@ def create_time_fig(assignment_survey_data, col):
     text_auto=".2s", 
     barmode='group',
     title="Average and Median Assignment Time",
-    error_y=to_plot[std_time]
+    error_y=std_time,
+    hover_data=[review_count]
   )
   time_fig.update_traces(textfont_size=12, textangle=0, textposition="inside", insidetextanchor="start", cliponaxis=False)
   time_fig.write_html(r'renders\diagram\project_fig.html')
