@@ -113,8 +113,10 @@ def create_time_fig(assignment_survey_data, col):
     color="Metric", 
     text_auto=".2s", 
     barmode='group',
-    title="Average and Median Assignment Time"
+    title="Average and Median Assignment Time",
+    error_y=to_plot[std_time]
   )
+  time_fig.update_traces(textfont_size=12, textangle=0, textposition="inside", insidetextanchor="start", cliponaxis=False)
   time_fig.write_html(r'renders\diagram\project_fig.html')
   return time_fig
 
@@ -250,6 +252,7 @@ time_col = "How much time did you spend on this assignment in hours?"
 avg_time = "Average Time (hours)"
 median_time = "Median Time (hours)"
 review_count = "Number of Reviews"
+std_time = "Standard Deviation (hours)"
 assignment_type = "Are you reviewing a project or a homework assignment?"
 satisfaction_mapping = {
   1: 'Very Dissatisfied', 
@@ -271,12 +274,15 @@ assignment_survey_data = pd.read_csv('https://raw.githubusercontent.com/TheReneg
 assignment_survey_data[avg_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.mean())
 assignment_survey_data[median_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.median())
 assignment_survey_data[review_count] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.count())
+assignment_survey_data[std_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.std())
 homework_time_mean = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.mean())
 homework_time_median = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.median())
 homework_time_count = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.count())
+homework_time_std = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.std())
 assignment_survey_data.loc[homework_time_mean.index, avg_time] = homework_time_mean
 assignment_survey_data.loc[homework_time_median.index, median_time] = homework_time_median
 assignment_survey_data.loc[homework_time_count.index, review_count] = homework_time_count
+assignment_survey_data.loc[homework_time_std.index, std_time] = homework_time_std
 assignment_survey_data[pre_emotions_column] = assignment_survey_data[pre_emotions_column].astype(str).apply(lambda x: x.split(";"))
 assignment_survey_data[during_emotions_column] = assignment_survey_data[during_emotions_column].astype(str).apply(lambda x: x.split(";"))
 assignment_survey_data[post_emotions_column] = assignment_survey_data[post_emotions_column].astype(str).apply(lambda x: x.split(";"))
