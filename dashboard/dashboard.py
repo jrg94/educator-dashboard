@@ -4,6 +4,7 @@ import pandas as pd
 import plotly.express as px
 from dash import dcc
 
+# Constants
 rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
 project_review_col = "Which project are you reviewing (enter a # between 1 and 11)?"
 homework_review_col = "Which homework assignment are you reviewing (enter a # between 1 and 22)?"
@@ -26,6 +27,10 @@ satisfaction_mapping = {
 likert_scale = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]
 likert_scale_alt = ["Poor", "Fair", "Satisfactory", "Very good", "Excellent"]
 satisfaction_colors = dict(zip(satisfaction_mapping.values(), px.colors.sequential.Viridis[::2]))
+
+# Global app
+app = dash.Dash(__name__)
+server = app.server
 
 def create_value_fig(grade_data, assignment_survey_data, assignment, max_score):
   assignment_score_data = [name for name in grade_data.columns if assignment in name]
@@ -541,10 +546,6 @@ def create_app_layout():
 ])
 
 if __name__ == '__main__':
-  app = dash.Dash(__name__)
-
-  server = app.server
-
   # Assignment survey figures
   assignment_survey_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/assignment-survey-data.csv')
   assignment_survey_data[avg_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.mean())
