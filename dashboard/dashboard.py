@@ -542,7 +542,16 @@ def create_app_layout():
 ])
 
 # Global app
-app = dash.Dash(__name__)
+app = dash.Dash(
+  __name__,
+  external_scripts=[
+    {
+      "src": "https://plausible.io/js/plausible.js",
+      "data-domain": "educator.therenegadecoder.com"
+    }
+  ],
+  title="The Educator Dashboard"
+)
 server = app.server
 
 # Assignment survey figures
