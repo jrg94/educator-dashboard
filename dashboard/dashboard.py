@@ -4,6 +4,29 @@ import pandas as pd
 import plotly.express as px
 from dash import dcc
 
+rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
+project_review_col = "Which project are you reviewing (enter a # between 1 and 11)?"
+homework_review_col = "Which homework assignment are you reviewing (enter a # between 1 and 22)?"
+pre_emotions_column = "Which of the following emotions did you experience **before** starting this project (select all that apply)?"
+during_emotions_column = "Which of the following emotions did you experience while completing this project (select all that apply)?"
+post_emotions_column = "Which of the following emotions did you experience **after** completing this project (select all that apply)?"
+time_col = "How much time did you spend on this assignment in hours?"
+avg_time = "Average Time (hours)"
+median_time = "Median Time (hours)"
+review_count = "Number of Reviews"
+std_time = "Standard Deviation (hours)"
+assignment_type = "Are you reviewing a project or a homework assignment?"
+satisfaction_mapping = {
+  1: 'Very Dissatisfied', 
+  2: 'Dissatisfied', 
+  3: 'Neutral', 
+  4: 'Satisfied', 
+  5: 'Very Satisfied'
+}
+likert_scale = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]
+likert_scale_alt = ["Poor", "Fair", "Satisfactory", "Very good", "Excellent"]
+satisfaction_colors = dict(zip(satisfaction_mapping.values(), px.colors.sequential.Viridis[::2]))
+
 def create_value_fig(grade_data, assignment_survey_data, assignment, max_score):
   assignment_score_data = [name for name in grade_data.columns if assignment in name]
   assignment_calculations = grade_data[assignment_score_data].agg(["mean", "median"]).T
@@ -243,93 +266,13 @@ def create_emotions_fig(assignment_survey_data, review_column):
   emotions_figure.for_each_annotation(lambda a: a.update(text=f'Homework {a.text.split("=")[-1].split(".")[0]}'))
   return emotions_figure
 
-rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
-project_review_col = "Which project are you reviewing (enter a # between 1 and 11)?"
-homework_review_col = "Which homework assignment are you reviewing (enter a # between 1 and 22)?"
-pre_emotions_column = "Which of the following emotions did you experience **before** starting this project (select all that apply)?"
-during_emotions_column = "Which of the following emotions did you experience while completing this project (select all that apply)?"
-post_emotions_column = "Which of the following emotions did you experience **after** completing this project (select all that apply)?"
-time_col = "How much time did you spend on this assignment in hours?"
-avg_time = "Average Time (hours)"
-median_time = "Median Time (hours)"
-review_count = "Number of Reviews"
-std_time = "Standard Deviation (hours)"
-assignment_type = "Are you reviewing a project or a homework assignment?"
-satisfaction_mapping = {
-  1: 'Very Dissatisfied', 
-  2: 'Dissatisfied', 
-  3: 'Neutral', 
-  4: 'Satisfied', 
-  5: 'Very Satisfied'
-}
-likert_scale = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]
-likert_scale_alt = ["Poor", "Fair", "Satisfactory", "Very good", "Excellent"]
-satisfaction_colors = dict(zip(satisfaction_mapping.values(), px.colors.sequential.Viridis[::2]))
+def create_sei_tab() -> dcc.Tab:
+  """
+  Creates the tab containing all of the student evaluation of instruction figures.
 
-app = dash.Dash(__name__)
-
-server = app.server
-
-# Assignment survey figures
-assignment_survey_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/assignment-survey-data.csv')
-assignment_survey_data[avg_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.mean())
-assignment_survey_data[median_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.median())
-assignment_survey_data[review_count] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.count())
-assignment_survey_data[std_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.std())
-homework_time_mean = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.mean())
-homework_time_median = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.median())
-homework_time_count = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.count())
-homework_time_std = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.std())
-assignment_survey_data.loc[homework_time_mean.index, avg_time] = homework_time_mean
-assignment_survey_data.loc[homework_time_median.index, median_time] = homework_time_median
-assignment_survey_data.loc[homework_time_count.index, review_count] = homework_time_count
-assignment_survey_data.loc[homework_time_std.index, std_time] = homework_time_std
-assignment_survey_data[pre_emotions_column] = assignment_survey_data[pre_emotions_column].astype(str).apply(lambda x: x.split(";"))
-assignment_survey_data[during_emotions_column] = assignment_survey_data[during_emotions_column].astype(str).apply(lambda x: x.split(";"))
-assignment_survey_data[post_emotions_column] = assignment_survey_data[post_emotions_column].astype(str).apply(lambda x: x.split(";"))
-project_time_fig = create_time_fig(assignment_survey_data, col=project_review_col)
-homework_time_fig = create_time_fig(assignment_survey_data, col=homework_review_col)
-rubric_scores_fig = create_rubric_scores_fig(assignment_survey_data)
-assignment_survey_data[rubric_heading] = assignment_survey_data[rubric_heading].map(satisfaction_mapping)
-rubric_fig = create_rubric_overview_fig(assignment_survey_data)
-rubric_breakdown_fig = create_rubric_breakdown_fig(assignment_survey_data)
-emotions_fig = create_emotions_fig(assignment_survey_data, review_column=homework_review_col)
-
-# SEI figures
-sei_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/sei-data.csv')
-sei_fig = create_sei_fig(sei_data)
-
-# Course evaluation figures
-course_eval_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/eval-data.csv')
-course_content_fig = create_course_eval_fig(course_eval_data, "Course content", likert_scale)
-skill_and_responsiveness_fig = create_course_eval_fig(course_eval_data, "Skill and responsiveness", likert_scale)
-contribution_to_learning_fig = create_course_eval_fig(course_eval_data, "Contribution to learning", likert_scale_alt)
-
-# Assignment figures
-grade_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/cse-2221-grades.csv')
-grade_data["Date"] = pd.to_datetime(grade_data["Date"])
-project_calculations_fig = create_assignment_fig(grade_data, "Project", 10)
-homework_calculations_fig = create_assignment_fig(grade_data, "Homework", 2)
-exams_calculations_fig = create_assignment_fig(grade_data, "Exam", 100)
-missing_project_fig = create_missing_assignment_fig(grade_data, "Project")
-missing_homework_fig = create_missing_assignment_fig(grade_data, "Homework")
-missing_exam_fig = create_missing_assignment_fig(grade_data, "Exam")
-project_trend_fig = create_project_trend_fig(grade_data, "Project")
-homework_trend_fig = create_project_trend_fig(grade_data, "Homework")
-exam_trend_fig = create_project_trend_fig(grade_data, "Exam")
-project_points_per_hour_fig, project_hours_per_point_fig = create_value_fig(grade_data, assignment_survey_data, "Project", 10)
-
-app.layout = html.Div(children=[
-  html.H1(children='The Educator Dashboard'),
-  html.Hr(),
-  html.P(children=
-  '''
-  A collection of visualizations related to courses taught by myself, Jeremy Grifski, with the first two tabs dedicated
-  to an overview of my ability as an instructor and the last two tabs dedicated to one of my courses. 
-  '''
-  ),
-  dcc.Tabs([
-    dcc.Tab(label="Student Evaluation of Instruction", children=[
+  :return: the tab containing all of the student evaluation of instruction figures
+  """
+  return dcc.Tab(label="Student Evaluation of Instruction", children=[
       html.H2(children='Student Evaluation of Instruction'),
       html.P(children=
         '''
@@ -342,8 +285,10 @@ app.layout = html.Div(children=[
         '''
       ),
       dcc.Graph(id="bad-scale-1", figure=sei_fig),
-    ]),
-    dcc.Tab(label="Course Evaluation Survey", children=[
+    ])
+
+def create_course_eval_tab() -> dcc.Tab:
+  return dcc.Tab(label="Course Evaluation Survey", children=[
       html.H2(children='Course Evaluation Survey Data'),
       dcc.Markdown(
         '''
@@ -386,8 +331,10 @@ app.layout = html.Div(children=[
         '''
       ),
       dcc.Graph(figure=contribution_to_learning_fig),
-    ]),
-    dcc.Tab(label="Assignment Survey [CSE 2221]", children=[
+    ])
+
+def create_assignment_survey_tab() -> dcc.Tab:
+  return dcc.Tab(label="Assignment Survey [CSE 2221]", children=[
       html.H2(children='Assignment Survey Data [CSE 2221]'),
       html.P(children=
         '''
@@ -452,8 +399,10 @@ app.layout = html.Div(children=[
         """
       ),
       dcc.Graph(figure=rubric_scores_fig),
-    ]),
-    dcc.Tab(label="Grades [CSE 2221]", children=[
+    ])
+
+def create_grades_tab() -> dcc.Tab:
+  return dcc.Tab(label="Grades [CSE 2221]", children=[
       html.H2(children='Grades [CSE 2221]'),
       html.P(children=
         '''
@@ -571,9 +520,79 @@ app.layout = html.Div(children=[
         '''
       ),
       dcc.Graph(figure=exam_trend_fig),
-    ]),
+    ])
+
+def create_app_layout(): 
+  return html.Div(children=[
+  html.H1(children='The Educator Dashboard'),
+  html.Hr(),
+  html.P(children=
+    '''
+    A collection of visualizations related to courses taught by myself, Jeremy Grifski, with the first two tabs dedicated
+    to an overview of my ability as an instructor and the last two tabs dedicated to one of my courses. 
+    '''
+  ),
+  dcc.Tabs([
+    create_sei_tab(),
+    create_course_eval_tab(),
+    create_assignment_survey_tab(),
+    create_grades_tab()
   ])
 ])
 
 if __name__ == '__main__':
+  app = dash.Dash(__name__)
+
+  server = app.server
+
+  # Assignment survey figures
+  assignment_survey_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/assignment-survey-data.csv')
+  assignment_survey_data[avg_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.mean())
+  assignment_survey_data[median_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.median())
+  assignment_survey_data[review_count] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.count())
+  assignment_survey_data[std_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.std())
+  homework_time_mean = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.mean())
+  homework_time_median = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.median())
+  homework_time_count = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.count())
+  homework_time_std = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.std())
+  assignment_survey_data.loc[homework_time_mean.index, avg_time] = homework_time_mean
+  assignment_survey_data.loc[homework_time_median.index, median_time] = homework_time_median
+  assignment_survey_data.loc[homework_time_count.index, review_count] = homework_time_count
+  assignment_survey_data.loc[homework_time_std.index, std_time] = homework_time_std
+  assignment_survey_data[pre_emotions_column] = assignment_survey_data[pre_emotions_column].astype(str).apply(lambda x: x.split(";"))
+  assignment_survey_data[during_emotions_column] = assignment_survey_data[during_emotions_column].astype(str).apply(lambda x: x.split(";"))
+  assignment_survey_data[post_emotions_column] = assignment_survey_data[post_emotions_column].astype(str).apply(lambda x: x.split(";"))
+  project_time_fig = create_time_fig(assignment_survey_data, col=project_review_col)
+  homework_time_fig = create_time_fig(assignment_survey_data, col=homework_review_col)
+  rubric_scores_fig = create_rubric_scores_fig(assignment_survey_data)
+  assignment_survey_data[rubric_heading] = assignment_survey_data[rubric_heading].map(satisfaction_mapping)
+  rubric_fig = create_rubric_overview_fig(assignment_survey_data)
+  rubric_breakdown_fig = create_rubric_breakdown_fig(assignment_survey_data)
+  emotions_fig = create_emotions_fig(assignment_survey_data, review_column=homework_review_col)
+
+  # SEI figures
+  sei_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/sei-data.csv')
+  sei_fig = create_sei_fig(sei_data)
+
+  # Course evaluation figures
+  course_eval_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/eval-data.csv')
+  course_content_fig = create_course_eval_fig(course_eval_data, "Course content", likert_scale)
+  skill_and_responsiveness_fig = create_course_eval_fig(course_eval_data, "Skill and responsiveness", likert_scale)
+  contribution_to_learning_fig = create_course_eval_fig(course_eval_data, "Contribution to learning", likert_scale_alt)
+
+  # Assignment figures
+  grade_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/cse-2221-grades.csv')
+  grade_data["Date"] = pd.to_datetime(grade_data["Date"])
+  project_calculations_fig = create_assignment_fig(grade_data, "Project", 10)
+  homework_calculations_fig = create_assignment_fig(grade_data, "Homework", 2)
+  exams_calculations_fig = create_assignment_fig(grade_data, "Exam", 100)
+  missing_project_fig = create_missing_assignment_fig(grade_data, "Project")
+  missing_homework_fig = create_missing_assignment_fig(grade_data, "Homework")
+  missing_exam_fig = create_missing_assignment_fig(grade_data, "Exam")
+  project_trend_fig = create_project_trend_fig(grade_data, "Project")
+  homework_trend_fig = create_project_trend_fig(grade_data, "Homework")
+  exam_trend_fig = create_project_trend_fig(grade_data, "Exam")
+  project_points_per_hour_fig, project_hours_per_point_fig = create_value_fig(grade_data, assignment_survey_data, "Project", 10)
+
+  app.layout = create_app_layout()
   app.run_server(debug=True)
