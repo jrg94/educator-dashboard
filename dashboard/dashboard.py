@@ -28,10 +28,6 @@ likert_scale = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly a
 likert_scale_alt = ["Poor", "Fair", "Satisfactory", "Very good", "Excellent"]
 satisfaction_colors = dict(zip(satisfaction_mapping.values(), px.colors.sequential.Viridis[::2]))
 
-# Global app
-app = dash.Dash(__name__)
-server = app.server
-
 def create_value_fig(grade_data, assignment_survey_data, assignment, max_score):
   assignment_score_data = [name for name in grade_data.columns if assignment in name]
   assignment_calculations = grade_data[assignment_score_data].agg(["mean", "median"]).T
@@ -545,55 +541,60 @@ def create_app_layout():
   ])
 ])
 
+# Global app
+app = dash.Dash(__name__)
+server = app.server
+
+# Assignment survey figures
+assignment_survey_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/assignment-survey-data.csv')
+assignment_survey_data[avg_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.mean())
+assignment_survey_data[median_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.median())
+assignment_survey_data[review_count] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.count())
+assignment_survey_data[std_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.std())
+homework_time_mean = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.mean())
+homework_time_median = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.median())
+homework_time_count = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.count())
+homework_time_std = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.std())
+assignment_survey_data.loc[homework_time_mean.index, avg_time] = homework_time_mean
+assignment_survey_data.loc[homework_time_median.index, median_time] = homework_time_median
+assignment_survey_data.loc[homework_time_count.index, review_count] = homework_time_count
+assignment_survey_data.loc[homework_time_std.index, std_time] = homework_time_std
+assignment_survey_data[pre_emotions_column] = assignment_survey_data[pre_emotions_column].astype(str).apply(lambda x: x.split(";"))
+assignment_survey_data[during_emotions_column] = assignment_survey_data[during_emotions_column].astype(str).apply(lambda x: x.split(";"))
+assignment_survey_data[post_emotions_column] = assignment_survey_data[post_emotions_column].astype(str).apply(lambda x: x.split(";"))
+project_time_fig = create_time_fig(assignment_survey_data, col=project_review_col)
+homework_time_fig = create_time_fig(assignment_survey_data, col=homework_review_col)
+rubric_scores_fig = create_rubric_scores_fig(assignment_survey_data)
+assignment_survey_data[rubric_heading] = assignment_survey_data[rubric_heading].map(satisfaction_mapping)
+rubric_fig = create_rubric_overview_fig(assignment_survey_data)
+rubric_breakdown_fig = create_rubric_breakdown_fig(assignment_survey_data)
+emotions_fig = create_emotions_fig(assignment_survey_data, review_column=homework_review_col)
+
+# SEI figures
+sei_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/sei-data.csv')
+sei_fig = create_sei_fig(sei_data)
+
+# Course evaluation figures
+course_eval_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/eval-data.csv')
+course_content_fig = create_course_eval_fig(course_eval_data, "Course content", likert_scale)
+skill_and_responsiveness_fig = create_course_eval_fig(course_eval_data, "Skill and responsiveness", likert_scale)
+contribution_to_learning_fig = create_course_eval_fig(course_eval_data, "Contribution to learning", likert_scale_alt)
+
+# Assignment figures
+grade_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/cse-2221-grades.csv')
+grade_data["Date"] = pd.to_datetime(grade_data["Date"])
+project_calculations_fig = create_assignment_fig(grade_data, "Project", 10)
+homework_calculations_fig = create_assignment_fig(grade_data, "Homework", 2)
+exams_calculations_fig = create_assignment_fig(grade_data, "Exam", 100)
+missing_project_fig = create_missing_assignment_fig(grade_data, "Project")
+missing_homework_fig = create_missing_assignment_fig(grade_data, "Homework")
+missing_exam_fig = create_missing_assignment_fig(grade_data, "Exam")
+project_trend_fig = create_project_trend_fig(grade_data, "Project")
+homework_trend_fig = create_project_trend_fig(grade_data, "Homework")
+exam_trend_fig = create_project_trend_fig(grade_data, "Exam")
+project_points_per_hour_fig, project_hours_per_point_fig = create_value_fig(grade_data, assignment_survey_data, "Project", 10)
+
+app.layout = create_app_layout()
+
 if __name__ == '__main__':
-  # Assignment survey figures
-  assignment_survey_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/assignment-survey-data.csv')
-  assignment_survey_data[avg_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.mean())
-  assignment_survey_data[median_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.median())
-  assignment_survey_data[review_count] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.count())
-  assignment_survey_data[std_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.std())
-  homework_time_mean = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.mean())
-  homework_time_median = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.median())
-  homework_time_count = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.count())
-  homework_time_std = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.std())
-  assignment_survey_data.loc[homework_time_mean.index, avg_time] = homework_time_mean
-  assignment_survey_data.loc[homework_time_median.index, median_time] = homework_time_median
-  assignment_survey_data.loc[homework_time_count.index, review_count] = homework_time_count
-  assignment_survey_data.loc[homework_time_std.index, std_time] = homework_time_std
-  assignment_survey_data[pre_emotions_column] = assignment_survey_data[pre_emotions_column].astype(str).apply(lambda x: x.split(";"))
-  assignment_survey_data[during_emotions_column] = assignment_survey_data[during_emotions_column].astype(str).apply(lambda x: x.split(";"))
-  assignment_survey_data[post_emotions_column] = assignment_survey_data[post_emotions_column].astype(str).apply(lambda x: x.split(";"))
-  project_time_fig = create_time_fig(assignment_survey_data, col=project_review_col)
-  homework_time_fig = create_time_fig(assignment_survey_data, col=homework_review_col)
-  rubric_scores_fig = create_rubric_scores_fig(assignment_survey_data)
-  assignment_survey_data[rubric_heading] = assignment_survey_data[rubric_heading].map(satisfaction_mapping)
-  rubric_fig = create_rubric_overview_fig(assignment_survey_data)
-  rubric_breakdown_fig = create_rubric_breakdown_fig(assignment_survey_data)
-  emotions_fig = create_emotions_fig(assignment_survey_data, review_column=homework_review_col)
-
-  # SEI figures
-  sei_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/sei-data.csv')
-  sei_fig = create_sei_fig(sei_data)
-
-  # Course evaluation figures
-  course_eval_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/eval-data.csv')
-  course_content_fig = create_course_eval_fig(course_eval_data, "Course content", likert_scale)
-  skill_and_responsiveness_fig = create_course_eval_fig(course_eval_data, "Skill and responsiveness", likert_scale)
-  contribution_to_learning_fig = create_course_eval_fig(course_eval_data, "Contribution to learning", likert_scale_alt)
-
-  # Assignment figures
-  grade_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/cse-2221-grades.csv')
-  grade_data["Date"] = pd.to_datetime(grade_data["Date"])
-  project_calculations_fig = create_assignment_fig(grade_data, "Project", 10)
-  homework_calculations_fig = create_assignment_fig(grade_data, "Homework", 2)
-  exams_calculations_fig = create_assignment_fig(grade_data, "Exam", 100)
-  missing_project_fig = create_missing_assignment_fig(grade_data, "Project")
-  missing_homework_fig = create_missing_assignment_fig(grade_data, "Homework")
-  missing_exam_fig = create_missing_assignment_fig(grade_data, "Exam")
-  project_trend_fig = create_project_trend_fig(grade_data, "Project")
-  homework_trend_fig = create_project_trend_fig(grade_data, "Homework")
-  exam_trend_fig = create_project_trend_fig(grade_data, "Exam")
-  project_points_per_hour_fig, project_hours_per_point_fig = create_value_fig(grade_data, assignment_survey_data, "Project", 10)
-
-  app.layout = create_app_layout()
   app.run_server(debug=True)
