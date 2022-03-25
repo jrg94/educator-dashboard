@@ -606,4 +606,4 @@ project_points_per_hour_fig, project_hours_per_point_fig = create_value_fig(grad
 app.layout = create_app_layout()
 
 if __name__ == '__main__':
-  app.run_server(debug=True)
+  app.run_server()
