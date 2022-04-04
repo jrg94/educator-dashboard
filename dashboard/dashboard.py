@@ -80,12 +80,10 @@ def create_correlation_fig(grade_data):
     "Attendance": grade_data["TH-Attendance"]
   }
 
-  print(pd.DataFrame(correlation).corr())
-
   return px.scatter(
     pd.DataFrame(correlation),
-    x="Grades",
-    y="Attendance",
+    y="Grades",
+    x="Attendance",
     trendline="ols",
   )
 
@@ -490,6 +488,14 @@ def create_grades_tab() -> dcc.Tab:
         '''
       ),
       dcc.Graph(figure=correlation_fig),
+      html.P(children=
+        '''
+        At the moment, the connection between attendance and grades is pretty small. At the time of writing,
+        the Pearson correlation was .478 with an R-squared of .23. I can't remember off the top of my
+        head if this is a considered a good correlation in education, but only reasources point to this being
+        a weak to moderate positive correlation. 
+        '''
+      ),
       html.H3(children='Project Grades'),
       html.P(children=
         '''
