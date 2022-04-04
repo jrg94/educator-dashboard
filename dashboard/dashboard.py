@@ -67,6 +67,67 @@ def create_value_fig(grade_data, assignment_survey_data, assignment, max_score):
   return assignment_expected_time_fig, assignment_expected_effort_fig
 
 
+def create_correlation_fig(grade_data, correlating_factor, label):
+  grade_overview = generate_grade_overview(grade_data)
+
+  total_scores = grade_overview["Exams"] * .6 \
+    + grade_overview["Homeworks"] * .06 \
+    + grade_overview["Projects"] * .3 \
+    + grade_overview["Participation"] * .04
+
+  correlation = {
+    "Grades": total_scores,
+    label: grade_data[correlating_factor]
+  }
+
+  return px.scatter(
+    pd.DataFrame(correlation),
+    y="Grades",
+    x=label,
+    trendline="ols",
+    title=f"Grades vs {label}"
+  )
+
+
+def generate_grade_overview(grade_data):
+  grade_data = grade_data[grade_data["Date"] != "2020-05-07"]
+  exam_columns = [name for name in grade_data.columns if "Exam" in name]
+  homework_columns = [name for name in grade_data.columns if "Homework" in name]
+  project_columns = [name for name in grade_data.columns if "Project" in name]
+  participation_columns = [name for name in grade_data.columns if "Participation" in name]
+
+  exam_grades = grade_data[exam_columns].sum(axis=1) / (100 * 3) * 100
+  homework_grades = grade_data[homework_columns].sum(axis=1) / (2 * 22) * 100
+  project_grades = grade_data[project_columns].sum(axis=1) / (10 * 11) * 100
+  participation_grades = grade_data[participation_columns].sum(axis=1) / (4 * 1) * 100
+
+  overview_dict = {
+    "Exams": exam_grades,
+    "Homeworks": homework_grades,
+    "Projects": project_grades,
+    "Participation": participation_grades
+  }
+
+  return pd.DataFrame(overview_dict)
+
+
+def create_grades_fig(grade_data):
+  assignment_calculations = generate_grade_overview(grade_data).agg(["mean", "median"]).T
+  grade_fig = px.bar(
+    assignment_calculations,
+    labels={
+      "index": "Assignment Type",
+      "value": "Grade/100%",
+      "variable": "Metric",
+      "mean": "Average",
+      "median": "Median"
+    },
+    barmode="group",
+    title=f"Overview of Course Grades by Type"
+  )
+  return grade_fig
+
+
 def create_assignment_fig(grade_data, assignment, total):
   assignment_data = [name for name in grade_data.columns if assignment in name]
   assignment_calculations = grade_data[assignment_data].agg(["mean", "median"]).T
@@ -412,6 +473,50 @@ def create_grades_tab() -> dcc.Tab:
         database of grades which allows me to generate some pretty interesting plots.
         '''
       ),
+      html.H3(children='Overview'),
+      dcc.Markdown(children=
+        '''
+        Given the different types of grade data I collect, I figured I'd start by sharing an overview
+        of the grades by type. **TODO**: There is an assumption that there are three exams each semester.
+        One semester, there was only one exam before COVID. Grades from the semester of COVID have been
+        filtered out of the overview plots.
+        '''
+      ),
+      dcc.Graph(figure=grade_overview_fig),
+      html.P(children=
+        '''
+        Given the history of grades in this course, I was also interested in seeing how the grades correlated
+        with attendance, which is a metric I track through Top Hat. For context, I don't force attendance,
+        so the attendance scores are more of a lower bound.
+        '''
+      ),
+      dcc.Graph(figure=grades_vs_attendance),
+      html.P(children=
+        '''
+        At the moment, the connection between attendance and grades is pretty small. At the time of writing,
+        the correlation between attendance and grades gives an R-squared of .23. I can't remember off the top of my
+        head if this is a considered a good correlation in education, but online reasources point to this being
+        a weak to moderate positive correlation. 
+        '''
+      ),
+      html.P(children=
+        '''
+        Now, in order to get an attendance grade, you just enter some digits at the start of class.
+        Participation, on the other hand, is calculated based on interaction with Top Hat. Some semesters,
+        I've used Top Hat more often than others. For example, I used to use it quite a bit for Peer
+        Instruction. These days, I don't use it as much, but it may be useful in demonstrating a
+        strong correlation with grades. 
+        '''
+      ),
+      dcc.Graph(figure=grades_vs_participation),
+      html.P(children=
+        '''
+        At the time of writing, the correlation was slightly stronger with an R-squared of .28. Though,
+        there's not much to brag about there. That said, it does imply that attendance and participation
+        positively correlate with grades. I wouldn't go as far as to say that attending class will
+        improve your grades, but I would be lying if I didn't tell you that it could. 
+        '''
+      ),
       html.H3(children='Project Grades'),
       html.P(children=
         '''
@@ -592,6 +697,9 @@ contribution_to_learning_fig = create_course_eval_fig(course_eval_data, "Contrib
 # Assignment figures
 grade_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/cse-2221-grades.csv')
 grade_data["Date"] = pd.to_datetime(grade_data["Date"])
+grade_overview_fig = create_grades_fig(grade_data)
+grades_vs_attendance = create_correlation_fig(grade_data, "TH-Attendance", "Top Hat Attendance")
+grades_vs_participation = create_correlation_fig(grade_data, "Top Hat", "Top Hat Participation")
 project_calculations_fig = create_assignment_fig(grade_data, "Project", 10)
 homework_calculations_fig = create_assignment_fig(grade_data, "Homework", 2)
 exams_calculations_fig = create_assignment_fig(grade_data, "Exam", 100)
@@ -606,4 +714,4 @@ project_points_per_hour_fig, project_hours_per_point_fig = create_value_fig(grad
 app.layout = create_app_layout()
 
 if __name__ == '__main__':
-  app.run_server()
+  app.run_server(debug=True)
