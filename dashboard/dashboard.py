@@ -67,7 +67,7 @@ def create_value_fig(grade_data, assignment_survey_data, assignment, max_score):
   return assignment_expected_time_fig, assignment_expected_effort_fig
 
 
-def create_correlation_fig(grade_data):
+def create_correlation_fig(grade_data, correlating_factor, label):
   grade_overview = generate_grade_overview(grade_data)
 
   total_scores = grade_overview["Exams"] * .6 \
@@ -77,14 +77,15 @@ def create_correlation_fig(grade_data):
 
   correlation = {
     "Grades": total_scores,
-    "Attendance": grade_data["TH-Attendance"]
+    label: grade_data[correlating_factor]
   }
 
   return px.scatter(
     pd.DataFrame(correlation),
     y="Grades",
-    x="Attendance",
+    x=label,
     trendline="ols",
+    title=f"Grades vs {label}"
   )
 
 
@@ -122,6 +123,7 @@ def create_grades_fig(grade_data):
       "median": "Median"
     },
     barmode="group",
+    title=f"Overview of Course Grades by Type"
   )
   return grade_fig
 
@@ -484,16 +486,35 @@ def create_grades_tab() -> dcc.Tab:
       html.P(children=
         '''
         Given the history of grades in this course, I was also interested in seeing how the grades correlated
-        with attendance, which is a metric I track through Top Hat. 
+        with attendance, which is a metric I track through Top Hat. For context, I don't force attendance,
+        so the attendance scores are more of a lower bound.
         '''
       ),
-      dcc.Graph(figure=correlation_fig),
+      dcc.Graph(figure=grades_vs_attendance),
       html.P(children=
         '''
         At the moment, the connection between attendance and grades is pretty small. At the time of writing,
-        the Pearson correlation was .478 with an R-squared of .23. I can't remember off the top of my
-        head if this is a considered a good correlation in education, but only reasources point to this being
+        the correlation between attendance and grades gives an R-squared of .23. I can't remember off the top of my
+        head if this is a considered a good correlation in education, but online reasources point to this being
         a weak to moderate positive correlation. 
+        '''
+      ),
+      html.P(children=
+        '''
+        Now, in order to get an attendance grade, you just enter some digits at the start of class.
+        Participation, on the other hand, is calculated based on interaction with Top Hat. Some semesters,
+        I've used Top Hat more often than others. For example, I used to use it quite a bit for Peer
+        Instruction. These days, I don't use it as much, but it may be useful in demonstrating a
+        strong correlation with grades. 
+        '''
+      ),
+      dcc.Graph(figure=grades_vs_participation),
+      html.P(children=
+        '''
+        At the time of writing, the correlation was slightly stronger with an R-squared of .28. Though,
+        there's not much to brag about there. That said, it does imply that attendance and participation
+        positively correlate with grades. I wouldn't go as far as to say that attending class will
+        improve your grades, but I would be lying if I didn't tell you that it could. 
         '''
       ),
       html.H3(children='Project Grades'),
@@ -677,7 +698,8 @@ contribution_to_learning_fig = create_course_eval_fig(course_eval_data, "Contrib
 grade_data = pd.read_csv('https://raw.githubusercontent.com/TheRenegadeCoder/educator-dashboard/main/dashboard/data/cse-2221-grades.csv')
 grade_data["Date"] = pd.to_datetime(grade_data["Date"])
 grade_overview_fig = create_grades_fig(grade_data)
-correlation_fig = create_correlation_fig(grade_data)
+grades_vs_attendance = create_correlation_fig(grade_data, "TH-Attendance", "Top Hat Attendance")
+grades_vs_participation = create_correlation_fig(grade_data, "Top Hat", "Top Hat Participation")
 project_calculations_fig = create_assignment_fig(grade_data, "Project", 10)
 homework_calculations_fig = create_assignment_fig(grade_data, "Homework", 2)
 exams_calculations_fig = create_assignment_fig(grade_data, "Exam", 100)
