@@ -203,7 +203,6 @@ def create_time_fig(assignment_survey_data, col):
     hover_data=[review_count]
   )
   time_fig.update_traces(textfont_size=12, textangle=0, textposition="inside", insidetextanchor="start", cliponaxis=False)
-  time_fig.write_html(r'renders\diagram\project_fig.html')
   return time_fig
 
 def create_rubric_scores_fig(assignment_survey_data):
@@ -237,7 +236,6 @@ def create_rubric_overview_fig(assignment_survey_data):
     title="Project Rubric Satisfaction Overview",
     color_discrete_map=satisfaction_colors
   )
-  rubric_fig.write_html(r'renders\diagram\rubric_fig.html')
   return rubric_fig
 
 def create_rubric_breakdown_fig(assignment_survey_data):
@@ -266,7 +264,6 @@ def create_rubric_breakdown_fig(assignment_survey_data):
     color_discrete_map=satisfaction_colors
   )
   rubric_breakdown_fig.for_each_annotation(lambda a: a.update(text=f'Project {a.text.split("=")[-1]}'))
-  rubric_breakdown_fig.write_html(r'renders\diagram\rubric_breakdown_fig.html')
   return rubric_breakdown_fig
 
 def create_missing_assignment_fig(grade_data, assignment):
