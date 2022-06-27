@@ -649,7 +649,7 @@ app = dash.Dash(
   external_scripts=[
     {
       "src": "https://plausible.io/js/plausible.js",
-      "data-domain": "educator.therenegadecoder.com"
+      "data-domain": "educator.jeremygrifski.com"
     }
   ],
   title="The Educator Dashboard"
