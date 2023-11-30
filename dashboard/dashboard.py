@@ -184,8 +184,15 @@ def create_sei_fig(sei_data):
   sei_fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
   return sei_fig
 
-def create_time_fig(assignment_survey_data, col):
-  to_plot = assignment_survey_data.drop_duplicates(subset=[col]).sort_values(by=col)
+def create_time_fig(assignment_survey_data: pd.DataFrame, col: str):
+  """
+  Creates a figure of the average and median time spent
+  on each assignment.
+  """
+  to_plot = assignment_survey_data \
+    .drop_duplicates(subset=[col]) \
+    .dropna(subset=[col]) \
+    .sort_values(by=col)
   to_plot = to_plot.melt(
     id_vars=[item for item in to_plot.columns if item not in [avg_time, median_time]], 
     var_name="Metric", 
@@ -280,8 +287,12 @@ def create_missing_assignment_fig(grade_data, assignment):
   )
   return missing_assignment_fig
 
-def create_project_trend_fig(grade_data, assignment):
-  trend_data = grade_data.groupby("Date").mean()[[item for item in grade_data if assignment in item]]
+def create_project_trend_fig(grade_data: pd.DataFrame, assignment: str):
+  """
+  Creates a semesterly line graph for each assignment of a
+  particular type (e.g., Exam, Project, Homework, etc.)
+  """
+  trend_data = grade_data.groupby("Date").mean(numeric_only=True)[[item for item in grade_data if assignment in item]]
   trend_data = trend_data.reset_index().melt(
     id_vars="Date",
     var_name="Assignment", 
@@ -656,23 +667,30 @@ app = dash.Dash(
 )
 server = app.server
 
-# Assignment survey figures
+# Compute project statistics
 assignment_survey_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/assignment-survey-data.csv')
 assignment_survey_data[avg_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.mean())
 assignment_survey_data[median_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.median())
 assignment_survey_data[review_count] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.count())
 assignment_survey_data[std_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.std())
+
+# Compute homework statistics
 homework_time_mean = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.mean())
 homework_time_median = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.median())
 homework_time_count = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.count())
 homework_time_std = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.std())
-assignment_survey_data.loc[homework_time_mean.index, avg_time] = homework_time_mean
-assignment_survey_data.loc[homework_time_median.index, median_time] = homework_time_median
-assignment_survey_data.loc[homework_time_count.index, review_count] = homework_time_count
-assignment_survey_data.loc[homework_time_std.index, std_time] = homework_time_std
+
+# Update project statistics column with homework statistics data
+assignment_survey_data[avg_time] = assignment_survey_data[avg_time].combine_first(homework_time_mean)
+assignment_survey_data[median_time] = assignment_survey_data[median_time].combine_first(homework_time_median)
+assignment_survey_data[review_count] = assignment_survey_data[review_count].combine_first(homework_time_count)
+assignment_survey_data[std_time] = assignment_survey_data[std_time].combine_first(homework_time_std)
+
 assignment_survey_data[pre_emotions_column] = assignment_survey_data[pre_emotions_column].astype(str).apply(lambda x: x.split(";"))
 assignment_survey_data[during_emotions_column] = assignment_survey_data[during_emotions_column].astype(str).apply(lambda x: x.split(";"))
 assignment_survey_data[post_emotions_column] = assignment_survey_data[post_emotions_column].astype(str).apply(lambda x: x.split(";"))
+
+# Generate assignment survey figures
 project_time_fig = create_time_fig(assignment_survey_data, col=project_review_col)
 homework_time_fig = create_time_fig(assignment_survey_data, col=homework_review_col)
 rubric_scores_fig = create_rubric_scores_fig(assignment_survey_data)
