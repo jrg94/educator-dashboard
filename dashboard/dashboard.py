@@ -1,6 +1,7 @@
 import dash
 from dash import html
 import pandas as pd
+import plotly
 import plotly.express as px
 from dash import dcc
 
@@ -28,6 +29,24 @@ satisfaction_mapping = {
 likert_scale = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]
 likert_scale_alt = ["Poor", "Fair", "Satisfactory", "Very good", "Excellent"]
 satisfaction_colors = dict(zip(satisfaction_mapping.values(), px.colors.sequential.Viridis[::2]))
+
+def _semester_order(data: pd.DataFrame):
+  """
+  Returns a sorted list of semesters in the expected order 
+  (e.g., [Autumn 2018, Spring 2019, Autumn 2019, Spring 2020, ...]).
+  
+  It works by parsing the semester string and calculating a
+  sortable numeric value where the year is used unless
+  the semester is in the autumn, in which case the year + .5
+  is used. 
+
+  :param data: the DataFrame provided by the user with an assumed Semester column
+  :return: a list of sorted semesters
+  """
+  return sorted(
+    data["Semester"].unique(), 
+    key=lambda x: int(x.split()[1]) + (.5 if x.split()[0] == "Autumn" else 0)
+  )
 
 def create_value_fig(grade_data, assignment_survey_data, assignment, max_score):
   assignment_score_data = [name for name in grade_data.columns if assignment in name]
@@ -179,17 +198,32 @@ def create_course_eval_fig(course_eval_data, question, axes_labels):
   question_fig.for_each_annotation(lambda a: a.update(text=a.text[a.text.find("[")+1:a.text.find("]")]))
   return question_fig
 
-def create_sei_fig(sei_data):
+def create_sei_fig(sei_data: pd.DataFrame) -> plotly.graph_objs.Figure:
+  """
+  Creates an SEI data figure showing all of the SEI
+  data results over "time", where time is a categorical
+  semester string that is added to the SEI data. There
+  are four lines in this plot to compare against my
+  SEI data (i.e., the department, college, and university).
+  
+  :param sei_data: the raw SEI data as a dataframe
+  :return: the resulting SEI figure
+  """
   sei_data["Date"] = pd.to_datetime(sei_data["Date"])
+  sei_data["Semester"] = sei_data["Season"] + " " + sei_data["Year"].astype(str)
   sei_fig = px.line(
     sei_data, 
-    x="Date", 
+    x="Semester", 
     y="Mean", 
     color="Group", 
     facet_col="Question", 
     facet_col_wrap=2, 
     markers=True, 
-    title="Student Evaluation of Instruction Trends by Cohort"
+    title="Student Evaluation of Instruction Trends by Cohort",
+    category_orders={
+      "Semester": _semester_order(sei_data)
+    },
+    hover_data=["Course"]
   )
   sei_fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
   return sei_fig
