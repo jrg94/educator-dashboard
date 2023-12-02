@@ -113,6 +113,13 @@ def generate_grade_overview(grade_data):
 
 def create_grades_fig(grade_data):
   assignment_calculations = generate_grade_overview(grade_data).agg(["mean", "median"]).T
+  row_count = len(grade_data.index)
+  assignment_calculations["count"] = {
+    "Exams": row_count * 3,
+    "Projects": row_count * 11,
+    "Homeworks": row_count * 22,
+    "Participation": row_count
+  }
   grade_fig = px.bar(
     assignment_calculations,
     labels={
@@ -120,10 +127,12 @@ def create_grades_fig(grade_data):
       "value": "Grade/100%",
       "variable": "Metric",
       "mean": "Average",
-      "median": "Median"
+      "median": "Median",
+      "count": "Estimated Count"
     },
     barmode="group",
-    title=f"Overview of Course Grades by Type"
+    title=f"Overview of Course Grades by Type",
+    hover_data=["count"]
   )
   return grade_fig
 
