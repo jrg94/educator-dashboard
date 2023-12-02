@@ -209,7 +209,6 @@ def create_sei_fig(sei_data: pd.DataFrame) -> plotly.graph_objs.Figure:
   :param sei_data: the raw SEI data as a dataframe
   :return: the resulting SEI figure
   """
-  sei_data["Date"] = pd.to_datetime(sei_data["Date"])
   sei_data["Semester"] = sei_data["Season"] + " " + sei_data["Year"].astype(str)
   sei_fig = px.line(
     sei_data, 
