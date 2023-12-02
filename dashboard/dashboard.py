@@ -7,7 +7,8 @@ from dash import dcc
 # Constants
 rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
 project_review_col = "Which project are you reviewing (enter a # between 1 and 11)?"
-homework_review_col = "Which homework assignment are you reviewing (enter a # between 1 and 22)?"
+homework_review_col = "Which homework assignment are you reviewing (enter a # between 1 and 37)?"
+class_review_col = "Which of the following classes is this assignment for?"
 pre_emotions_column = "Which of the following emotions did you experience **before** starting this project (select all that apply)?"
 during_emotions_column = "Which of the following emotions did you experience while completing this project (select all that apply)?"
 post_emotions_column = "Which of the following emotions did you experience **after** completing this project (select all that apply)?"
@@ -678,6 +679,7 @@ server = app.server
 
 # Compute project statistics
 assignment_survey_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/assignment-survey-data.csv')
+assignment_survey_data = assignment_survey_data[assignment_survey_data[class_review_col].isna()]
 assignment_survey_data[avg_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.mean())
 assignment_survey_data[median_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.median())
 assignment_survey_data[review_count] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.count())
