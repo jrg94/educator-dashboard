@@ -452,7 +452,7 @@ def create_assignment_survey_tab() -> dcc.Tab:
         I'll update this dashboard to include the project assignments as well. 
         '''
       ),
-      dcc.Graph(figure=emotions_fig),
+      dcc.Graph(id="bad-scale-3", figure=emotions_fig),
       html.H3(children='Rubric Evaluation'),
       html.P(children=
         """
