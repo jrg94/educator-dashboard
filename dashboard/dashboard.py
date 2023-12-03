@@ -428,14 +428,15 @@ def create_sei_tab() -> dcc.Tab:
   """
   return dcc.Tab(label="Student Evaluation of Instruction", children=[
       html.H2(children='Student Evaluation of Instruction'),
-      html.P(children=
+      dcc.Markdown(children=
         '''
         Each semester, the university asks students to fill out a survey about the instruction for the course.
         These data are anonymized and provided as averages for each question. Here is the breakdown of my scores
         against the scores for various cohorts including my department, my college, and my university. In general,
         I outperform all three cohorts, but I'm noticing a downward trend in course organization. For context,
         I taught CSE 1223 in the Fall of 2018 and the Spring of 2019. I've been teaching CSE 2221 ever since, with
-        a year gap for research. 
+        a year gap for research during Autumn 2020 and Spring 2021. **TODO**: the plot should clearly show the
+        gap in teaching. 
         '''
       ),
       dcc.Graph(id="bad-scale-1", figure=sei_fig),
