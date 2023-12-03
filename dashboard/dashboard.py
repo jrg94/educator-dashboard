@@ -253,6 +253,7 @@ def create_sei_comment_fig(sei_comments: pd.DataFrame) -> plotly.graph_objs.Figu
   stop = stopwords.words("english")
   word_counts = word_counts[~word_counts["Word"].isin(stop)]
   word_counts = word_counts[~word_counts["Word"].isin(list(string.punctuation))]
+  word_counts = word_counts[~word_counts["Word"].str.contains("'")]
   
   # Sorts and pulls the top 25 words
   word_counts = word_counts.sort_values(by="Count", ascending=False)
