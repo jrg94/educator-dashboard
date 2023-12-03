@@ -1,12 +1,12 @@
-from collections import Counter
 import string
+from collections import Counter
+
 import dash
-from dash import html
+import nltk
 import pandas as pd
 import plotly
 import plotly.express as px
-from dash import dcc
-import nltk
+from dash import dcc, html
 from nltk.corpus import stopwords
 
 # Constants
