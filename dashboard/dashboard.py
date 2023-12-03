@@ -7,8 +7,6 @@ import plotly
 import plotly.express as px
 from dash import dcc
 import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
 from nltk.corpus import stopwords
 
 # Constants
@@ -234,13 +232,29 @@ def create_sei_fig(sei_data: pd.DataFrame) -> plotly.graph_objs.Figure:
   return sei_fig
 
 def create_sei_comment_fig(sei_comments: pd.DataFrame) -> plotly.graph_objs.Figure:
+  # Tokenizes the comments and computes their counts
   results = Counter()
-  sei_comments["Comment"].str.lower().apply(nltk.word_tokenize).apply(results.update)
+  sei_comments["Comment"].str.lower().str.capitalize().apply(nltk.word_tokenize).apply(results.update)
   word_counts = pd.DataFrame.from_dict(results, orient="index").reset_index()
   word_counts = word_counts.rename(columns={"index": "Word", 0:"Count"})  
+  
+  # Installs needed corpus data
+  try:
+    nltk.data.find("tokenizers/punkt")
+  except LookupError:
+    nltk.download('punkt')
+    
+  try:
+    nltk.data.find("corpora/stopwords")
+  except LookupError:
+    nltk.download('stopwords')
+  
+  # Removes stop words and punctuation from the totals
   stop = stopwords.words("english")
   word_counts = word_counts[~word_counts["Word"].isin(stop)]
   word_counts = word_counts[~word_counts["Word"].isin(list(string.punctuation))]
+  
+  # Sorts and pulls the top 25 words
   word_counts = word_counts.sort_values(by="Count", ascending=False)
   word_counts = word_counts.head(25)
   word_counts = word_counts.sort_values(by="Count")
@@ -248,7 +262,8 @@ def create_sei_comment_fig(sei_comments: pd.DataFrame) -> plotly.graph_objs.Figu
     word_counts,
     x="Count",
     y="Word",
-    height=1000
+    height=1000,
+    title="Top 25 Most Common Words in SEI Comments"
   )
   return sei_comment_fig
 
