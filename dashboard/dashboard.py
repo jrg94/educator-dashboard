@@ -1,9 +1,15 @@
+from collections import Counter
+import string
 import dash
 from dash import html
 import pandas as pd
 import plotly
 import plotly.express as px
 from dash import dcc
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
+from nltk.corpus import stopwords
 
 # Constants
 rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
@@ -227,6 +233,25 @@ def create_sei_fig(sei_data: pd.DataFrame) -> plotly.graph_objs.Figure:
   sei_fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
   return sei_fig
 
+def create_sei_comment_fig(sei_comments: pd.DataFrame) -> plotly.graph_objs.Figure:
+  results = Counter()
+  sei_comments["Comment"].str.lower().apply(nltk.word_tokenize).apply(results.update)
+  word_counts = pd.DataFrame.from_dict(results, orient="index").reset_index()
+  word_counts = word_counts.rename(columns={"index": "Word", 0:"Count"})  
+  stop = stopwords.words("english")
+  word_counts = word_counts[~word_counts["Word"].isin(stop)]
+  word_counts = word_counts[~word_counts["Word"].isin(list(string.punctuation))]
+  word_counts = word_counts.sort_values(by="Count", ascending=False)
+  word_counts = word_counts.head(25)
+  word_counts = word_counts.sort_values(by="Count")
+  sei_comment_fig = px.bar(
+    word_counts,
+    x="Count",
+    y="Word",
+    height=1000
+  )
+  return sei_comment_fig
+
 def create_time_fig(assignment_survey_data: pd.DataFrame, col: str):
   """
   Creates a figure of the average and median time spent
@@ -398,6 +423,13 @@ def create_sei_tab() -> dcc.Tab:
         '''
       ),
       dcc.Graph(id="bad-scale-1", figure=sei_fig),
+      html.P(children=
+        """
+        Also, as a qualitative researcher, I find the comments themselves to be more meaningful.
+        Therefore, here's a plot of the most frequent terms in my SEI comments. 
+        """
+      ),
+      dcc.Graph(figure=sei_comment_fig)
     ])
 
 def create_course_eval_tab() -> dcc.Tab:
@@ -746,6 +778,8 @@ emotions_fig = create_emotions_fig(assignment_survey_data, review_column=homewor
 # SEI figures
 sei_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-data.csv')
 sei_fig = create_sei_fig(sei_data)
+sei_comment_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-comments.csv')
+sei_comment_fig = create_sei_comment_fig(sei_comment_data)
 
 # Course evaluation figures
 course_eval_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/eval-data.csv')
