@@ -232,15 +232,15 @@ def create_sei_fig(sei_data: pd.DataFrame) -> plotly.graph_objs.Figure:
   return sei_fig
 
 def create_sei_comment_fig(sei_comments: pd.DataFrame) -> plotly.graph_objs.Figure:
+  # Installs needed corpus data
+  nltk.download('punkt')
+  nltk.download('stopwords')
+  
   # Tokenizes the comments and computes their counts
   results = Counter()
   sei_comments["Comment"].str.lower().apply(nltk.word_tokenize).apply(results.update)
   word_counts = pd.DataFrame.from_dict(results, orient="index").reset_index()
   word_counts = word_counts.rename(columns={"index": "Word", 0:"Count"}) 
-  
-  # Installs needed corpus data
-  nltk.download('punkt')
-  nltk.download('stopwords')
   
   # Removes stop words and punctuation from the totals
   stop = stopwords.words("english")
