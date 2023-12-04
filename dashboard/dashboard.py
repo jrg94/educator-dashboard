@@ -239,15 +239,8 @@ def create_sei_comment_fig(sei_comments: pd.DataFrame) -> plotly.graph_objs.Figu
   word_counts = word_counts.rename(columns={"index": "Word", 0:"Count"}) 
   
   # Installs needed corpus data
-  try:
-    nltk.data.find("tokenizers/punkt")
-  except LookupError:
-    nltk.download('punkt')
-    
-  try:
-    nltk.data.find("corpora/stopwords")
-  except LookupError:
-    nltk.download('stopwords')
+  nltk.download('punkt')
+  nltk.download('stopwords')
   
   # Removes stop words and punctuation from the totals
   stop = stopwords.words("english")
