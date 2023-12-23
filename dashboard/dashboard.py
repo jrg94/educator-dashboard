@@ -361,33 +361,6 @@ def create_project_trend_fig(grade_data: pd.DataFrame, assignment: str):
   )
   return trend_fig
 
-def create_emotions_fig(assignment_survey_data, review_column):
-  emotions_data = assignment_survey_data.explode(pre_emotions_column)
-  emotions_data = emotions_data.explode(during_emotions_column)
-  emotions_data = emotions_data.explode(post_emotions_column)
-  emotions_data = emotions_data[emotions_data[pre_emotions_column].isin(["Joy", "Hope", "Hopelessness", "Relief", "Anxiety"])]
-  emotions_data = emotions_data[emotions_data[during_emotions_column].isin(["Enjoyment", "Anger", "Frustration", "Boredom"])]
-  emotions_data = emotions_data[emotions_data[post_emotions_column].isin(["Joy", "Pride", "Gratitude", "Sadness", "Shame", "Anger"])]
-  emotions_data = emotions_data.groupby(review_column)[[pre_emotions_column, during_emotions_column, post_emotions_column]].value_counts() 
-  emotions_data = emotions_data.reset_index().melt(id_vars=review_column, value_vars=[pre_emotions_column, during_emotions_column, post_emotions_column])
-  emotions_data = emotions_data.replace({
-    pre_emotions_column: "Pre-Assignment",
-    during_emotions_column: "During Assignment",
-    post_emotions_column: "Post-Assignment"
-  })
-  emotions_figure = px.histogram(
-    emotions_data,
-    x="value",
-    color="variable",
-    facet_col=review_column,
-    facet_col_wrap=2,
-    labels={
-      "value": 'Emotion'    
-    }
-  )
-  emotions_figure.for_each_annotation(lambda a: a.update(text=f'Homework {a.text.split("=")[-1].split(".")[0]}'))
-  return emotions_figure
-
 def create_sei_tab() -> dcc.Tab:
   """
   Creates the tab containing all of the student evaluation of instruction figures.
@@ -503,7 +476,7 @@ def create_assignment_survey_tab() -> dcc.Tab:
         I'll update this dashboard to include the project assignments as well. 
         '''
       ),
-      dcc.Graph(id="bad-scale-3", figure=emotions_fig),
+      dcc.Graph(id="emotions"),
       html.H3(children='Rubric Evaluation'),
       html.P(children=
         """
@@ -743,7 +716,6 @@ rubric_scores_fig = create_rubric_scores_fig(assignment_survey_data)
 assignment_survey_data[rubric_heading] = assignment_survey_data[rubric_heading].map(satisfaction_mapping)
 rubric_fig = create_rubric_overview_fig(assignment_survey_data)
 rubric_breakdown_fig = create_rubric_breakdown_fig(assignment_survey_data)
-emotions_fig = create_emotions_fig(assignment_survey_data, review_column=homework_review_col)
 
 # SEI figures
 sei_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-data.csv')
