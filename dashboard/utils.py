@@ -77,16 +77,13 @@ def create_emotions_fig(assignment_survey_data: pd.DataFrame, col: str):
 
 def create_rubric_overview_fig(assignment_survey_data: pd.DataFrame):
     assignment_survey_data[rubric_heading] = assignment_survey_data[rubric_heading].map(satisfaction_mapping)
-    data = assignment_survey_data[rubric_heading].value_counts()
+    data = assignment_survey_data[rubric_heading].value_counts().rename_axis("Response").reset_index(name="Number of Reviews")
     rubric_fig = px.bar(
         data, 
-        color=data.index,
-        category_orders={"index": list(satisfaction_mapping.values())},
-        labels={
-        "index": 'Response',
-        "value": 'Number of Reviews',
-        "color": 'Response'
-        },
+        x="Response",
+        y="Number of Reviews",
+        color="Response",
+        category_orders={"Response": list(satisfaction_mapping.values())},
         text_auto=True,
         title="Project Rubric Satisfaction Overview",
         color_discrete_map=satisfaction_colors
@@ -111,11 +108,11 @@ def create_rubric_breakdown_fig(assignment_survey_data: pd.DataFrame):
         facet_col_wrap=2,
         text_auto=True,
         category_orders={
-        rubric_heading: list(satisfaction_mapping.values()),
-        project_review_col: list(range(1, 12))
+            "Response": list(satisfaction_mapping.values()),
+            project_review_col: list(range(1, 12))
         },
         labels={
-        rubric_heading: 'Response',
+            rubric_heading: 'Response',
         },
         title="Rubric Satisfaction By Project",
         color_discrete_map=satisfaction_colors
@@ -124,7 +121,7 @@ def create_rubric_breakdown_fig(assignment_survey_data: pd.DataFrame):
     return rubric_breakdown_fig
 
 
-def create_rubric_scores_fig(assignment_survey_data):
+def create_rubric_scores_fig(assignment_survey_data: pd.DataFrame):
     rubric_scores = assignment_survey_data.groupby(project_review_col)[rubric_heading].agg(["mean", "count"])
     rubric_scores_fig = px.bar(
         rubric_scores, 
