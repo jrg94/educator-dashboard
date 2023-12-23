@@ -260,7 +260,7 @@ def create_grades_tab() -> dcc.Tab:
             progresses), that could potentially explain the low averages for certain projects. 
             '''
         ),
-        dcc.Graph(id="missing-project"),
+        dcc.Graph(id="missing-projects"),
         dcc.Markdown(
             '''
             Unfortunately, one of the drawbacks of the plots above is that they aggregate the data for every

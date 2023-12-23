@@ -5,7 +5,7 @@ from constants import homework_review_col, project_review_col, likert_scale, lik
 from dash import Input, Output, callback
 from utils import (create_emotions_fig, create_rubric_breakdown_fig,
                    create_rubric_overview_fig, create_rubric_scores_fig,
-                   create_sei_fig, create_time_fig, create_sei_comment_fig, create_course_eval_fig, create_grades_fig, create_correlation_fig, create_assignment_fig)
+                   create_sei_fig, create_time_fig, create_sei_comment_fig, create_course_eval_fig, create_grades_fig, create_correlation_fig, create_assignment_fig, create_missing_assignment_fig, create_project_trend_fig)
 
 
 @callback(
@@ -159,3 +159,57 @@ def render_grade_overview_data(jsonified_data):
 def render_grade_overview_data(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_assignment_fig(df, "Exam", 100)
+
+
+@callback(
+    Output("missing-projects", "figure"),
+    Input("grade-data", "data")
+)
+def render_grade_overview_data(jsonified_data):
+    df = pd.read_json(StringIO(jsonified_data))
+    return create_missing_assignment_fig(df, "Project")
+
+
+@callback(
+    Output("missing-homeworks", "figure"),
+    Input("grade-data", "data")
+)
+def render_grade_overview_data(jsonified_data):
+    df = pd.read_json(StringIO(jsonified_data))
+    return create_missing_assignment_fig(df, "Homework")
+
+
+@callback(
+    Output("missing-exams", "figure"),
+    Input("grade-data", "data")
+)
+def render_grade_overview_data(jsonified_data):
+    df = pd.read_json(StringIO(jsonified_data))
+    return create_missing_assignment_fig(df, "Exam")
+
+
+@callback(
+    Output("project-trends", "figure"),
+    Input("grade-data", "data")
+)
+def render_grade_overview_data(jsonified_data):
+    df = pd.read_json(StringIO(jsonified_data))
+    return create_project_trend_fig(df, "Project")
+
+
+@callback(
+    Output("homework-trends", "figure"),
+    Input("grade-data", "data")
+)
+def render_grade_overview_data(jsonified_data):
+    df = pd.read_json(StringIO(jsonified_data))
+    return create_project_trend_fig(df, "Homework")
+
+
+@callback(
+    Output("exam-trends", "figure"),
+    Input("grade-data", "data")
+)
+def render_grade_overview_data(jsonified_data):
+    df = pd.read_json(StringIO(jsonified_data))
+    return create_project_trend_fig(df, "Exam")
