@@ -54,3 +54,8 @@ def load_course_eval_data() -> dcc.Store:
     course_eval_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/eval-data.csv')
     course_eval_data["Timestamp"] = pd.to_datetime(course_eval_data["Timestamp"], format="%Y/%m/%d %I:%M:%S %p %Z")
     return dcc.Store(id="course-eval-data", data=course_eval_data.to_json())    
+
+def load_grade_data() -> dcc.Store:
+    grade_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/cse-2221-grades.csv')
+    grade_data["Date"] = pd.to_datetime(grade_data["Date"])
+    return dcc.Store(id="grade-data", data=grade_data.to_json())

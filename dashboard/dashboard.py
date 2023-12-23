@@ -3,7 +3,7 @@ import dash
 import pandas as pd
 import plotly.express as px
 from dash import dcc, html
-from data import (load_assignment_survey_data, load_sei_comments_data,
+from data import (load_assignment_survey_data, load_grade_data, load_sei_comments_data,
                   load_sei_data, load_course_eval_data)
 
 # Constants
@@ -31,200 +31,39 @@ likert_scale = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly a
 likert_scale_alt = ["Poor", "Fair", "Satisfactory", "Very good", "Excellent"]
 satisfaction_colors = dict(zip(satisfaction_mapping.values(), px.colors.sequential.Viridis[::2]))
 
-def create_value_fig(grade_data, assignment_survey_data, assignment, max_score):
-  assignment_score_data = [name for name in grade_data.columns if assignment in name]
-  assignment_calculations = grade_data[assignment_score_data].agg(["mean", "median"]).T
-  assignment_time_data = assignment_survey_data[assignment_survey_data[assignment_type] == "Project"]
-  assignment_time_data = assignment_time_data.drop_duplicates(subset=[project_review_col]).sort_values(by=project_review_col)
-  assignment_time_data["Project #"] = "Project #" + assignment_time_data[project_review_col].astype(int).astype(str)
-  assignment_time_data = assignment_time_data.set_index(f"{assignment} #")[median_time]
-  assignment_aggregate_data = assignment_calculations.join(assignment_time_data)
-  assignment_aggregate_data = assignment_aggregate_data.rename(columns={'mean': f'Average Score/{max_score}', 'median': f'Median Score/{max_score}'})
-  assignment_aggregate_data["Points per Hour"] = assignment_aggregate_data[f"Median Score/{max_score}"] / assignment_aggregate_data["Median Time (hours)"]
-  assignment_aggregate_data["Minutes per Point"] = assignment_aggregate_data["Median Time (hours)"] / assignment_aggregate_data[f"Median Score/{max_score}"] * 60
-  assignment_aggregate_data = assignment_aggregate_data.reset_index()
-  assignment_expected_time_fig = px.bar(
-    assignment_aggregate_data,
-    x="index",
-    y="Points per Hour",
-    labels={
-      "index": "Project Name",
-      "Points per Hour": "Median Points/Hour of Work",
-    },
-    text_auto=".2s",
-    title="Expected Value Per Project"
-  )
-  assignment_expected_time_fig.update_layout(showlegend=False)
-  assignment_expected_effort_fig = px.bar(
-    assignment_aggregate_data,
-    x="index",
-    y="Minutes per Point",
-    labels={
-      "index": "Project Name",
-      "Minutes per Point": "Median Minutes of Work/Point",
-    },
-    text_auto=".2s",
-    title="Expected Effort Per Project"
-  )
-  assignment_expected_effort_fig.update_layout(showlegend=False)
-  return assignment_expected_time_fig, assignment_expected_effort_fig
-
-
-def create_correlation_fig(grade_data, correlating_factor, label):
-  grade_overview = generate_grade_overview(grade_data)
-
-  total_scores = grade_overview["Exams"] * .6 \
-    + grade_overview["Homeworks"] * .06 \
-    + grade_overview["Projects"] * .3 \
-    + grade_overview["Participation"] * .04
-
-  correlation = {
-    "Grades": total_scores,
-    label: grade_data[correlating_factor]
-  }
-
-  return px.scatter(
-    pd.DataFrame(correlation),
-    y="Grades",
-    x=label,
-    trendline="ols",
-    title=f"Grades vs {label}"
-  )
-
-
-def generate_grade_overview(grade_data):
-  grade_data = grade_data[grade_data["Date"] != "2020-05-07"]
-  exam_columns = [name for name in grade_data.columns if "Exam" in name]
-  homework_columns = [name for name in grade_data.columns if "Homework" in name]
-  project_columns = [name for name in grade_data.columns if "Project" in name]
-  participation_columns = [name for name in grade_data.columns if "Participation" in name]
-
-  exam_grades = grade_data[exam_columns].sum(axis=1) / (100 * 3) * 100
-  homework_grades = grade_data[homework_columns].sum(axis=1) / (2 * 22) * 100
-  project_grades = grade_data[project_columns].sum(axis=1) / (10 * 11) * 100
-  participation_grades = grade_data[participation_columns].sum(axis=1) / (4 * 1) * 100
-
-  overview_dict = {
-    "Exams": exam_grades,
-    "Homeworks": homework_grades,
-    "Projects": project_grades,
-    "Participation": participation_grades
-  }
-
-  return pd.DataFrame(overview_dict)
-
-
-def create_grades_fig(grade_data):
-  assignment_calculations = generate_grade_overview(grade_data).agg(["mean", "median"]).T
-  row_count = len(grade_data.index)
-  assignment_calculations["count"] = {
-    "Exams": row_count * 3,
-    "Projects": row_count * 11,
-    "Homeworks": row_count * 22,
-    "Participation": row_count
-  }
-  grade_fig = px.bar(
-    assignment_calculations,
-    labels={
-      "index": "Assignment Type",
-      "value": "Grade/100%",
-      "variable": "Metric",
-      "mean": "Average",
-      "median": "Median",
-      "count": "Estimated Count"
-    },
-    barmode="group",
-    title=f"Overview of Course Grades by Type",
-    hover_data=["count"]
-  )
-  return grade_fig
-
-
-def create_assignment_fig(grade_data, assignment, total):
-  assignment_data = [name for name in grade_data.columns if assignment in name]
-  assignment_calculations = grade_data[assignment_data].agg(["mean", "median"]).T
-  assignment_calculations.rename(columns={'mean': 'Average', 'median': 'Median'}, inplace=True)
-  assignment_calculations_fig = px.bar(
-    assignment_calculations,
-    labels={
-      "index": "Project Name",
-      "value": f"Grade/{total}",
-      "variable": "Metric",
-      "mean": "Average",
-      "median": "Median"
-    },
-    barmode='group',
-    text_auto=".2s",
-    title=f"Average and Median {assignment} Grades".title()
-  )
-  return assignment_calculations_fig
-
-def create_missing_assignment_fig(grade_data, assignment):
-  missing_assignment_data = (grade_data == 0).sum() / len(grade_data) * 100
-  missing_assignment_data = missing_assignment_data.reset_index()
-  missing_assignment_data.rename(columns={'index': 'Assignment', 0: 'Percent Missing'}, inplace=True)
-  missing_assignment_data = missing_assignment_data.loc[missing_assignment_data["Assignment"].str.contains(assignment)]
-  missing_assignment_fig = px.bar(
-    missing_assignment_data, 
-    x="Assignment", 
-    y="Percent Missing", 
-    text_auto=".2s", 
-    title=f"Percent of Missing {assignment}s"
-  )
-  return missing_assignment_fig
-
-def create_project_trend_fig(grade_data: pd.DataFrame, assignment: str):
-  """
-  Creates a semesterly line graph for each assignment of a
-  particular type (e.g., Exam, Project, Homework, etc.)
-  """
-  trend_data = grade_data.groupby("Date").mean(numeric_only=True)[[item for item in grade_data if assignment in item]]
-  trend_data = trend_data.reset_index().melt(
-    id_vars="Date",
-    var_name="Assignment", 
-    value_name="Average Score"
-  ).dropna()
-  
-  trend_fig = px.line(
-    trend_data,
-    x="Date",
-    y="Average Score",
-    color="Assignment",
-    markers=True,
-    title=f"Average {assignment} Score by Date"
-  )
-  return trend_fig
-
 def create_sei_tab() -> dcc.Tab:
     """
     Creates the tab containing all of the student evaluation of instruction figures.
 
     :return: the tab containing all of the student evaluation of instruction figures
     """
-    return dcc.Tab(label="Student Evaluation of Instruction", children=[
-        html.H2(children='Student Evaluation of Instruction'),
-        dcc.Markdown(
-          '''
-          Each semester, the university asks students to fill out a survey about the instruction for the course.
-          These data are anonymized and provided as averages for each question. Here is the breakdown of my scores
-          against the scores for various cohorts including my department, my college, and my university. In general,
-          I outperform all three cohorts, but I'm noticing a downward trend in course organization. For context,
-          I taught CSE 1223 in the Fall of 2018 and the Spring of 2019. I've been teaching CSE 2221 ever since, with
-          a year gap for research during Autumn 2020 and Spring 2021. **TODO**: the plot should clearly show the
-          gap in teaching. 
-          '''
-        ),
-        dcc.Graph(id="sei-stats"),
-        html.P(
-          """
-          Also, as a qualitative researcher, I find the comments themselves to be more meaningful.
-          Therefore, here's a plot of the most frequent terms in my SEI comments. 
-          """
-        ),
-        dcc.Graph(id="sei-comments"),
-        load_sei_data(),
-        load_sei_comments_data()
-      ])
+    return dcc.Tab(
+        label="Student Evaluation of Instruction", 
+        children=[
+            html.H2('Student Evaluation of Instruction'),
+            dcc.Markdown(
+                '''
+                Each semester, the university asks students to fill out a survey about the instruction for the course.
+                These data are anonymized and provided as averages for each question. Here is the breakdown of my scores
+                against the scores for various cohorts including my department, my college, and my university. In general,
+                I outperform all three cohorts, but I'm noticing a downward trend in course organization. For context,
+                I taught CSE 1223 in the Fall of 2018 and the Spring of 2019. I've been teaching CSE 2221 ever since, with
+                a year gap for research during Autumn 2020 and Spring 2021. **TODO**: the plot should clearly show the
+                gap in teaching. 
+                '''
+            ),
+            dcc.Graph(id="sei-stats"),
+            html.P(
+                """
+                Also, as a qualitative researcher, I find the comments themselves to be more meaningful.
+                Therefore, here's a plot of the most frequent terms in my SEI comments. 
+                """
+            ),
+            dcc.Graph(id="sei-comments"),
+            load_sei_data(),
+            load_sei_comments_data()
+        ]
+    )
 
 
 def create_course_eval_tab() -> dcc.Tab:
@@ -278,238 +117,245 @@ def create_course_eval_tab() -> dcc.Tab:
     )
 
 def create_assignment_survey_tab() -> dcc.Tab:
-  return dcc.Tab(label="Assignment Survey [CSE 2221]", children=[
-      html.H2(children='Assignment Survey Data [CSE 2221]'),
-      html.P(children=
-        '''
-        Throughout the course, I asked students to give me feedback on the assignments. Originally,
-        these data were collected through a Carmen quiz (Autumn 2021). However, I found the Carmen 
-        quiz format to be limiting, so later iterations of the quiz were administered through a Google
-        Form. 
-        '''
-      ),
-      html.H3(children='Time Spent Working on Projects'),
-      html.P(children=
-        '''
-        One of the questions I asked my students was how long they spent on each project. Based on the responses,
-        I found that students spent between 2 and 7.5 hours on each project on average. In general, these values
-        trend up as the semester progresses. If we assume that students then spend an average of 4 hours on each
-        project, they will conduct roughly 44 hours of work over the course of the semester. 
-        '''
-      ), # TODO: use an f-string to include the min and max average here
-      dcc.Graph(id="project-time"),
-      html.H3(children='Time Spent Working on Homework Assignments'),
-      html.P(children=
-        '''
-        Similarly, I asked students to tell me how much time they spent on the homework assignments.
-        The data is fairly preliminary, so I only have the first few homework assignments. That
-        said, I am finding that students spend multiple hours a week on each written assignment.
-        '''
-      ),
-      dcc.Graph(id="homework-time"),
-      html.H3(children='Emotional Experience with Assignments'),
-      html.P(children=
-        '''
-        Something new I tried in 2022 was asking students about the emotions they experienced
-        before, during, and after assignments. For this, I borrowed the emotions from
-        Control Value Theory and asked students retrospectively about their emotions. As it
-        is early in the semester, I decided to only plot the homework assignments. Later,
-        I'll update this dashboard to include the project assignments as well. 
-        '''
-      ),
-      dcc.Graph(id="emotions"),
-      html.H3(children='Rubric Evaluation'),
-      html.P(children=
-        """
-        Another question I asked my students was about their satisfaction with the rubrics for each project. 
-        The following plot gives the overview of the rubric ratings over all 11 projects. In general,
-        it appears students are fairly satisfied with the rubrics.
-        """
-      ),
-      dcc.Graph(id="rubric-overview"),
-      dcc.Markdown(
-        """
-        In case you were curious about each project individually, here is a breakdown of the rubric scores for each project. 
-        """
-      ),
-      dcc.Graph(id="rubric-breakdown"),
-      dcc.Markdown(
-        """
-        And just to be perfectly explicit, I also computed average scores for each rubric over all 11 projects.
-        These scores are computed by assigning Very Dissatisfied (1) to the lowest score and Very Satisfied (5) 
-        to the highest score. Then, we sum up all the values and divide by the number of reviews. As a result,
-        you can see that students are generally the least satisfied with the project 1 rubric and most satisfied
-        with the project 3 rubric. 
-        """
-      ),
-      dcc.Graph(id="rubric-scores"),
-      load_assignment_survey_data()
-    ])
+  return dcc.Tab(
+      label="Assignment Survey [CSE 2221]", 
+      children=[
+        html.H2('Assignment Survey Data [CSE 2221]'),
+        html.P(
+            '''
+            Throughout the course, I asked students to give me feedback on the assignments. Originally,
+            these data were collected through a Carmen quiz (Autumn 2021). However, I found the Carmen 
+            quiz format to be limiting, so later iterations of the quiz were administered through a Google
+            Form. 
+            '''
+        ),
+        html.H3('Time Spent Working on Projects'),
+        html.P(
+            '''
+            One of the questions I asked my students was how long they spent on each project. Based on the responses,
+            I found that students spent between 2 and 7.5 hours on each project on average. In general, these values
+            trend up as the semester progresses. If we assume that students then spend an average of 4 hours on each
+            project, they will conduct roughly 44 hours of work over the course of the semester. 
+            '''
+        ), # TODO: use an f-string to include the min and max average here
+        dcc.Graph(id="project-time"),
+        html.H3('Time Spent Working on Homework Assignments'),
+        html.P(
+            '''
+            Similarly, I asked students to tell me how much time they spent on the homework assignments.
+            The data is fairly preliminary, so I only have the first few homework assignments. That
+            said, I am finding that students spend multiple hours a week on each written assignment.
+            '''
+        ),
+        dcc.Graph(id="homework-time"),
+        html.H3('Emotional Experience with Assignments'),
+        html.P(
+            '''
+            Something new I tried in 2022 was asking students about the emotions they experienced
+            before, during, and after assignments. For this, I borrowed the emotions from
+            Control Value Theory and asked students retrospectively about their emotions. As it
+            is early in the semester, I decided to only plot the homework assignments. Later,
+            I'll update this dashboard to include the project assignments as well. 
+            '''
+        ),
+        dcc.Graph(id="emotions"),
+        html.H3('Rubric Evaluation'),
+        html.P(
+            """
+            Another question I asked my students was about their satisfaction with the rubrics for each project. 
+            The following plot gives the overview of the rubric ratings over all 11 projects. In general,
+            it appears students are fairly satisfied with the rubrics.
+            """
+        ),
+        dcc.Graph(id="rubric-overview"),
+        dcc.Markdown(
+            """
+            In case you were curious about each project individually, here is a breakdown of the rubric scores for each project. 
+            """
+        ),
+        dcc.Graph(id="rubric-breakdown"),
+        dcc.Markdown(
+            """
+            And just to be perfectly explicit, I also computed average scores for each rubric over all 11 projects.
+            These scores are computed by assigning Very Dissatisfied (1) to the lowest score and Very Satisfied (5) 
+            to the highest score. Then, we sum up all the values and divide by the number of reviews. As a result,
+            you can see that students are generally the least satisfied with the project 1 rubric and most satisfied
+            with the project 3 rubric. 
+            """
+        ),
+        dcc.Graph(id="rubric-scores"),
+        load_assignment_survey_data()
+    ]
+)
 
 def create_grades_tab() -> dcc.Tab:
-  return dcc.Tab(label="Grades [CSE 2221]", children=[
-      html.H2(children='Grades [CSE 2221]'),
-      html.P(children=
-        '''
-        Each semester, I collect grades for 22 homework assignments, 11 projects, and 3 exams. Fortunately,
-        I have graders for the bulk of it, but I grade the exams. Recently, I decided to put together a
-        database of grades which allows me to generate some pretty interesting plots.
-        '''
-      ),
-      html.H3(children='Overview'),
-      dcc.Markdown(children=
-        '''
-        Given the different types of grade data I collect, I figured I'd start by sharing an overview
-        of the grades by type. **TODO**: There is an assumption that there are three exams each semester.
-        One semester, there was only one exam before COVID. Grades from the semester of COVID have been
-        filtered out of the overview plots.
-        '''
-      ),
-      dcc.Graph(figure=grade_overview_fig),
-      html.P(children=
-        '''
-        Given the history of grades in this course, I was also interested in seeing how the grades correlated
-        with attendance, which is a metric I track through Top Hat. For context, I don't force attendance,
-        so the attendance scores are more of a lower bound.
-        '''
-      ),
-      dcc.Graph(figure=grades_vs_attendance),
-      html.P(children=
-        '''
-        At the moment, the connection between attendance and grades is pretty small. At the time of writing,
-        the correlation between attendance and grades gives an R-squared of .23. I can't remember off the top of my
-        head if this is a considered a good correlation in education, but online reasources point to this being
-        a weak to moderate positive correlation. 
-        '''
-      ),
-      html.P(children=
-        '''
-        Now, in order to get an attendance grade, you just enter some digits at the start of class.
-        Participation, on the other hand, is calculated based on interaction with Top Hat. Some semesters,
-        I've used Top Hat more often than others. For example, I used to use it quite a bit for Peer
-        Instruction. These days, I don't use it as much, but it may be useful in demonstrating a
-        strong correlation with grades. 
-        '''
-      ),
-      dcc.Graph(figure=grades_vs_participation),
-      html.P(children=
-        '''
-        At the time of writing, the correlation was slightly stronger with an R-squared of .28. Though,
-        there's not much to brag about there. That said, it does imply that attendance and participation
-        positively correlate with grades. I wouldn't go as far as to say that attending class will
-        improve your grades, but I would be lying if I didn't tell you that it could. 
-        '''
-      ),
-      html.H3(children='Project Grades'),
-      html.P(children=
-        '''
-        To start, I'd like to talk about the 11 projects. Specifically, I'll share the average and median grade
-        for each project. The key takeaway here is that project 1 is a slam dunk while project 8 is a bit rough.
-        '''
-      ),
-      dcc.Graph(figure=project_calculations_fig),
-      html.P(children=
-        '''
-        While medians and averages are helpful, I also think it's useful to look at just how many students
-        actually complete the projects. Or rather, what percentage of students skip out on projects, and
-        is there a trend to observe? If so (spoiler alert: students turn in less work as the semester 
-        progresses), that could potentially explain the low averages for certain projects. 
-        '''
-      ),
-      dcc.Graph(figure=missing_project_fig),
-      dcc.Markdown(
-        '''
-        Unfortunately, one of the drawbacks of the plots above is that they aggregate the data for every
-        semester I've taught the course. Personally, I like to see trends, right? For example, it's 
-        helpful to know if project grades are getting better over time. What I'm finding is that's not
-        the case. Frankly, I think most of this is due to grader influences, but I have not investigated
-        that. **TODO**: I should include grader influences in the plot. 
-        '''
-      ),
-      dcc.Graph(figure=project_trend_fig),
-      dcc.Markdown(
-        '''
-        Next, we get into the "advanced" metrics. In this case, I thought it would be interesting to combine
-        some of the data found in the assignment survey with the grade data. For instance, remember how
-        I previously shared the amount of time students spent on each project on average? Well, I figured
-        it would be interesting to see how many points a student could expect to earn per hour on average.
-        Ultimately, I ended up calling this metric "Expected Value" because it gives us a sense of how
-        much value a student could get out of their time. With this metric, we're able to clearly see that 
-        project 1 offers the most bang for your buck. Meanwhile, Project 8 offers very little in terms of
-        value for your time. 
-        '''
-      ),
-      dcc.Graph(figure=project_points_per_hour_fig),
-      dcc.Markdown(
-        '''
-        Interestingly, if we invert the previous plot, we get what I'm calling the "Expected Effort" metric.
-        Rather than describing the amount of points we expect to get for an hour of work, we begin talking
-        about how much time we expect to give for a point. The distinction is fairly minor, but it allows
-        us to see which projects require the most effort. In this case, the roles are reversed. Project 1
-        requires the least amount of effort, while project 8 requires the most.
-        '''
-      ),
-      dcc.Graph(figure=project_hours_per_point_fig),
-      html.H3(children='Homework Grades'),
-      dcc.Markdown(
-        '''
-        In addition to 11 projects, we also assign 22 homework assignments. These assignments are graded
-        on completion for a maximum of 2 points each. Naturally, here's the breakdown of average and median
-        scores for each assignment. As you can see, students generally get full credit, but there are some
-        students who pull the average down with incomplete assignments (more on that later).
-        '''
-      ),
-      dcc.Graph(figure=homework_calculations_fig),
-      dcc.Markdown(
-        '''
-        As promised, here's a look at the trend of homework completion. As with projects, students tend
-        to submit fewer assignments as the semester progresses. Though, I find it interesting that there
-        are spikes in missing assignments at various points throughout the semester. I suspect that the 
-        assignments that students submit least often are tied to larger review assignments before exams.
-        **TODO**: I should look into this more.
-        '''
-      ),
-      dcc.Graph(figure=missing_homework_fig),
-      dcc.Markdown(
-        '''
-        Finally, here's a look at the trend of grades for the homework assignments. I find this plot really
-        interesting because it shows the spread of homework grades against each semester. For instance,
-        there is quite the spread of homework averages in Autumn 2021. 
-        '''
-      ),
-      dcc.Graph(figure=homework_trend_fig),
-      html.H3(children='Exam Grades'),
-      dcc.Markdown(
-        '''
-        At this point, all that is left to discuss are the exams. In total, there are three exams, and the
-        general trend tends to be that scores go down as the semester progresses. I haven't quite figured
-        out why. 
-        '''
-      ),
-      dcc.Graph(figure=exams_calculations_fig),
-      dcc.Markdown(
-        '''
-        As with projects and homework assignments, I find it important to also track the percentage of students
-        who skip exams. In general, it's pretty rare for a student to skip an exam, and it's usually due to some
-        extreme circumstance. That said, the trend remains the same for exams as well (i.e., fewer students attend
-        the exams as the semester progresses).
-        '''
-      ),
-      dcc.Graph(figure=missing_exam_fig),
-      dcc.Markdown(
-        '''
-        All that is left to talk about is the exam score trend over time. One thing that is worth noting is that
-        the exams were not consistent from semester to semester. For example, you'll notice that exams 2 and 3
-        are missing data points. The reason for this is that we eventually converted those exams to online quizzes
-        due to COVID. As a result, those quiz scores are omitted. It's also worth noting that the data points in
-        Summer 2019 are from before I started teaching the course (i.e., I was training to teach it at the time).
-        As a result, the first time I taught the course, my exam scores were quite low. Since then, things have
-        improved considerably. Well, except for the final exam. I'll be looking to provide more ways for
-        students to practice ahead of time. 
-        '''
-      ),
-      dcc.Graph(figure=exam_trend_fig),
-    ])
+  return dcc.Tab(
+      label="Grades [CSE 2221]", 
+      children=[
+        html.H2('Grades [CSE 2221]'),
+        html.P(
+            '''
+            Each semester, I collect grades for 22 homework assignments, 11 projects, and 3 exams. Fortunately,
+            I have graders for the bulk of it, but I grade the exams. Recently, I decided to put together a
+            database of grades which allows me to generate some pretty interesting plots.
+            '''
+        ),
+        html.H3('Overview'),
+        dcc.Markdown(
+            '''
+            Given the different types of grade data I collect, I figured I'd start by sharing an overview
+            of the grades by type. **TODO**: There is an assumption that there are three exams each semester.
+            One semester, there was only one exam before COVID. Grades from the semester of COVID have been
+            filtered out of the overview plots.
+            '''
+        ),
+        dcc.Graph(id="grade-overview"),
+        html.P(
+            '''
+            Given the history of grades in this course, I was also interested in seeing how the grades correlated
+            with attendance, which is a metric I track through Top Hat. For context, I don't force attendance,
+            so the attendance scores are more of a lower bound.
+            '''
+        ),
+        dcc.Graph(id="grade-vs-attendance"),
+        html.P(
+            '''
+            At the moment, the connection between attendance and grades is pretty small. At the time of writing,
+            the correlation between attendance and grades gives an R-squared of .23. I can't remember off the top of my
+            head if this is a considered a good correlation in education, but online reasources point to this being
+            a weak to moderate positive correlation. 
+            '''
+        ),
+        html.P(
+            '''
+            Now, in order to get an attendance grade, you just enter some digits at the start of class.
+            Participation, on the other hand, is calculated based on interaction with Top Hat. Some semesters,
+            I've used Top Hat more often than others. For example, I used to use it quite a bit for Peer
+            Instruction. These days, I don't use it as much, but it may be useful in demonstrating a
+            strong correlation with grades. 
+            '''
+        ),
+        dcc.Graph(id="grades-vs-participation"),
+        html.P(
+            '''
+            At the time of writing, the correlation was slightly stronger with an R-squared of .28. Though,
+            there's not much to brag about there. That said, it does imply that attendance and participation
+            positively correlate with grades. I wouldn't go as far as to say that attending class will
+            improve your grades, but I would be lying if I didn't tell you that it could. 
+            '''
+        ),
+        html.H3('Project Grades'),
+        html.P(
+            '''
+            To start, I'd like to talk about the 11 projects. Specifically, I'll share the average and median grade
+            for each project. The key takeaway here is that project 1 is a slam dunk while project 8 is a bit rough.
+            '''
+        ),
+        dcc.Graph(id="project-calculations"),
+        html.P(children=
+            '''
+            While medians and averages are helpful, I also think it's useful to look at just how many students
+            actually complete the projects. Or rather, what percentage of students skip out on projects, and
+            is there a trend to observe? If so (spoiler alert: students turn in less work as the semester 
+            progresses), that could potentially explain the low averages for certain projects. 
+            '''
+        ),
+        dcc.Graph(id="missing-project"),
+        dcc.Markdown(
+            '''
+            Unfortunately, one of the drawbacks of the plots above is that they aggregate the data for every
+            semester I've taught the course. Personally, I like to see trends, right? For example, it's 
+            helpful to know if project grades are getting better over time. What I'm finding is that's not
+            the case. Frankly, I think most of this is due to grader influences, but I have not investigated
+            that. **TODO**: I should include grader influences in the plot. 
+            '''
+        ),
+        dcc.Graph(id="project-trends"),
+        dcc.Markdown(
+            '''
+            Next, we get into the "advanced" metrics. In this case, I thought it would be interesting to combine
+            some of the data found in the assignment survey with the grade data. For instance, remember how
+            I previously shared the amount of time students spent on each project on average? Well, I figured
+            it would be interesting to see how many points a student could expect to earn per hour on average.
+            Ultimately, I ended up calling this metric "Expected Value" because it gives us a sense of how
+            much value a student could get out of their time. With this metric, we're able to clearly see that 
+            project 1 offers the most bang for your buck. Meanwhile, Project 8 offers very little in terms of
+            value for your time. 
+            '''
+        ),
+        dcc.Graph(id="project-points-per-hour"),
+        dcc.Markdown(
+            '''
+            Interestingly, if we invert the previous plot, we get what I'm calling the "Expected Effort" metric.
+            Rather than describing the amount of points we expect to get for an hour of work, we begin talking
+            about how much time we expect to give for a point. The distinction is fairly minor, but it allows
+            us to see which projects require the most effort. In this case, the roles are reversed. Project 1
+            requires the least amount of effort, while project 8 requires the most.
+            '''
+        ),
+        dcc.Graph(id="project-hours-per-point"),
+        html.H3(children='Homework Grades'),
+        dcc.Markdown(
+            '''
+            In addition to 11 projects, we also assign 22 homework assignments. These assignments are graded
+            on completion for a maximum of 2 points each. Naturally, here's the breakdown of average and median
+            scores for each assignment. As you can see, students generally get full credit, but there are some
+            students who pull the average down with incomplete assignments (more on that later).
+            '''
+        ),
+        dcc.Graph(id="homework-calculations"),
+        dcc.Markdown(
+            '''
+            As promised, here's a look at the trend of homework completion. As with projects, students tend
+            to submit fewer assignments as the semester progresses. Though, I find it interesting that there
+            are spikes in missing assignments at various points throughout the semester. I suspect that the 
+            assignments that students submit least often are tied to larger review assignments before exams.
+            **TODO**: I should look into this more.
+            '''
+        ),
+        dcc.Graph(id="missing-homeworks"),
+        dcc.Markdown(
+            '''
+            Finally, here's a look at the trend of grades for the homework assignments. I find this plot really
+            interesting because it shows the spread of homework grades against each semester. For instance,
+            there is quite the spread of homework averages in Autumn 2021. 
+            '''
+        ),
+        dcc.Graph(id="homework-trends"),
+        html.H3(children='Exam Grades'),
+        dcc.Markdown(
+            '''
+            At this point, all that is left to discuss are the exams. In total, there are three exams, and the
+            general trend tends to be that scores go down as the semester progresses. I haven't quite figured
+            out why. 
+            '''
+        ),
+        dcc.Graph(id="exams-calculations"),
+        dcc.Markdown(
+            '''
+            As with projects and homework assignments, I find it important to also track the percentage of students
+            who skip exams. In general, it's pretty rare for a student to skip an exam, and it's usually due to some
+            extreme circumstance. That said, the trend remains the same for exams as well (i.e., fewer students attend
+            the exams as the semester progresses).
+            '''
+        ),
+        dcc.Graph(id="missing-exams"),
+        dcc.Markdown(
+            '''
+            All that is left to talk about is the exam score trend over time. One thing that is worth noting is that
+            the exams were not consistent from semester to semester. For example, you'll notice that exams 2 and 3
+            are missing data points. The reason for this is that we eventually converted those exams to online quizzes
+            due to COVID. As a result, those quiz scores are omitted. It's also worth noting that the data points in
+            Summer 2019 are from before I started teaching the course (i.e., I was training to teach it at the time).
+            As a result, the first time I taught the course, my exam scores were quite low. Since then, things have
+            improved considerably. Well, except for the final exam. I'll be looking to provide more ways for
+            students to practice ahead of time. 
+            '''
+        ),
+        dcc.Graph(id="exam-trends"),
+        load_grade_data()
+    ]
+)
 
 def create_app_layout(): 
   return html.Div(children=[
@@ -541,31 +387,6 @@ app = dash.Dash(
   title="The Educator Dashboard"
 )
 server = app.server
-
-# Compute project statistics
-assignment_survey_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/assignment-survey-data.csv')
-assignment_survey_data = assignment_survey_data[assignment_survey_data[class_review_col].isna()]
-assignment_survey_data[avg_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.mean())
-assignment_survey_data[median_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.median())
-assignment_survey_data[review_count] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.count())
-assignment_survey_data[std_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.std())
-
-# Assignment figures
-grade_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/cse-2221-grades.csv')
-grade_data["Date"] = pd.to_datetime(grade_data["Date"])
-grade_overview_fig = create_grades_fig(grade_data)
-grades_vs_attendance = create_correlation_fig(grade_data, "TH-Attendance", "Top Hat Attendance")
-grades_vs_participation = create_correlation_fig(grade_data, "Top Hat", "Top Hat Participation")
-project_calculations_fig = create_assignment_fig(grade_data, "Project", 10)
-homework_calculations_fig = create_assignment_fig(grade_data, "Homework", 2)
-exams_calculations_fig = create_assignment_fig(grade_data, "Exam", 100)
-missing_project_fig = create_missing_assignment_fig(grade_data, "Project")
-missing_homework_fig = create_missing_assignment_fig(grade_data, "Homework")
-missing_exam_fig = create_missing_assignment_fig(grade_data, "Exam")
-project_trend_fig = create_project_trend_fig(grade_data, "Project")
-homework_trend_fig = create_project_trend_fig(grade_data, "Homework")
-exam_trend_fig = create_project_trend_fig(grade_data, "Exam")
-project_points_per_hour_fig, project_hours_per_point_fig = create_value_fig(grade_data, assignment_survey_data, "Project", 10)
 
 app.layout = create_app_layout()
 

@@ -190,6 +190,7 @@ def create_sei_fig(sei_data: pd.DataFrame) -> plotly.graph_objs.Figure:
     sei_fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
     return sei_fig
 
+
 def create_sei_comment_fig(sei_comments: pd.DataFrame) -> plotly.graph_objs.Figure:
     # Installs needed corpus data
     nltk.download('punkt')
@@ -242,4 +243,171 @@ def create_course_eval_fig(course_eval_data, question, axes_labels):
     )
     question_fig.for_each_annotation(lambda a: a.update(text=a.text[a.text.find("[")+1:a.text.find("]")]))
     return question_fig
+
+
+def create_value_fig(grade_data, assignment_survey_data, assignment, max_score):
+    assignment_score_data = [name for name in grade_data.columns if assignment in name]
+    assignment_calculations = grade_data[assignment_score_data].agg(["mean", "median"]).T
+    assignment_time_data = assignment_survey_data[assignment_survey_data[assignment_type] == "Project"]
+    assignment_time_data = assignment_time_data.drop_duplicates(subset=[project_review_col]).sort_values(by=project_review_col)
+    assignment_time_data["Project #"] = "Project #" + assignment_time_data[project_review_col].astype(int).astype(str)
+    assignment_time_data = assignment_time_data.set_index(f"{assignment} #")[median_time]
+    assignment_aggregate_data = assignment_calculations.join(assignment_time_data)
+    assignment_aggregate_data = assignment_aggregate_data.rename(columns={'mean': f'Average Score/{max_score}', 'median': f'Median Score/{max_score}'})
+    assignment_aggregate_data["Points per Hour"] = assignment_aggregate_data[f"Median Score/{max_score}"] / assignment_aggregate_data["Median Time (hours)"]
+    assignment_aggregate_data["Minutes per Point"] = assignment_aggregate_data["Median Time (hours)"] / assignment_aggregate_data[f"Median Score/{max_score}"] * 60
+    assignment_aggregate_data = assignment_aggregate_data.reset_index()
+    assignment_expected_time_fig = px.bar(
+        assignment_aggregate_data,
+        x="index",
+        y="Points per Hour",
+        labels={
+        "index": "Project Name",
+        "Points per Hour": "Median Points/Hour of Work",
+        },
+        text_auto=".2s",
+        title="Expected Value Per Project"
+    )
+    assignment_expected_time_fig.update_layout(showlegend=False)
+    assignment_expected_effort_fig = px.bar(
+        assignment_aggregate_data,
+        x="index",
+        y="Minutes per Point",
+        labels={
+        "index": "Project Name",
+        "Minutes per Point": "Median Minutes of Work/Point",
+        },
+        text_auto=".2s",
+        title="Expected Effort Per Project"
+    )
+    assignment_expected_effort_fig.update_layout(showlegend=False)
+    return assignment_expected_time_fig, assignment_expected_effort_fig
+
+
+def create_correlation_fig(grade_data, correlating_factor, label):
+    grade_overview = generate_grade_overview(grade_data)
+
+    total_scores = grade_overview["Exams"] * .6 \
+        + grade_overview["Homeworks"] * .06 \
+        + grade_overview["Projects"] * .3 \
+        + grade_overview["Participation"] * .04
+
+    correlation = {
+        "Grades": total_scores,
+        label: grade_data[correlating_factor]
+    }
+
+    return px.scatter(
+        pd.DataFrame(correlation),
+        y="Grades",
+        x=label,
+        trendline="ols",
+        title=f"Grades vs {label}"
+    )
+
+
+def generate_grade_overview(grade_data):
+    grade_data = grade_data[grade_data["Date"] != "2020-05-07"]
+    exam_columns = [name for name in grade_data.columns if "Exam" in name]
+    homework_columns = [name for name in grade_data.columns if "Homework" in name]
+    project_columns = [name for name in grade_data.columns if "Project" in name]
+    participation_columns = [name for name in grade_data.columns if "Participation" in name]
+
+    exam_grades = grade_data[exam_columns].sum(axis=1) / (100 * 3) * 100
+    homework_grades = grade_data[homework_columns].sum(axis=1) / (2 * 22) * 100
+    project_grades = grade_data[project_columns].sum(axis=1) / (10 * 11) * 100
+    participation_grades = grade_data[participation_columns].sum(axis=1) / (4 * 1) * 100
+
+    overview_dict = {
+        "Exams": exam_grades,
+        "Homeworks": homework_grades,
+        "Projects": project_grades,
+        "Participation": participation_grades
+    }
+
+    return pd.DataFrame(overview_dict)
+
+
+def create_grades_fig(grade_data):
+    assignment_calculations = generate_grade_overview(grade_data).agg(["mean", "median"]).T
+    row_count = len(grade_data.index)
+    assignment_calculations["count"] = {
+        "Exams": row_count * 3,
+        "Projects": row_count * 11,
+        "Homeworks": row_count * 22,
+        "Participation": row_count
+    }
+    grade_fig = px.bar(
+        assignment_calculations,
+        labels={
+        "index": "Assignment Type",
+        "value": "Grade/100%",
+        "variable": "Metric",
+        "mean": "Average",
+        "median": "Median",
+        "count": "Estimated Count"
+        },
+        barmode="group",
+        title=f"Overview of Course Grades by Type",
+        hover_data=["count"]
+    )
+    return grade_fig
+
+
+def create_assignment_fig(grade_data, assignment, total):
+    assignment_data = [name for name in grade_data.columns if assignment in name]
+    assignment_calculations = grade_data[assignment_data].agg(["mean", "median"]).T
+    assignment_calculations.rename(columns={'mean': 'Average', 'median': 'Median'}, inplace=True)
+    assignment_calculations_fig = px.bar(
+        assignment_calculations,
+        labels={
+        "index": "Project Name",
+        "value": f"Grade/{total}",
+        "variable": "Metric",
+        "mean": "Average",
+        "median": "Median"
+        },
+        barmode='group',
+        text_auto=".2s",
+        title=f"Average and Median {assignment} Grades".title()
+    )
+    return assignment_calculations_fig
+
+
+def create_missing_assignment_fig(grade_data, assignment):
+    missing_assignment_data = (grade_data == 0).sum() / len(grade_data) * 100
+    missing_assignment_data = missing_assignment_data.reset_index()
+    missing_assignment_data.rename(columns={'index': 'Assignment', 0: 'Percent Missing'}, inplace=True)
+    missing_assignment_data = missing_assignment_data.loc[missing_assignment_data["Assignment"].str.contains(assignment)]
+    missing_assignment_fig = px.bar(
+        missing_assignment_data, 
+        x="Assignment", 
+        y="Percent Missing", 
+        text_auto=".2s", 
+        title=f"Percent of Missing {assignment}s"
+    )
+    return missing_assignment_fig
+
+
+def create_project_trend_fig(grade_data: pd.DataFrame, assignment: str):
+    """
+    Creates a semesterly line graph for each assignment of a
+    particular type (e.g., Exam, Project, Homework, etc.)
+    """
+    trend_data = grade_data.groupby("Date").mean(numeric_only=True)[[item for item in grade_data if assignment in item]]
+    trend_data = trend_data.reset_index().melt(
+        id_vars="Date",
+        var_name="Assignment", 
+        value_name="Average Score"
+    ).dropna()
+    
+    trend_fig = px.line(
+        trend_data,
+        x="Date",
+        y="Average Score",
+        color="Assignment",
+        markers=True,
+        title=f"Average {assignment} Score by Date"
+    )
+    return trend_fig
 
