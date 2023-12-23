@@ -264,34 +264,6 @@ def create_sei_comment_fig(sei_comments: pd.DataFrame) -> plotly.graph_objs.Figu
   )
   return sei_comment_fig
 
-def create_time_fig(assignment_survey_data: pd.DataFrame, col: str):
-  """
-  Creates a figure of the average and median time spent
-  on each assignment.
-  """
-  to_plot = assignment_survey_data \
-    .drop_duplicates(subset=[col]) \
-    .dropna(subset=[col]) \
-    .sort_values(by=col)
-  to_plot = to_plot.melt(
-    id_vars=[item for item in to_plot.columns if item not in [avg_time, median_time]], 
-    var_name="Metric", 
-    value_name="Time (hours)"
-  )
-  time_fig = px.bar(
-    to_plot, 
-    x=col, 
-    y="Time (hours)", 
-    color="Metric", 
-    text_auto=".2s", 
-    barmode='group',
-    title="Average and Median Assignment Time",
-    error_y=std_time,
-    hover_data=[review_count]
-  )
-  time_fig.update_traces(textfont_size=12, textangle=0, textposition="inside", insidetextanchor="start", cliponaxis=False)
-  return time_fig
-
 def create_rubric_scores_fig(assignment_survey_data):
   rubric_scores = assignment_survey_data.groupby(project_review_col)[rubric_heading].agg(["mean", "count"])
   rubric_scores_fig = px.bar(
@@ -520,7 +492,7 @@ def create_assignment_survey_tab() -> dcc.Tab:
         said, I am finding that students spend multiple hours a week on each written assignment.
         '''
       ),
-      dcc.Graph(figure=homework_time_fig),
+      dcc.Graph(id="homework-time"),
       html.H3(children='Emotional Experience with Assignments'),
       html.P(children=
         '''
@@ -781,8 +753,6 @@ assignment_survey_data[during_emotions_column] = assignment_survey_data[during_e
 assignment_survey_data[post_emotions_column] = assignment_survey_data[post_emotions_column].astype(str).apply(lambda x: x.split(";"))
 
 # Generate assignment survey figures
-project_time_fig = create_time_fig(assignment_survey_data, col=project_review_col)
-homework_time_fig = create_time_fig(assignment_survey_data, col=homework_review_col)
 rubric_scores_fig = create_rubric_scores_fig(assignment_survey_data)
 assignment_survey_data[rubric_heading] = assignment_survey_data[rubric_heading].map(satisfaction_mapping)
 rubric_fig = create_rubric_overview_fig(assignment_survey_data)
