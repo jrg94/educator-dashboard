@@ -736,21 +736,7 @@ assignment_survey_data[median_time] = assignment_survey_data.groupby(project_rev
 assignment_survey_data[review_count] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.count())
 assignment_survey_data[std_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.std())
 
-# Compute homework statistics
-homework_time_mean = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.mean())
-homework_time_median = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.median())
-homework_time_count = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.count())
-homework_time_std = assignment_survey_data.groupby(homework_review_col)[time_col].transform(lambda x: x.std())
 
-# Update project statistics column with homework statistics data
-assignment_survey_data[avg_time] = assignment_survey_data[avg_time].combine_first(homework_time_mean)
-assignment_survey_data[median_time] = assignment_survey_data[median_time].combine_first(homework_time_median)
-assignment_survey_data[review_count] = assignment_survey_data[review_count].combine_first(homework_time_count)
-assignment_survey_data[std_time] = assignment_survey_data[std_time].combine_first(homework_time_std)
-
-assignment_survey_data[pre_emotions_column] = assignment_survey_data[pre_emotions_column].astype(str).apply(lambda x: x.split(";"))
-assignment_survey_data[during_emotions_column] = assignment_survey_data[during_emotions_column].astype(str).apply(lambda x: x.split(";"))
-assignment_survey_data[post_emotions_column] = assignment_survey_data[post_emotions_column].astype(str).apply(lambda x: x.split(";"))
 
 # Generate assignment survey figures
 rubric_scores_fig = create_rubric_scores_fig(assignment_survey_data)

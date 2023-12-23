@@ -12,11 +12,12 @@ review_count = "Number of Reviews"
 std_time = "Standard Deviation (hours)"
 assignment_type = "Are you reviewing a project or a homework assignment?"
 satisfaction_mapping = {
-  1: 'Very Dissatisfied', 
-  2: 'Dissatisfied', 
-  3: 'Neutral', 
-  4: 'Satisfied', 
-  5: 'Very Satisfied'
+    1: 'Very Dissatisfied',
+    2: 'Dissatisfied',
+    3: 'Neutral',
+    4: 'Satisfied',
+    5: 'Very Satisfied'
 }
-likert_scale = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]
+likert_scale = ["Strongly disagree", "Disagree",
+                "Neutral", "Agree", "Strongly agree"]
 likert_scale_alt = ["Poor", "Fair", "Satisfactory", "Very good", "Excellent"]
