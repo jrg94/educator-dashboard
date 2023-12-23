@@ -9,6 +9,9 @@ import plotly.express as px
 from dash import dcc, html
 from nltk.corpus import stopwords
 
+from data import load_assignment_survey_data
+import callbacks
+
 # Constants
 rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
 project_review_col = "Which project are you reviewing (enter a # between 1 and 11)?"
@@ -508,7 +511,7 @@ def create_assignment_survey_tab() -> dcc.Tab:
         project, they will conduct roughly 44 hours of work over the course of the semester. 
         '''
       ), # TODO: use an f-string to include the min and max average here
-      dcc.Graph(figure=project_time_fig),
+      dcc.Graph(id="project-time"),
       html.H3(children='Time Spent Working on Homework Assignments'),
       html.P(children=
         '''
@@ -554,6 +557,7 @@ def create_assignment_survey_tab() -> dcc.Tab:
         """
       ),
       dcc.Graph(figure=rubric_scores_fig),
+      load_assignment_survey_data()
     ])
 
 def create_grades_tab() -> dcc.Tab:
