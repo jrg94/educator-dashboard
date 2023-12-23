@@ -252,7 +252,7 @@ def create_grades_tab() -> dcc.Tab:
             '''
         ),
         dcc.Graph(id="project-calculations"),
-        html.P(children=
+        html.P(
             '''
             While medians and averages are helpful, I also think it's useful to look at just how many students
             actually complete the projects. Or rather, what percentage of students skip out on projects, and
