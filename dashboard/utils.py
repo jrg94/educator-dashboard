@@ -219,3 +219,27 @@ def create_sei_comment_fig(sei_comments: pd.DataFrame) -> plotly.graph_objs.Figu
         title="Top 25 Most Common Words in SEI Comments"
     )
     return sei_comment_fig
+
+
+def create_course_eval_fig(course_eval_data, question, axes_labels):
+    colors = dict(zip(axes_labels, satisfaction_colors.values()))
+    question_data = course_eval_data.melt(
+        id_vars=[item for item in course_eval_data.columns if question not in item],
+        var_name="Question",
+        value_name="Response"
+    )
+    question_data = question_data[question_data["Response"].notna()]
+    question_fig = px.histogram(
+        question_data, 
+        x="Response", 
+        color="Response", 
+        facet_col="Question", 
+        facet_col_wrap=2, 
+        category_orders=dict(Response=axes_labels),
+        text_auto=True,
+        title=f"{question} by Subquestion".title(),
+        color_discrete_map=colors
+    )
+    question_fig.for_each_annotation(lambda a: a.update(text=a.text[a.text.find("[")+1:a.text.find("]")]))
+    return question_fig
+

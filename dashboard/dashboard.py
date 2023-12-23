@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.express as px
 from dash import dcc, html
 from data import (load_assignment_survey_data, load_sei_comments_data,
-                  load_sei_data)
+                  load_sei_data, load_course_eval_data)
 
 # Constants
 rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
@@ -159,28 +159,6 @@ def create_assignment_fig(grade_data, assignment, total):
   )
   return assignment_calculations_fig
 
-def create_course_eval_fig(course_eval_data, question, axes_labels):
-  colors = dict(zip(axes_labels, satisfaction_colors.values()))
-  question_data = course_eval_data.melt(
-    id_vars=[item for item in course_eval_data.columns if question not in item],
-    var_name="Question",
-    value_name="Response"
-  )
-  question_data = question_data[question_data["Response"].notna()]
-  question_fig = px.histogram(
-    question_data, 
-    x="Response", 
-    color="Response", 
-    facet_col="Question", 
-    facet_col_wrap=2, 
-    category_orders=dict(Response=axes_labels),
-    text_auto=True,
-    title=f"{question} by Subquestion".title(),
-    color_discrete_map=colors
-  )
-  question_fig.for_each_annotation(lambda a: a.update(text=a.text[a.text.find("[")+1:a.text.find("]")]))
-  return question_fig
-
 def create_missing_assignment_fig(grade_data, assignment):
   missing_assignment_data = (grade_data == 0).sum() / len(grade_data) * 100
   missing_assignment_data = missing_assignment_data.reset_index()
@@ -218,81 +196,86 @@ def create_project_trend_fig(grade_data: pd.DataFrame, assignment: str):
   return trend_fig
 
 def create_sei_tab() -> dcc.Tab:
-  """
-  Creates the tab containing all of the student evaluation of instruction figures.
+    """
+    Creates the tab containing all of the student evaluation of instruction figures.
 
-  :return: the tab containing all of the student evaluation of instruction figures
-  """
-  return dcc.Tab(label="Student Evaluation of Instruction", children=[
-      html.H2(children='Student Evaluation of Instruction'),
-      dcc.Markdown(children=
-        '''
-        Each semester, the university asks students to fill out a survey about the instruction for the course.
-        These data are anonymized and provided as averages for each question. Here is the breakdown of my scores
-        against the scores for various cohorts including my department, my college, and my university. In general,
-        I outperform all three cohorts, but I'm noticing a downward trend in course organization. For context,
-        I taught CSE 1223 in the Fall of 2018 and the Spring of 2019. I've been teaching CSE 2221 ever since, with
-        a year gap for research during Autumn 2020 and Spring 2021. **TODO**: the plot should clearly show the
-        gap in teaching. 
-        '''
-      ),
-      dcc.Graph(id="sei-stats"),
-      html.P(children=
-        """
-        Also, as a qualitative researcher, I find the comments themselves to be more meaningful.
-        Therefore, here's a plot of the most frequent terms in my SEI comments. 
-        """
-      ),
-      dcc.Graph(id="sei-comments"),
-      load_sei_data(),
-      load_sei_comments_data()
-    ])
+    :return: the tab containing all of the student evaluation of instruction figures
+    """
+    return dcc.Tab(label="Student Evaluation of Instruction", children=[
+        html.H2(children='Student Evaluation of Instruction'),
+        dcc.Markdown(
+          '''
+          Each semester, the university asks students to fill out a survey about the instruction for the course.
+          These data are anonymized and provided as averages for each question. Here is the breakdown of my scores
+          against the scores for various cohorts including my department, my college, and my university. In general,
+          I outperform all three cohorts, but I'm noticing a downward trend in course organization. For context,
+          I taught CSE 1223 in the Fall of 2018 and the Spring of 2019. I've been teaching CSE 2221 ever since, with
+          a year gap for research during Autumn 2020 and Spring 2021. **TODO**: the plot should clearly show the
+          gap in teaching. 
+          '''
+        ),
+        dcc.Graph(id="sei-stats"),
+        html.P(
+          """
+          Also, as a qualitative researcher, I find the comments themselves to be more meaningful.
+          Therefore, here's a plot of the most frequent terms in my SEI comments. 
+          """
+        ),
+        dcc.Graph(id="sei-comments"),
+        load_sei_data(),
+        load_sei_comments_data()
+      ])
+
 
 def create_course_eval_tab() -> dcc.Tab:
-  return dcc.Tab(label="Course Evaluation Survey", children=[
-      html.H2(children='Course Evaluation Survey Data'),
-      dcc.Markdown(
-        '''
-        At the end of each semester, I ask students to give me feedback on the course. These data are collected
-        through a Google Form. Questions are broken down into different areas which include feedback on
-        course content, my skill and responsiveness, and the course's contribution to learning. **Note**:
-        future work is being done to ensure the following plots feature review counts as seen in the assignment
-        survey data. 
-        '''
-      ),
-      html.H3(children='Course Content'),
-      html.P(children=
-        '''
-        One way the course was evaluated was by asking students to rate their satisfaction with the course content.
-        In short, there are four questions that I ask that cover topics that range from learning objectives to
-        organization. Generally, the students that choose to fill out the course survey seem to be satisfied with 
-        the course content. For example, at this time, there have been no "strongly disagree" responses. 
-        '''
-      ),
-      dcc.Graph(figure=course_content_fig),
-      html.H3(children='Skill and Responsiveness of the Instructor'),
-      html.P(children=
-        '''
-        Another way the course was evaluated was by asking students to rate their satisfaction with the instructor, me.
-        This time around, I ask six questions which range from satisfaction with time usage to satisfaction
-        with grading. Again, students are generally happy with my instruction. In fact, they're often more happy
-        with my instruction than the course content itself. 
-        '''
-      ),
-      dcc.Graph(figure=skill_and_responsiveness_fig),
-      html.H3(children='Contribution to Learning'),
-      dcc.Markdown(
-        '''
-        Yet another way the course was evaluated was by asking students how much they felt the course contributed to 
-        their learning. In this section of the survey, I ask students four questions that attempt to chart how much
-        students felt they learned over the course of the semester. In general, students believe they learned a great
-        deal, with most students reporting only a fair amount of knowledge coming into the course and a very good
-        amount of knowledge at the end of the course. **TODO**: I should add a plot showing the scores for all four
-        questions with an additional plot showing the trajectory of learning over the semester.
-        '''
-      ),
-      dcc.Graph(figure=contribution_to_learning_fig),
-    ])
+    return dcc.Tab(
+        label="Course Evaluation Survey",
+        children=[
+            html.H2('Course Evaluation Survey Data'),
+            dcc.Markdown(
+                '''
+                At the end of each semester, I ask students to give me feedback on the course. These data are collected
+                through a Google Form. Questions are broken down into different areas which include feedback on
+                course content, my skill and responsiveness, and the course's contribution to learning. **Note**:
+                future work is being done to ensure the following plots feature review counts as seen in the assignment
+                survey data. 
+                '''
+            ),
+            html.H3('Course Content'),
+            html.P(
+                '''
+                One way the course was evaluated was by asking students to rate their satisfaction with the course content.
+                In short, there are four questions that I ask that cover topics that range from learning objectives to
+                organization. Generally, the students that choose to fill out the course survey seem to be satisfied with 
+                the course content. For example, at this time, there have been no "strongly disagree" responses. 
+                '''
+            ),
+            dcc.Graph(id="course-content"),
+            html.H3('Skill and Responsiveness of the Instructor'),
+            html.P(
+                '''
+                Another way the course was evaluated was by asking students to rate their satisfaction with the instructor, me.
+                This time around, I ask six questions which range from satisfaction with time usage to satisfaction
+                with grading. Again, students are generally happy with my instruction. In fact, they're often more happy
+                with my instruction than the course content itself. 
+                '''
+            ),
+            dcc.Graph(id="skill-and-responsiveness"),
+            html.H3('Contribution to Learning'),
+            dcc.Markdown(
+                '''
+                Yet another way the course was evaluated was by asking students how much they felt the course contributed to 
+                their learning. In this section of the survey, I ask students four questions that attempt to chart how much
+                students felt they learned over the course of the semester. In general, students believe they learned a great
+                deal, with most students reporting only a fair amount of knowledge coming into the course and a very good
+                amount of knowledge at the end of the course. **TODO**: I should add a plot showing the scores for all four
+                questions with an additional plot showing the trajectory of learning over the semester.
+                '''
+            ),
+            dcc.Graph(id="contribution-to-learning"),
+            load_course_eval_data()
+        ]
+    )
 
 def create_assignment_survey_tab() -> dcc.Tab:
   return dcc.Tab(label="Assignment Survey [CSE 2221]", children=[
@@ -566,12 +549,6 @@ assignment_survey_data[avg_time] = assignment_survey_data.groupby(project_review
 assignment_survey_data[median_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.median())
 assignment_survey_data[review_count] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.count())
 assignment_survey_data[std_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.std())
-
-# Course evaluation figures
-course_eval_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/eval-data.csv')
-course_content_fig = create_course_eval_fig(course_eval_data, "Course content", likert_scale)
-skill_and_responsiveness_fig = create_course_eval_fig(course_eval_data, "Skill and responsiveness", likert_scale)
-contribution_to_learning_fig = create_course_eval_fig(course_eval_data, "Contribution to learning", likert_scale_alt)
 
 # Assignment figures
 grade_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/cse-2221-grades.csv')

@@ -1,6 +1,10 @@
 import pandas as pd
+from constants import (avg_time, class_review_col, during_emotions_column,
+                       homework_review_col, median_time, post_emotions_column,
+                       pre_emotions_column, project_review_col, review_count,
+                       rubric_heading, satisfaction_mapping, std_time,
+                       time_col, likert_scale, likert_scale_alt)
 from dash import dcc
-from constants import avg_time, median_time, review_count, std_time, class_review_col, project_review_col, time_col, homework_review_col, pre_emotions_column, during_emotions_column, post_emotions_column, rubric_heading, satisfaction_mapping
 
 
 def load_assignment_survey_data() -> dcc.Store:
@@ -45,3 +49,8 @@ def load_sei_data() -> dcc.Store:
 def load_sei_comments_data() -> dcc.Store:
     sei_comment_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-comments.csv')
     return dcc.Store(id="sei-comments-data", data=sei_comment_data.to_json())
+
+def load_course_eval_data() -> dcc.Store:
+    course_eval_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/eval-data.csv')
+    course_eval_data["Timestamp"] = pd.to_datetime(course_eval_data["Timestamp"], format="%Y/%m/%d %I:%M:%S %p %Z")
+    return dcc.Store(id="course-eval-data", data=course_eval_data.to_json())    

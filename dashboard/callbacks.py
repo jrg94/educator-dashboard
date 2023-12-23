@@ -1,11 +1,11 @@
 from io import StringIO
 
 import pandas as pd
-from constants import homework_review_col, project_review_col
+from constants import homework_review_col, project_review_col, likert_scale, likert_scale_alt
 from dash import Input, Output, callback
 from utils import (create_emotions_fig, create_rubric_breakdown_fig,
                    create_rubric_overview_fig, create_rubric_scores_fig,
-                   create_sei_fig, create_time_fig, create_sei_comment_fig)
+                   create_sei_fig, create_time_fig, create_sei_comment_fig, create_course_eval_fig)
 
 
 @callback(
@@ -78,3 +78,30 @@ def render_sei_stats_figure(jsonified_data):
 def render_sei_comments_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_sei_comment_fig(df)
+
+
+@callback(
+    Output("course-content", "figure"),
+    Input("course-eval-data", "data")
+)
+def render_course_content_figure(jsonified_data):
+    df = pd.read_json(StringIO(jsonified_data))
+    return create_course_eval_fig(df, "Course content", likert_scale)
+
+
+@callback(
+    Output("skill-and-responsiveness", "figure"),
+    Input("course-eval-data", "data")
+)
+def render_skill_and_responsiveness_figure(jsonified_data):
+    df = pd.read_json(StringIO(jsonified_data))
+    return create_course_eval_fig(df, "Skill and responsiveness", likert_scale)
+
+
+@callback(
+    Output("contribution-to-learning", "figure"),
+    Input("course-eval-data", "data")
+)
+def render_course_content_figure(jsonified_data):
+    df = pd.read_json(StringIO(jsonified_data))
+    return create_course_eval_fig(df, "Contribution to learning", likert_scale_alt)
