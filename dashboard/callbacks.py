@@ -5,12 +5,12 @@ from constants import homework_review_col, project_review_col, likert_scale, lik
 from dash import Input, Output, callback
 from utils import (create_emotions_fig, create_rubric_breakdown_fig,
                    create_rubric_overview_fig, create_rubric_scores_fig,
-                   create_sei_fig, create_time_fig, create_sei_comment_fig, create_course_eval_fig, create_grades_fig, create_correlation_fig, create_assignment_fig, create_missing_assignment_fig, create_project_trend_fig)
+                   create_sei_fig, create_time_fig, create_sei_comment_fig, create_course_eval_fig, create_grades_fig, create_correlation_fig, create_assignment_fig, create_missing_assignment_fig, create_project_trend_fig, create_value_fig)
 
 
 @callback(
     Output("project-time", "figure"),
-    Input("assignment-survey", "data")
+    Input("assignment-survey-data", "data")
 )
 def render_project_time_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -19,7 +19,7 @@ def render_project_time_figure(jsonified_data):
 
 @callback(
     Output("homework-time", "figure"),
-    Input("assignment-survey", "data")
+    Input("assignment-survey-data", "data")
 )
 def render_homework_time_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -28,7 +28,7 @@ def render_homework_time_figure(jsonified_data):
 
 @callback(
     Output("emotions", "figure"),
-    Input("assignment-survey", "data")
+    Input("assignment-survey-data", "data")
 )
 def render_emotions_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -37,7 +37,7 @@ def render_emotions_figure(jsonified_data):
 
 @callback(
     Output("rubric-overview", "figure"),
-    Input("assignment-survey", "data")
+    Input("assignment-survey-data", "data")
 )
 def render_rubric_overview_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -46,7 +46,7 @@ def render_rubric_overview_figure(jsonified_data):
 
 @callback(
     Output("rubric-breakdown", "figure"),
-    Input("assignment-survey", "data")
+    Input("assignment-survey-data", "data")
 )
 def render_rubric_breakdown_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -55,7 +55,7 @@ def render_rubric_breakdown_figure(jsonified_data):
 
 @callback(
     Output("rubric-scores", "figure"),
-    Input("assignment-survey", "data")
+    Input("assignment-survey-data", "data")
 )
 def render_rubric_scores_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -213,3 +213,15 @@ def render_grade_overview_data(jsonified_data):
 def render_grade_overview_data(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_project_trend_fig(df, "Exam")
+
+
+@callback(
+    Output("project-points-per-hour", "figure"),
+    Output("project-hours-per-point", "figure"),
+    Input("grade-data", "data"),
+    Input("assignment-survey-data", "data")
+)
+def render_points_per_hour_graph(jsonified_grade_data, jsonified_assignment_survey_data):
+    grade_data = pd.read_json(StringIO(jsonified_grade_data))
+    assignment_survey_data = pd.read_json(StringIO(jsonified_assignment_survey_data))
+    return create_value_fig(grade_data, assignment_survey_data, "Project", 10)

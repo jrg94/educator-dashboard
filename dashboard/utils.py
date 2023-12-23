@@ -6,7 +6,7 @@ import plotly
 import nltk
 from nltk.corpus import stopwords
 
-from constants import std_time, review_count, avg_time, median_time, pre_emotions_column, during_emotions_column, post_emotions_column, project_review_col, rubric_heading, satisfaction_mapping, satisfaction_colors
+from constants import std_time, review_count, avg_time, median_time, pre_emotions_column, during_emotions_column, post_emotions_column, project_review_col, rubric_heading, satisfaction_mapping, satisfaction_colors, assignment_type
 
 
 def _semester_order(data: pd.DataFrame):
