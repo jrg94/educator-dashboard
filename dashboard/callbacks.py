@@ -5,7 +5,7 @@ from constants import homework_review_col, project_review_col, likert_scale, lik
 from dash import Input, Output, callback
 from utils import (create_emotions_fig, create_rubric_breakdown_fig,
                    create_rubric_overview_fig, create_rubric_scores_fig,
-                   create_sei_fig, create_time_fig, create_sei_comment_fig, create_course_eval_fig, create_grades_fig)
+                   create_sei_fig, create_time_fig, create_sei_comment_fig, create_course_eval_fig, create_grades_fig, create_correlation_fig)
 
 
 @callback(
@@ -114,3 +114,21 @@ def render_course_content_figure(jsonified_data):
 def render_grade_overview_data(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_grades_fig(df)
+
+
+@callback(
+    Output("grade-vs-attendance", "figure"),
+    Input("grade-data", "data")
+)
+def render_grade_overview_data(jsonified_data):
+    df = pd.read_json(StringIO(jsonified_data))
+    return create_correlation_fig(df, "TH-Attendance", "Top Hat Attendance")
+
+
+@callback(
+    Output("grade-vs-participation", "figure"),
+    Input("grade-data", "data")
+)
+def render_grade_overview_data(jsonified_data):
+    df = pd.read_json(StringIO(jsonified_data))
+    return create_correlation_fig(df, "Top Hat", "Top Hat Participation")

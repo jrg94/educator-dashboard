@@ -235,7 +235,7 @@ def create_grades_tab() -> dcc.Tab:
             strong correlation with grades. 
             '''
         ),
-        dcc.Graph(id="grades-vs-participation"),
+        dcc.Graph(id="grade-vs-participation"),
         html.P(
             '''
             At the time of writing, the correlation was slightly stronger with an R-squared of .28. Though,
