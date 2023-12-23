@@ -17,6 +17,7 @@ def create_time_fig(assignment_survey_data: pd.DataFrame, col: str):
     var_name="Metric", 
     value_name="Time (hours)"
   )
+  print(to_plot)
   time_fig = px.bar(
     to_plot, 
     x=col, 
