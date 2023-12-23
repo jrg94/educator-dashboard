@@ -37,3 +37,7 @@ def load_assignment_survey_data() -> dcc.Store:
     assignment_survey_data[post_emotions_column] = assignment_survey_data[post_emotions_column].astype(str).apply(lambda x: x.split(";"))    
     
     return dcc.Store(id="assignment-survey", data=assignment_survey_data.to_json())
+
+def load_sei_data() -> dcc.Store:
+    sei_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-data.csv')
+    return dcc.Store(id="sei-data", data=sei_data.to_json())

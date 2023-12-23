@@ -1,7 +1,27 @@
 import pandas as pd
 import plotly.express as px
+import plotly
 
 from constants import std_time, review_count, avg_time, median_time, pre_emotions_column, during_emotions_column, post_emotions_column, project_review_col, rubric_heading, satisfaction_mapping, satisfaction_colors
+
+
+def _semester_order(data: pd.DataFrame):
+    """
+    Returns a sorted list of semesters in the expected order 
+    (e.g., [Autumn 2018, Spring 2019, Autumn 2019, Spring 2020, ...]).
+    
+    It works by parsing the semester string and calculating a
+    sortable numeric value where the year is used unless
+    the semester is in the autumn, in which case the year + .5
+    is used. 
+
+    :param data: the DataFrame provided by the user with an assumed Semester column
+    :return: a list of sorted semesters
+    """
+    return sorted(
+        data["Semester"].unique(), 
+        key=lambda x: int(x.split()[1]) + (.5 if x.split()[0] == "Autumn" else 0)
+    )
 
 
 def create_time_fig(assignment_survey_data: pd.DataFrame, col: str):
@@ -136,3 +156,32 @@ def create_rubric_scores_fig(assignment_survey_data: pd.DataFrame):
         color_continuous_scale=px.colors.sequential.Viridis
     )
     return rubric_scores_fig
+
+def create_sei_fig(sei_data: pd.DataFrame) -> plotly.graph_objs.Figure:
+    """
+    Creates an SEI data figure showing all of the SEI
+    data results over "time", where time is a categorical
+    semester string that is added to the SEI data. There
+    are four lines in this plot to compare against my
+    SEI data (i.e., the department, college, and university).
+    
+    :param sei_data: the raw SEI data as a dataframe
+    :return: the resulting SEI figure
+    """
+    sei_data["Semester"] = sei_data["Season"] + " " + sei_data["Year"].astype(str)
+    sei_fig = px.line(
+        sei_data, 
+        x="Semester", 
+        y="Mean", 
+        color="Group", 
+        facet_col="Question", 
+        facet_col_wrap=2, 
+        markers=True, 
+        title="Student Evaluation of Instruction Trends by Cohort",
+        category_orders={
+        "Semester": _semester_order(sei_data)
+        },
+        hover_data=["Course"]
+    )
+    sei_fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
+    return sei_fig

@@ -5,7 +5,7 @@ from constants import homework_review_col, project_review_col
 from dash import Input, Output, callback
 from utils import (create_emotions_fig, create_rubric_breakdown_fig,
                    create_rubric_overview_fig, create_rubric_scores_fig,
-                   create_time_fig)
+                   create_sei_fig, create_time_fig)
 
 
 @callback(
@@ -60,3 +60,12 @@ def render_rubric_breakdown_figure(jsonified_data):
 def render_rubric_scores_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_rubric_scores_fig(df)
+
+
+@callback(
+    Output("sei-stats", "figure"),
+    Input("sei-data", "data")
+)
+def render_sei_stats_figure(jsonified_data):
+    df = pd.read_json(StringIO(jsonified_data))
+    return create_sei_fig(df)
