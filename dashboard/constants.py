@@ -1,3 +1,5 @@
+import plotly.express as px
+
 rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
 project_review_col = "Which project are you reviewing (enter a # between 1 and 11)?"
 homework_review_col = "Which homework assignment are you reviewing (enter a # between 1 and 37)?"
@@ -18,6 +20,18 @@ satisfaction_mapping = {
     4: 'Satisfied',
     5: 'Very Satisfied'
 }
-likert_scale = ["Strongly disagree", "Disagree",
-                "Neutral", "Agree", "Strongly agree"]
-likert_scale_alt = ["Poor", "Fair", "Satisfactory", "Very good", "Excellent"]
+likert_scale = [
+    "Strongly disagree", 
+    "Disagree",
+    "Neutral", 
+    "Agree",
+    "Strongly agree"
+]
+likert_scale_alt = [
+    "Poor", 
+    "Fair", 
+    "Satisfactory", 
+    "Very good", 
+    "Excellent"
+]
+satisfaction_colors = dict(zip(satisfaction_mapping.values(), px.colors.sequential.Viridis[::2]))

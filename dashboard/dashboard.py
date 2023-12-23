@@ -264,67 +264,6 @@ def create_sei_comment_fig(sei_comments: pd.DataFrame) -> plotly.graph_objs.Figu
   )
   return sei_comment_fig
 
-def create_rubric_scores_fig(assignment_survey_data):
-  rubric_scores = assignment_survey_data.groupby(project_review_col)[rubric_heading].agg(["mean", "count"])
-  rubric_scores_fig = px.bar(
-    rubric_scores, 
-    y="mean", 
-    color="count",
-    labels={
-      "mean": "Average Score (out of 5)",
-      "count": "Number of Reviews"
-    },
-    text_auto=".3s",
-    title="Project Rubric Satisfaction Scores",
-    color_continuous_scale=px.colors.sequential.Viridis
-  )
-  return rubric_scores_fig
-
-def create_rubric_overview_fig(assignment_survey_data):
-  data = assignment_survey_data[rubric_heading].value_counts()
-  rubric_fig = px.bar(
-    data, 
-    color=data.index,
-    category_orders={"index": list(satisfaction_mapping.values())},
-    labels={
-      "index": 'Response',
-      "value": 'Number of Reviews',
-      "color": 'Response'
-    },
-    text_auto=True,
-    title="Project Rubric Satisfaction Overview",
-    color_discrete_map=satisfaction_colors
-  )
-  return rubric_fig
-
-def create_rubric_breakdown_fig(assignment_survey_data):
-  data = assignment_survey_data.groupby(project_review_col)[rubric_heading] \
-    .value_counts() \
-    .unstack() \
-    .reset_index() \
-    .melt(id_vars=[project_review_col], var_name="Response", value_name="Number of Reviews") \
-    .dropna() 
-  rubric_breakdown_fig = px.bar(
-    data, 
-    x="Response",
-    y="Number of Reviews",
-    color="Response",
-    facet_col=project_review_col, 
-    facet_col_wrap=2,
-    text_auto=True,
-    category_orders={
-      rubric_heading: list(satisfaction_mapping.values()),
-      project_review_col: list(range(1, 12))
-    },
-    labels={
-      rubric_heading: 'Response',
-    },
-    title="Rubric Satisfaction By Project",
-    color_discrete_map=satisfaction_colors
-  )
-  rubric_breakdown_fig.for_each_annotation(lambda a: a.update(text=f'Project {a.text.split("=")[-1]}'))
-  return rubric_breakdown_fig
-
 def create_missing_assignment_fig(grade_data, assignment):
   missing_assignment_data = (grade_data == 0).sum() / len(grade_data) * 100
   missing_assignment_data = missing_assignment_data.reset_index()
@@ -485,13 +424,13 @@ def create_assignment_survey_tab() -> dcc.Tab:
         it appears students are fairly satisfied with the rubrics.
         """
       ),
-      dcc.Graph(figure=rubric_fig),
+      dcc.Graph(id="rubric-overview"),
       dcc.Markdown(
         """
         In case you were curious about each project individually, here is a breakdown of the rubric scores for each project. 
         """
       ),
-      dcc.Graph(id="bad-scale-2", figure=rubric_breakdown_fig),
+      dcc.Graph(id="rubric-breakdown"),
       dcc.Markdown(
         """
         And just to be perfectly explicit, I also computed average scores for each rubric over all 11 projects.
@@ -501,7 +440,7 @@ def create_assignment_survey_tab() -> dcc.Tab:
         with the project 3 rubric. 
         """
       ),
-      dcc.Graph(figure=rubric_scores_fig),
+      dcc.Graph(id="rubric-scores"),
       load_assignment_survey_data()
     ])
 
@@ -708,14 +647,6 @@ assignment_survey_data[avg_time] = assignment_survey_data.groupby(project_review
 assignment_survey_data[median_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.median())
 assignment_survey_data[review_count] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.count())
 assignment_survey_data[std_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.std())
-
-
-
-# Generate assignment survey figures
-rubric_scores_fig = create_rubric_scores_fig(assignment_survey_data)
-assignment_survey_data[rubric_heading] = assignment_survey_data[rubric_heading].map(satisfaction_mapping)
-rubric_fig = create_rubric_overview_fig(assignment_survey_data)
-rubric_breakdown_fig = create_rubric_breakdown_fig(assignment_survey_data)
 
 # SEI figures
 sei_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-data.csv')

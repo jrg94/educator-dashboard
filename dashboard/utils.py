@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.express as px
 
-from constants import std_time, review_count, avg_time, median_time, pre_emotions_column, during_emotions_column, post_emotions_column
+from constants import std_time, review_count, avg_time, median_time, pre_emotions_column, during_emotions_column, post_emotions_column, project_review_col, rubric_heading, satisfaction_mapping, satisfaction_colors
 
 
 def create_time_fig(assignment_survey_data: pd.DataFrame, col: str):
@@ -73,3 +73,69 @@ def create_emotions_fig(assignment_survey_data: pd.DataFrame, col: str):
     )
     emotions_figure.for_each_annotation(lambda a: a.update(text=f'Homework {a.text.split("=")[-1].split(".")[0]}'))
     return emotions_figure
+
+
+def create_rubric_overview_fig(assignment_survey_data: pd.DataFrame):
+    assignment_survey_data[rubric_heading] = assignment_survey_data[rubric_heading].map(satisfaction_mapping)
+    data = assignment_survey_data[rubric_heading].value_counts()
+    rubric_fig = px.bar(
+        data, 
+        color=data.index,
+        category_orders={"index": list(satisfaction_mapping.values())},
+        labels={
+        "index": 'Response',
+        "value": 'Number of Reviews',
+        "color": 'Response'
+        },
+        text_auto=True,
+        title="Project Rubric Satisfaction Overview",
+        color_discrete_map=satisfaction_colors
+    )
+    return rubric_fig
+
+
+def create_rubric_breakdown_fig(assignment_survey_data: pd.DataFrame):
+    assignment_survey_data[rubric_heading] = assignment_survey_data[rubric_heading].map(satisfaction_mapping)
+    data = assignment_survey_data.groupby(project_review_col)[rubric_heading] \
+        .value_counts() \
+        .unstack() \
+        .reset_index() \
+        .melt(id_vars=[project_review_col], var_name="Response", value_name="Number of Reviews") \
+        .dropna() 
+    rubric_breakdown_fig = px.bar(
+        data, 
+        x="Response",
+        y="Number of Reviews",
+        color="Response",
+        facet_col=project_review_col, 
+        facet_col_wrap=2,
+        text_auto=True,
+        category_orders={
+        rubric_heading: list(satisfaction_mapping.values()),
+        project_review_col: list(range(1, 12))
+        },
+        labels={
+        rubric_heading: 'Response',
+        },
+        title="Rubric Satisfaction By Project",
+        color_discrete_map=satisfaction_colors
+    )
+    rubric_breakdown_fig.for_each_annotation(lambda a: a.update(text=f'Project {a.text.split("=")[-1]}'))
+    return rubric_breakdown_fig
+
+
+def create_rubric_scores_fig(assignment_survey_data):
+    rubric_scores = assignment_survey_data.groupby(project_review_col)[rubric_heading].agg(["mean", "count"])
+    rubric_scores_fig = px.bar(
+        rubric_scores, 
+        y="mean", 
+        color="count",
+        labels={
+        "mean": "Average Score (out of 5)",
+        "count": "Number of Reviews"
+        },
+        text_auto=".3s",
+        title="Project Rubric Satisfaction Scores",
+        color_continuous_scale=px.colors.sequential.Viridis
+    )
+    return rubric_scores_fig

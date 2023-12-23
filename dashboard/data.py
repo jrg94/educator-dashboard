@@ -1,6 +1,6 @@
 import pandas as pd
 from dash import dcc
-from constants import avg_time, median_time, review_count, std_time, class_review_col, project_review_col, time_col, homework_review_col, pre_emotions_column, during_emotions_column, post_emotions_column
+from constants import avg_time, median_time, review_count, std_time, class_review_col, project_review_col, time_col, homework_review_col, pre_emotions_column, during_emotions_column, post_emotions_column, rubric_heading, satisfaction_mapping
 
 
 def load_assignment_survey_data() -> dcc.Store:
@@ -34,5 +34,6 @@ def load_assignment_survey_data() -> dcc.Store:
     # Clean emotions columns
     assignment_survey_data[pre_emotions_column] = assignment_survey_data[pre_emotions_column].astype(str).apply(lambda x: x.split(";"))
     assignment_survey_data[during_emotions_column] = assignment_survey_data[during_emotions_column].astype(str).apply(lambda x: x.split(";"))
-    assignment_survey_data[post_emotions_column] = assignment_survey_data[post_emotions_column].astype(str).apply(lambda x: x.split(";"))
+    assignment_survey_data[post_emotions_column] = assignment_survey_data[post_emotions_column].astype(str).apply(lambda x: x.split(";"))    
+    
     return dcc.Store(id="assignment-survey", data=assignment_survey_data.to_json())
