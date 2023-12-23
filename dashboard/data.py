@@ -38,6 +38,10 @@ def load_assignment_survey_data() -> dcc.Store:
     
     return dcc.Store(id="assignment-survey", data=assignment_survey_data.to_json())
 
-def load_sei_data() -> dcc.Store:
+def load_sei_data() -> dcc.Store: 
     sei_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-data.csv')
     return dcc.Store(id="sei-data", data=sei_data.to_json())
+
+def load_sei_comments_data() -> dcc.Store:
+    sei_comment_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-comments.csv')
+    return dcc.Store(id="sei-comments-data", data=sei_comment_data.to_json())

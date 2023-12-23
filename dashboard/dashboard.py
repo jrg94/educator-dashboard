@@ -1,16 +1,10 @@
-import string
-from collections import Counter
-
+import callbacks
 import dash
-import nltk
 import pandas as pd
-import plotly
 import plotly.express as px
 from dash import dcc, html
-from nltk.corpus import stopwords
-
-from data import load_assignment_survey_data, load_sei_data
-import callbacks
+from data import (load_assignment_survey_data, load_sei_comments_data,
+                  load_sei_data)
 
 # Constants
 rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
@@ -187,36 +181,6 @@ def create_course_eval_fig(course_eval_data, question, axes_labels):
   question_fig.for_each_annotation(lambda a: a.update(text=a.text[a.text.find("[")+1:a.text.find("]")]))
   return question_fig
 
-def create_sei_comment_fig(sei_comments: pd.DataFrame) -> plotly.graph_objs.Figure:
-  # Installs needed corpus data
-  nltk.download('punkt')
-  nltk.download('stopwords')
-  
-  # Tokenizes the comments and computes their counts
-  results = Counter()
-  sei_comments["Comment"].str.lower().apply(nltk.word_tokenize).apply(results.update)
-  word_counts = pd.DataFrame.from_dict(results, orient="index").reset_index()
-  word_counts = word_counts.rename(columns={"index": "Word", 0:"Count"}) 
-  
-  # Removes stop words and punctuation from the totals
-  stop = stopwords.words("english")
-  word_counts = word_counts[~word_counts["Word"].isin(stop)]
-  word_counts = word_counts[~word_counts["Word"].isin(list(string.punctuation))]
-  word_counts = word_counts[~word_counts["Word"].str.contains("'")]
-  
-  # Sorts and pulls the top 25 words
-  word_counts = word_counts.sort_values(by="Count", ascending=False)
-  word_counts = word_counts.head(25)
-  word_counts = word_counts.sort_values(by="Count")
-  sei_comment_fig = px.bar(
-    word_counts,
-    x="Count",
-    y="Word",
-    height=1000,
-    title="Top 25 Most Common Words in SEI Comments"
-  )
-  return sei_comment_fig
-
 def create_missing_assignment_fig(grade_data, assignment):
   missing_assignment_data = (grade_data == 0).sum() / len(grade_data) * 100
   missing_assignment_data = missing_assignment_data.reset_index()
@@ -279,8 +243,9 @@ def create_sei_tab() -> dcc.Tab:
         Therefore, here's a plot of the most frequent terms in my SEI comments. 
         """
       ),
-      dcc.Graph(figure=sei_comment_fig),
-      load_sei_data()
+      dcc.Graph(id="sei-comments"),
+      load_sei_data(),
+      load_sei_comments_data()
     ])
 
 def create_course_eval_tab() -> dcc.Tab:
@@ -601,10 +566,6 @@ assignment_survey_data[avg_time] = assignment_survey_data.groupby(project_review
 assignment_survey_data[median_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.median())
 assignment_survey_data[review_count] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.count())
 assignment_survey_data[std_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.std())
-
-# SEI figures
-sei_comment_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-comments.csv')
-sei_comment_fig = create_sei_comment_fig(sei_comment_data)
 
 # Course evaluation figures
 course_eval_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/eval-data.csv')
