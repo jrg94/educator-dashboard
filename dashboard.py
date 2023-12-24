@@ -1,6 +1,6 @@
 import callbacks
 import dash
-from dashboard.layouts import tab_layout
+from core.layouts import tab_layout
 
 
 app = dash.Dash(
