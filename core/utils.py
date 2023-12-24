@@ -6,11 +6,13 @@ import pandas as pd
 import plotly
 import plotly.express as px
 import plotly.graph_objects as go
-from constants import (assignment_type, avg_time, during_emotions_column,
-                       median_time, post_emotions_column, pre_emotions_column,
-                       project_review_col, review_count, rubric_heading,
-                       satisfaction_colors, satisfaction_mapping, std_time)
 from nltk.corpus import stopwords
+
+from core.constants import (assignment_type, avg_time, during_emotions_column,
+                            median_time, post_emotions_column,
+                            pre_emotions_column, project_review_col,
+                            review_count, rubric_heading, satisfaction_colors,
+                            satisfaction_mapping, std_time)
 
 
 def _semester_order(data: pd.DataFrame):

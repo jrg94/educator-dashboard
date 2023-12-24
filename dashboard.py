@@ -1,7 +1,8 @@
-import callbacks
 import dash
-from core.layouts import tab_layout
+from dash import Input, Output, callback
 
+import core.callbacks
+from core.layouts import common_layout, tab_layout
 
 app = dash.Dash(
     __name__,
@@ -15,7 +16,17 @@ app = dash.Dash(
 )
 server = app.server
 
-app.layout = tab_layout
+app.layout = common_layout
+
+@callback(
+    Output("page-content", "children"),
+    Input("url", "pathname")
+)
+def display_page(pathname):
+    if pathname == "/":
+        return tab_layout
+    else:
+        return "404"
 
 if __name__ == '__main__':
     app.run_server(debug=True)
