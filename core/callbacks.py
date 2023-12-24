@@ -1,16 +1,17 @@
 from io import StringIO
 
 import pandas as pd
-from constants import (homework_review_col, likert_scale, likert_scale_alt,
-                       project_review_col)
 from dash import Input, Output, callback
-from utils import (create_assignment_fig, create_correlation_fig,
-                   create_course_eval_fig, create_emotions_fig,
-                   create_grades_fig, create_missing_assignment_fig,
-                   create_project_trend_fig, create_rubric_breakdown_fig,
-                   create_rubric_overview_fig, create_rubric_scores_fig,
-                   create_sei_comment_fig, create_sei_fig, create_time_fig,
-                   create_value_fig)
+
+from core.constants import (homework_review_col, likert_scale,
+                            likert_scale_alt, project_review_col)
+from core.utils import (create_assignment_fig, create_correlation_fig,
+                        create_course_eval_fig, create_emotions_fig,
+                        create_grades_fig, create_missing_assignment_fig,
+                        create_project_trend_fig, create_rubric_breakdown_fig,
+                        create_rubric_overview_fig, create_rubric_scores_fig,
+                        create_sei_comment_fig, create_sei_fig,
+                        create_time_fig, create_value_fig)
 
 
 @callback(

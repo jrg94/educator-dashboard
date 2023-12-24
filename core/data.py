@@ -1,9 +1,11 @@
 import pandas as pd
-from constants import (avg_time, class_review_col, during_emotions_column,
-                       homework_review_col, median_time, post_emotions_column,
-                       pre_emotions_column, project_review_col, review_count,
-                       std_time, time_col)
 from dash import dcc
+
+from core.constants import (avg_time, class_review_col, during_emotions_column,
+                            homework_review_col, median_time,
+                            post_emotions_column, pre_emotions_column,
+                            project_review_col, review_count, std_time,
+                            time_col)
 
 
 def load_assignment_survey_data() -> dcc.Store:

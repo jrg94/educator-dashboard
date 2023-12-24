@@ -1,7 +1,7 @@
-from dash import html, dcc
-from data import (load_assignment_survey_data, load_grade_data, load_sei_comments_data,
-                  load_sei_data, load_course_eval_data)
+from dash import dcc, html
 
+from core.data import (load_assignment_survey_data, load_course_eval_data,
+                       load_grade_data, load_sei_comments_data, load_sei_data)
 
 tab_layout = html.Div(
     children=[
