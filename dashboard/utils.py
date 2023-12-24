@@ -197,8 +197,15 @@ def create_sei_fig(sei_data: pd.DataFrame) -> plotly.graph_objs.Figure:
 
 def create_sei_comment_fig(sei_comments: pd.DataFrame) -> plotly.graph_objs.Figure:
     # Installs needed corpus data
-    nltk.download('punkt')
-    nltk.download('stopwords')
+    try:
+        nltk.data.find('tokenizers/punkt')
+    except:
+        nltk.download('punkt')
+        
+    try:
+        nltk.data.find('stopwords')
+    except:
+        nltk.download('stopwords')
     
     # Tokenizes the comments and computes their counts
     results = Counter()
