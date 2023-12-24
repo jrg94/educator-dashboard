@@ -2,15 +2,16 @@ import pandas as pd
 from constants import (avg_time, class_review_col, during_emotions_column,
                        homework_review_col, median_time, post_emotions_column,
                        pre_emotions_column, project_review_col, review_count,
-                       rubric_heading, satisfaction_mapping, std_time,
-                       time_col, likert_scale, likert_scale_alt)
+                       std_time, time_col)
 from dash import dcc
 
 
 def load_assignment_survey_data() -> dcc.Store:
     """
-    Loads the assignment survey data from a CSV, cleans it, and computes
+    Loads the assignment survey data from the remote CSV, cleans it, and computes
     some important metrics. The result is returned as a dcc.Store object.
+    
+    :return: the assignment survey data as a store
     """
     # Load and clean data
     assignment_survey_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/assignment-survey-data.csv')
@@ -42,18 +43,27 @@ def load_assignment_survey_data() -> dcc.Store:
     
     return dcc.Store(id="assignment-survey-data", data=assignment_survey_data.to_json())
 
-def load_sei_data() -> dcc.Store: 
+
+def load_sei_data() -> dcc.Store:
+    """
+    Loads the SEI data from the remote CSV. The result is returned as a dcc.Store object.
+    
+    :return: the SEI data as a store
+    """
     sei_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-data.csv')
     return dcc.Store(id="sei-data", data=sei_data.to_json())
+
 
 def load_sei_comments_data() -> dcc.Store:
     sei_comment_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-comments.csv')
     return dcc.Store(id="sei-comments-data", data=sei_comment_data.to_json())
 
+
 def load_course_eval_data() -> dcc.Store:
     course_eval_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/eval-data.csv')
     course_eval_data["Timestamp"] = pd.to_datetime(course_eval_data["Timestamp"], format="%Y/%m/%d %I:%M:%S %p %Z")
     return dcc.Store(id="course-eval-data", data=course_eval_data.to_json())    
+
 
 def load_grade_data() -> dcc.Store:
     grade_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/cse-2221-grades.csv')
