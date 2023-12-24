@@ -1,12 +1,15 @@
-from collections import Counter
 import string
-import pandas as pd
-import plotly.express as px
-import plotly
-import nltk
-from nltk.corpus import stopwords
+from collections import Counter
 
-from constants import std_time, review_count, avg_time, median_time, pre_emotions_column, during_emotions_column, post_emotions_column, project_review_col, rubric_heading, satisfaction_mapping, satisfaction_colors, assignment_type
+import nltk
+import pandas as pd
+import plotly
+import plotly.express as px
+from constants import (assignment_type, avg_time, during_emotions_column,
+                       median_time, post_emotions_column, pre_emotions_column,
+                       project_review_col, review_count, rubric_heading,
+                       satisfaction_colors, satisfaction_mapping, std_time)
+from nltk.corpus import stopwords
 
 
 def _semester_order(data: pd.DataFrame):
@@ -64,6 +67,7 @@ def create_time_fig(assignment_survey_data: pd.DataFrame, col: str):
         cliponaxis=False
     )
     return time_fig
+
 
 def create_emotions_fig(assignment_survey_data: pd.DataFrame, col: str):
     """
@@ -262,8 +266,8 @@ def create_value_fig(grade_data, assignment_survey_data, assignment, max_score):
         x="index",
         y="Points per Hour",
         labels={
-        "index": "Project Name",
-        "Points per Hour": "Median Points/Hour of Work",
+            "index": "Project Name",
+            "Points per Hour": "Median Points/Hour of Work",
         },
         text_auto=".2s",
         title="Expected Value Per Project"
@@ -274,8 +278,8 @@ def create_value_fig(grade_data, assignment_survey_data, assignment, max_score):
         x="index",
         y="Minutes per Point",
         labels={
-        "index": "Project Name",
-        "Minutes per Point": "Median Minutes of Work/Point",
+            "index": "Project Name",
+            "Minutes per Point": "Median Minutes of Work/Point",
         },
         text_auto=".2s",
         title="Expected Effort Per Project"
@@ -340,12 +344,12 @@ def create_grades_fig(grade_data):
     grade_fig = px.bar(
         assignment_calculations,
         labels={
-        "index": "Assignment Type",
-        "value": "Grade/100%",
-        "variable": "Metric",
-        "mean": "Average",
-        "median": "Median",
-        "count": "Estimated Count"
+            "index": "Assignment Type",
+            "value": "Grade/100%",
+            "variable": "Metric",
+            "mean": "Average",
+            "median": "Median",
+            "count": "Estimated Count"
         },
         barmode="group",
         title=f"Overview of Course Grades by Type",
@@ -361,11 +365,11 @@ def create_assignment_fig(grade_data, assignment, total):
     assignment_calculations_fig = px.bar(
         assignment_calculations,
         labels={
-        "index": "Project Name",
-        "value": f"Grade/{total}",
-        "variable": "Metric",
-        "mean": "Average",
-        "median": "Median"
+            "index": "Project Name",
+            "value": f"Grade/{total}",
+            "variable": "Metric",
+            "mean": "Average",
+            "median": "Median"
         },
         barmode='group',
         text_auto=".2s",
