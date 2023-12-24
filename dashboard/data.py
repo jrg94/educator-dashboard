@@ -9,7 +9,7 @@ from dash import dcc
 def load_assignment_survey_data() -> dcc.Store:
     """
     Loads the assignment survey data from the remote CSV, cleans it, and computes
-    some important metrics. The result is returned as a dcc.Store object.
+    some important metrics. The result is returned as a store object.
     
     :return: the assignment survey data as a store
     """
@@ -46,7 +46,7 @@ def load_assignment_survey_data() -> dcc.Store:
 
 def load_sei_data() -> dcc.Store:
     """
-    Loads the SEI data from the remote CSV. The result is returned as a dcc.Store object.
+    Loads the SEI data from the remote CSV. The result is returned as a store object.
     
     :return: the SEI data as a store
     """
@@ -55,17 +55,32 @@ def load_sei_data() -> dcc.Store:
 
 
 def load_sei_comments_data() -> dcc.Store:
+    """
+    Loads the SEI comment data from the remote CSV. The result is returned as a store object.
+    
+    :return: the SEI comment data as a store 
+    """
     sei_comment_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-comments.csv')
     return dcc.Store(id="sei-comments-data", data=sei_comment_data.to_json())
 
 
 def load_course_eval_data() -> dcc.Store:
+    """
+    Loads the course evaluation data from the remote CSV. The result is returned as a store object.
+    
+    :return: the SEI course evaluation data as a store
+    """
     course_eval_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/eval-data.csv')
     course_eval_data["Timestamp"] = pd.to_datetime(course_eval_data["Timestamp"], format="%Y/%m/%d %I:%M:%S %p %Z")
     return dcc.Store(id="course-eval-data", data=course_eval_data.to_json())    
 
 
 def load_grade_data() -> dcc.Store:
+    """
+    Loads the grade data from the remote CSV. The result is returned as a store object. 
+    
+    :return: the grade data as a store
+    """
     grade_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/cse-2221-grades.csv')
     grade_data["Date"] = pd.to_datetime(grade_data["Date"])
     return dcc.Store(id="grade-data", data=grade_data.to_json())
