@@ -48,6 +48,18 @@ files = [
 ]
 
 [[package]]
+name = "callbacks"
+version = "0.3.0"
+description = "Simple callbacks using decorators"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "callbacks-0.3.0-py2-none-any.whl", hash = "sha256:44a3d8d8686e78ab223042910945bd1dffc25d668adb0b76c115f3bf3fdf0a1b"},
+    {file = "callbacks-0.3.0.tar.gz", hash = "sha256:16248b2570394e06cc9c78f586f2582c36a677163e80f8735625d3904b3a5b65"},
+]
+
+[[package]]
 name = "certifi"
 version = "2023.11.17"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -1279,4 +1291,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "e6f4c147282387889e5643bcdc1777999ea6db262d24aecd05847cab13e54afc"
+content-hash = "f70c9b61e58e9c5cf436a61122adb4a2d26804c2512c2f7947763259a8d34834"
