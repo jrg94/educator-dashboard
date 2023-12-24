@@ -36,7 +36,7 @@ tab_layout = html.Div(
                         Therefore, here's a plot of the most frequent terms in my SEI comments. 
                         """
                     ),
-                    dcc.Graph(id="sei-comments"),
+                    dcc.Graph(id="sei-comments", className="max-window"),
                     load_sei_data(),
                     load_sei_comments_data()
                 ]
@@ -127,10 +127,11 @@ tab_layout = html.Div(
                         before, during, and after assignments. For this, I borrowed the emotions from
                         Control Value Theory and asked students retrospectively about their emotions. As it
                         is early in the semester, I decided to only plot the homework assignments. Later,
-                        I'll update this dashboard to include the project assignments as well. 
+                        I'll update this dashboard to include the project assignments as well. TODO: make this
+                        plot just a single image with a dropdown.
                         '''
                     ),
-                    dcc.Graph(id="emotions"),
+                    dcc.Graph(id="emotions", className="max-window"),
                     html.H3('Rubric Evaluation'),
                     html.P(
                         """
@@ -145,7 +146,7 @@ tab_layout = html.Div(
                         In case you were curious about each project individually, here is a breakdown of the rubric scores for each project. 
                         """
                     ),
-                    dcc.Graph(id="rubric-breakdown"),
+                    dcc.Graph(id="rubric-breakdown", className="max-window"),
                     dcc.Markdown(
                         """
                         And just to be perfectly explicit, I also computed average scores for each rubric over all 11 projects.
