@@ -5,6 +5,7 @@ import nltk
 import pandas as pd
 import plotly
 import plotly.express as px
+import plotly.graph_objects as go
 from constants import (assignment_type, avg_time, during_emotions_column,
                        median_time, post_emotions_column, pre_emotions_column,
                        project_review_col, review_count, rubric_heading,
@@ -48,6 +49,7 @@ def create_time_fig(assignment_survey_data: pd.DataFrame, col: str):
         var_name="Metric",
         value_name="Time (hours)"
     )
+    time_fig = go.Figure(layout=dict(template='plotly'))
     time_fig = px.bar(
         to_plot,
         x=col,
@@ -203,7 +205,7 @@ def create_sei_comment_fig(sei_comments: pd.DataFrame) -> plotly.graph_objs.Figu
         nltk.download('punkt')
         
     try:
-        nltk.data.find('stopwords')
+        nltk.data.find('corpora/stopwords')
     except:
         nltk.download('stopwords')
     
@@ -241,6 +243,7 @@ def create_course_eval_fig(course_eval_data, question, axes_labels):
         value_name="Response"
     )
     question_data = question_data[question_data["Response"].notna()]
+    question_fig = go.Figure(layout=dict(template='plotly'))
     question_fig = px.histogram(
         question_data, 
         x="Response", 
@@ -268,6 +271,9 @@ def create_value_fig(grade_data, assignment_survey_data, assignment, max_score):
     assignment_aggregate_data["Points per Hour"] = assignment_aggregate_data[f"Median Score/{max_score}"] / assignment_aggregate_data["Median Time (hours)"]
     assignment_aggregate_data["Minutes per Point"] = assignment_aggregate_data["Median Time (hours)"] / assignment_aggregate_data[f"Median Score/{max_score}"] * 60
     assignment_aggregate_data = assignment_aggregate_data.reset_index()
+    
+    # Generate figures
+    assignment_expected_time_fig = go.Figure(layout=dict(template='plotly'))
     assignment_expected_time_fig = px.bar(
         assignment_aggregate_data,
         x="index",
@@ -348,6 +354,7 @@ def create_grades_fig(grade_data):
         "Homeworks": row_count * 22,
         "Participation": row_count
     }
+    grade_fig = go.Figure(layout=dict(template='plotly'))
     grade_fig = px.bar(
         assignment_calculations,
         labels={
