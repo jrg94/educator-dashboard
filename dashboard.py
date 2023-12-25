@@ -2,7 +2,7 @@ import dash
 from dash import Input, Output, callback
 
 import core.callbacks
-from core.layouts import common_layout, tab_layout
+from core.layouts import common_layout, tab_layout, patch_notes_layout
 
 app = dash.Dash(
     __name__,
@@ -25,6 +25,8 @@ app.layout = common_layout
 def display_page(pathname):
     if pathname == "/":
         return tab_layout
+    elif pathname == "/patch-notes":
+        return patch_notes_layout
     else:
         return "404"
 

@@ -9,14 +9,22 @@ import dash_bootstrap_components as dbc
 
 common_layout = dbc.Container([
     dcc.Location(id="url", refresh=False),
+    html.H1('The Educator Dashboard'),
+    html.Hr(),
     html.Div(id="page-content")
 ])
 
 
+
+patch_notes_layout = html.Div(
+    children=[
+        dcc.Markdown(open("data/patch-notes.md", mode="r").read())
+    ]
+)
+
+
 tab_layout = html.Div(
     children=[
-        html.H1('The Educator Dashboard'),
-        html.Hr(),
         html.P(
             '''
             A collection of visualizations related to courses taught by myself, Jeremy Grifski, with the first two tabs dedicated
