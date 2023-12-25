@@ -1,8 +1,8 @@
 To help track my progress as an educator and provide some
 level of transparency around the development of my courses,
-I've created this patch notes file. The patches are listed
+I've created this patch notes document. The patches are listed
 by the most recent semester first and include any changes,
-updates, additions, or removals I made during that semester.
+updates, additions, or removals I made during or for that semester.
 
 ## Spring 2024
 
