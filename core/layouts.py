@@ -9,8 +9,15 @@ import dash_bootstrap_components as dbc
 
 common_layout = dbc.Container([
     dcc.Location(id="url", refresh=False),
-    html.H1('The Educator Dashboard'),
-    html.Hr(),
+    dbc.NavbarSimple(
+        children=[
+            dbc.NavItem(dbc.NavLink("Patch Notes", href="/patch-notes"))
+        ],
+        brand="The Educator Dashboard",
+        brand_href="/",
+        color="primary",
+        dark=True,
+    ),
     html.Div(id="page-content")
 ])
 

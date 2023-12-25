@@ -1,8 +1,9 @@
 import dash
+import dash_bootstrap_components as dbc
 from dash import Input, Output, callback
 
 import core.callbacks
-from core.layouts import common_layout, tab_layout, patch_notes_layout
+from core.layouts import common_layout, patch_notes_layout, tab_layout
 
 app = dash.Dash(
     __name__,
@@ -12,7 +13,11 @@ app = dash.Dash(
             "data-domain": "educator.jeremygrifski.com"
         }
     ],
-    title="The Educator Dashboard"
+    external_stylesheets=[
+        dbc.themes.BOOTSTRAP
+    ],
+    title="The Educator Dashboard",
+    suppress_callback_exceptions=True
 )
 server = app.server
 

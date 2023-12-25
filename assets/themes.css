@@ -33,3 +33,7 @@ span {
 .max-window {
     height: 85vh;
 }
+
+.bg-primary {
+    background-color: #c90229 !important;
+}
