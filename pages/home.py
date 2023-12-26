@@ -1,7 +1,11 @@
 import dash
 from dash import html
 
-dash.register_page(__name__, path='/')
+dash.register_page(
+    __name__, 
+    path='/',
+    title="Grifski Educator Dashboard"
+)
 
 layout = html.Div([
     html.H1('This is our Home page'),

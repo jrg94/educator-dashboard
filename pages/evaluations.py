@@ -10,7 +10,12 @@ from core.data import (load_course_eval_data, load_sei_comments_data,
 from core.utils import (create_course_eval_fig, create_sei_comment_fig,
                         create_sei_fig)
 
-dash.register_page(__name__, path='/evaluations')
+dash.register_page(
+    __name__, 
+    path='/evaluations',
+    name="Evaluations",
+    title="Grifski Education Dashboard: Evaluations"
+)
 
 
 @callback(

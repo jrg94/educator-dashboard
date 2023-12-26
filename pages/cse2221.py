@@ -13,7 +13,12 @@ from core.utils import (create_assignment_fig, create_correlation_fig,
                         create_rubric_overview_fig, create_rubric_scores_fig,
                         create_time_fig, create_value_fig)
 
-dash.register_page(__name__, path='/cse2221')
+dash.register_page(
+    __name__, 
+    path='/cse2221',
+    name="CSE2221",
+    title="Grifski Education Dashboard: CSE 2221"
+)
 
 
 @callback(
