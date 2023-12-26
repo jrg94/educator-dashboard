@@ -14,7 +14,7 @@ from core.utils import (create_assignment_fig, create_correlation_fig,
                         create_time_fig, create_value_fig)
 
 dash.register_page(
-    __name__, 
+    __name__,
     path='/cse2221',
     name="CSE2221",
     title="Grifski Education Dashboard: CSE 2221"
@@ -366,7 +366,7 @@ layout = html.Div([
         with the project 3 rubric. 
         """
     ),
-    dcc.Graph(id="rubric-scores"),    
+    dcc.Graph(id="rubric-scores"),
     html.H2(children='Exams'),
     dcc.Markdown(
         '''
@@ -433,7 +433,7 @@ layout = html.Div([
         positively correlate with grades. I wouldn't go as far as to say that attending class will
         improve your grades, but I would be lying if I didn't tell you that it could. 
         '''
-    ),    
+    ),
     load_grade_data(),
     load_assignment_survey_data()
 ])
