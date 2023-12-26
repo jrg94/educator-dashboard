@@ -48,7 +48,7 @@ updates, additions, or removals I made during or for that semester.
 ## Year 2 of Teaching
 
 - Started teaching software 1 (CSE 2221)
-- Taught 2 sectiona of 40 students of software 1
+- Taught 2 sections of 40 students of software 1
 
 **Spring 2020**
 
