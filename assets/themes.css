@@ -1,4 +1,4 @@
-p {
+p, li {
     font-size: 1.25em;    
     color: #363940;
     font-family: "Libre Franklin", Arial, Helvetica, sans-serif;
@@ -7,7 +7,7 @@ p {
 
 .dash-graph {
     padding: 10px;
-    border: 3px solid #77aaff;
+    border: 3px solid #c90229;
     border-radius: 25px;
     margin: 20px 0px;
 }
@@ -17,19 +17,22 @@ body {
     margin: 0 auto;  
 }
 
-h1, h2, h3, h4, h5, h6, span {
+h1, h2, h3, h4, h5, h6 {
     clear: both;
     font-family: "Roboto Condensed", "Arial Narrow", Arial, Helvetica, sans-serif;
     letter-spacing: 1px;
     font-weight: 800;
-    margin-bottom: 2px;
-    color: #c90229;
-}
-
-span {
-    font-size: 1.1em;
+    border-bottom: 3px solid #c90229;
+    padding-top: 1rem;
 }
 
 .max-window {
     height: 85vh;
 }
+
+.nav-pills {
+    --bs-nav-pills-border-radius: var(--bs-border-radius);
+    --bs-nav-pills-link-active-color: #fff;
+    --bs-nav-pills-link-active-bg: #c90229;
+}
+

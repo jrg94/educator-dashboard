@@ -1,8 +1,9 @@
 import dash
-from dash import Input, Output, callback
+import dash_bootstrap_components as dbc
+from dash import html
 
-import core.callbacks
-from core.layouts import common_layout, tab_layout
+TRC_LOGO = "https://avatars.githubusercontent.com/u/42280715"
+
 
 app = dash.Dash(
     __name__,
@@ -12,21 +13,59 @@ app = dash.Dash(
             "data-domain": "educator.jeremygrifski.com"
         }
     ],
-    title="The Educator Dashboard"
+    external_stylesheets=[
+        dbc.themes.BOOTSTRAP
+    ],
+    title="The Educator Dashboard",
+    use_pages=True,
+    suppress_callback_exceptions=True
 )
 server = app.server
 
-app.layout = common_layout
 
-@callback(
-    Output("page-content", "children"),
-    Input("url", "pathname")
+logo = html.A(
+    dbc.Row(
+        [
+            dbc.Col(html.Img(src=TRC_LOGO, height="30px")),
+            dbc.Col(
+                dbc.NavbarBrand("The Educator Dashboard", className="ms-2")
+            ),
+        ],
+        align="center",
+        className="g-0",
+    ),
+    href="https://jeremygrifski.com",
+    style={"textDecoration": "none"},
 )
-def display_page(pathname):
-    if pathname == "/":
-        return tab_layout
-    else:
-        return "404"
+
+
+navlinks = dbc.Nav(
+    [
+        dbc.NavLink(
+            html.Div(page["name"]),
+            href=page["path"],
+            active="exact",
+        )
+        for page in dash.page_registry.values()
+    ],
+    pills=True,
+)
+
+
+app.layout = dbc.Container([
+    dbc.Navbar(
+        dbc.Container(
+            [
+                logo,
+                navlinks
+            ]
+        ),
+        color="dark",
+        dark="True"
+    ),
+    dash.page_container
+])
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)

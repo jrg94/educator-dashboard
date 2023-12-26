@@ -231,7 +231,6 @@ def create_sei_comment_fig(sei_comments: pd.DataFrame) -> plotly.graph_objs.Figu
         word_counts,
         x="Count",
         y="Word",
-        height=1000,
         title="Top 25 Most Common Words in SEI Comments"
     )
     return sei_comment_fig
