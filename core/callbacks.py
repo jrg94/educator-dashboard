@@ -69,24 +69,6 @@ def render_rubric_scores_figure(jsonified_data):
 
 
 @callback(
-    Output("sei-stats", "figure"),
-    Input("sei-data", "data")
-)
-def render_sei_stats_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_sei_fig(df)
-
-
-@callback(
-    Output("sei-comments", "figure"),
-    Input("sei-comments-data", "data")
-)
-def render_sei_comments_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_sei_comment_fig(df)
-
-
-@callback(
     Output("course-content", "figure"),
     Input("course-eval-data", "data")
 )
