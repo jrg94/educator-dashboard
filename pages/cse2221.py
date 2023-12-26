@@ -66,9 +66,14 @@ def render_rubric_scores_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_rubric_scores_fig(df)
 
-
+# TODO: mix in the assignment survey with the grades rather than having them separate
 layout = html.Div([
     html.H1("CSE 2221: Software 1"),
+    html.P(
+        """
+        Software 1 (CSE 2221) is a course I started teaching in late 2019. In a short summary,...
+        """
+    ),
     html.H2("Assignment Survey Data"),
     html.P(
         '''
