@@ -28,7 +28,7 @@ logo = html.A(
         [
             dbc.Col(html.Img(src=TRC_LOGO, height="30px")),
             dbc.Col(
-                dbc.NavbarBrand("Grifski Educator Dashboard", className="ms-2")
+                dbc.NavbarBrand("The Educator Dashboard", className="ms-2")
             ),
         ],
         align="center",

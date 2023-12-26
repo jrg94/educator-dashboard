@@ -14,7 +14,7 @@ dash.register_page(
     __name__, 
     path='/evaluations',
     name="Evaluations",
-    title="Grifski Education Dashboard: Evaluations"
+    title="The Education Dashboard: Evaluations"
 )
 
 

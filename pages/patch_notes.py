@@ -5,7 +5,7 @@ dash.register_page(
     __name__, 
     path='/patch-notes',
     name="Patch Notes",
-    title="Grifski Educator Dashboard: Patch Notes"
+    title="The Educator Dashboard: Patch Notes"
 )
 
 

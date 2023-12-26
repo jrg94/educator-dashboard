@@ -17,7 +17,7 @@ dash.register_page(
     __name__,
     path='/cse2221',
     name="CSE2221",
-    title="Grifski Education Dashboard: CSE 2221"
+    title="The Education Dashboard: CSE 2221"
 )
 
 

@@ -4,7 +4,7 @@ from dash import html
 dash.register_page(
     __name__, 
     path='/',
-    title="Grifski Educator Dashboard"
+    title="The Educator Dashboard"
 )
 
 layout = html.Div([
