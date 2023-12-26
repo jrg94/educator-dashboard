@@ -7,20 +7,60 @@ from core.data import (load_assignment_survey_data, load_course_eval_data,
 import dash_bootstrap_components as dbc
 
 
+TRC_LOGO = "https://avatars.githubusercontent.com/u/42280715"
+
+
+logo = html.A(
+    dbc.Row(
+        [
+            dbc.Col(html.Img(src=TRC_LOGO, height="30px")),
+            dbc.Col(
+                dbc.NavbarBrand("Grifski Educator Dashboard", className="ms-2")
+            ),
+        ],
+        align="center",
+        className="g-0",
+    ),
+    href="https://jeremygrifski.com",
+    style={"textDecoration": "none"},
+)
+
+
+navlinks = dbc.Nav(
+    [
+        dbc.NavItem(
+            dbc.NavLink(
+                [html.Div("Home")],
+                href="/",
+                active="exact",
+            )
+        ),
+        dbc.NavItem(
+            dbc.NavLink(
+                [html.Div("Patch Notes")],
+                href="/patch-notes",
+                active="exact",
+            )
+        )
+    ],
+    pills=True,
+)
+
+
 common_layout = dbc.Container([
     dcc.Location(id="url", refresh=False),
-    dbc.NavbarSimple(
-        children=[
-            dbc.NavItem(dbc.NavLink("Patch Notes", href="/patch-notes"))
-        ],
-        brand="The Educator Dashboard",
-        brand_href="/",
-        color="primary",
-        dark=True,
+    dbc.Navbar(
+        dbc.Container(
+            [
+                logo,
+                navlinks
+            ]
+        ),
+        color="dark",
+        dark="True"
     ),
     html.Div(id="page-content")
 ])
-
 
 
 patch_notes_layout = html.Div(

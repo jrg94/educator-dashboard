@@ -34,6 +34,8 @@ span {
     height: 85vh;
 }
 
-.bg-primary {
-    background-color: #c90229 !important;
+.nav-pills {
+    --bs-nav-pills-border-radius: var(--bs-border-radius);
+    --bs-nav-pills-link-active-color: #fff;
+    --bs-nav-pills-link-active-bg: #c90229;
 }
