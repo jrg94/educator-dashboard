@@ -9,8 +9,6 @@ dash.register_page(
 )
 
 
-layout = html.Div(
-    children=[
-        dcc.Markdown(open("data/patch-notes.md", mode="r").read())
-    ]
-)
+layout = html.Div([
+    dcc.Markdown(open("data/patch-notes.md", mode="r").read())
+])
