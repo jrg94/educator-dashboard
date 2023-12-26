@@ -216,7 +216,7 @@ layout = html.Div([
         overview of what that has historically looked like in terms of average and median grades.
         """
     ),
-    dcc.Graph(id="grade-overview"),    
+    dcc.Graph(id="grade-overview"),
     html.P(
         """
         On the remainder of this page, we'll look at each type of assessment in more detail. 
@@ -340,10 +340,37 @@ layout = html.Div([
         '''
     ),
     dcc.Graph(id="project-hours-per-point"),
+    html.P(
+        """
+        Perhaps unrelated to all of the wonderful plots above, I also provide students with rubrics for
+        each of their projects. I don't recall exactly when I introduced the concept of rubrics, but it had
+        to have been during my second semester of teaching CSE2221 at the earliest. Out of curiosity, I started
+        asking my students about how much they liked and used the rubrics. This resulted in a variety of
+        great plots. The following plot gives the overview of the rubric ratings over all 11 projects. In general,
+        it appears students are fairly satisfied with the rubrics.
+        """
+    ),
+    dcc.Graph(id="rubric-overview"),
+    dcc.Markdown(
+        """
+        In case you were curious about each project individually, here is a breakdown of the rubric scores for each project. 
+        """
+    ),
+    dcc.Graph(id="rubric-breakdown", className="max-window"),
+    dcc.Markdown(
+        """
+        And just to be perfectly explicit, I also computed average scores for each rubric over all 11 projects.
+        These scores are computed by assigning Very Dissatisfied (1) to the lowest score and Very Satisfied (5) 
+        to the highest score. Then, we sum up all the values and divide by the number of reviews. As a result,
+        you can see that students are generally the least satisfied with the project 1 rubric and most satisfied
+        with the project 3 rubric. 
+        """
+    ),
+    dcc.Graph(id="rubric-scores"),    
     html.H2(children='Exams'),
     dcc.Markdown(
         '''
-        At this point, all that is left to discuss are the exams. In total, there are three exams, and the
+        At this point, the last remaining assessments are the exams. In total, there are three exams, and the
         general trend tends to be that scores go down as the semester progresses. I haven't quite figured
         out why. 
         '''
@@ -371,85 +398,42 @@ layout = html.Div([
         '''
     ),
     dcc.Graph(id="exam-trends"),
-    html.H2("Assignment Survey Data"),
-    html.P(
-        '''
-        Throughout the course, I asked students to give me feedback on the assignments. Originally,
-        these data were collected through a Carmen quiz (Autumn 2021). However, I found the Carmen 
-        quiz format to be limiting, so later iterations of the quiz were administered through a Google
-        Form. 
-        '''
-    ),
-    html.H3('Rubric Evaluation'),
+    html.H2("Participation and Attendance"),
     html.P(
         """
-        Another question I asked my students was about their satisfaction with the rubrics for each project. 
-        The following plot gives the overview of the rubric ratings over all 11 projects. In general,
-        it appears students are fairly satisfied with the rubrics.
+        In general, attendance is not something I really care about. That said, it is something I track
+        as a proxy for participation when needed. It's also a useful tool for making sure students aren't
+        missing. Finally, I just like having the data because we can do more interesting analyses. 
+        For example, I was interested in seeing how the grades correlated with attendance as follows:
         """
-    ),
-    dcc.Graph(id="rubric-overview"),
-    dcc.Markdown(
-        """
-        In case you were curious about each project individually, here is a breakdown of the rubric scores for each project. 
-        """
-    ),
-    dcc.Graph(id="rubric-breakdown", className="max-window"),
-    dcc.Markdown(
-        """
-        And just to be perfectly explicit, I also computed average scores for each rubric over all 11 projects.
-        These scores are computed by assigning Very Dissatisfied (1) to the lowest score and Very Satisfied (5) 
-        to the highest score. Then, we sum up all the values and divide by the number of reviews. As a result,
-        you can see that students are generally the least satisfied with the project 1 rubric and most satisfied
-        with the project 3 rubric. 
-        """
-    ),
-    dcc.Graph(id="rubric-scores"),
-    html.H2('Grades [CSE 2221]'),
-    html.P(
-        '''
-        Each semester, I collect grades for 22 homework assignments, 11 projects, and 3 exams. Fortunately,
-        I have graders for the bulk of it, but I grade the exams. Recently, I decided to put together a
-        database of grades which allows me to generate some pretty interesting plots.
-        '''
-    ),
-    html.P(
-        '''
-                        Given the history of grades in this course, I was also interested in seeing how the grades correlated
-                        with attendance, which is a metric I track through Top Hat. For context, I don't force attendance,
-                        so the attendance scores are more of a lower bound.
-                        '''
     ),
     dcc.Graph(id="grade-vs-attendance"),
     html.P(
         '''
-                        At the moment, the connection between attendance and grades is pretty small. At the time of writing,
-                        the correlation between attendance and grades gives an R-squared of .23. I can't remember off the top of my
-                        head if this is a considered a good correlation in education, but online reasources point to this being
-                        a weak to moderate positive correlation. 
-                        '''
+        At the moment, the connection between attendance and grades is pretty small. At the time of writing,
+        the correlation between attendance and grades gives an R-squared of .23. I can't remember off the top of my
+        head if this is a considered a good correlation in education, but online reasources point to this being
+        a weak to moderate positive correlation. 
+        '''
     ),
     html.P(
         '''
-                        Now, in order to get an attendance grade, you just enter some digits at the start of class.
-                        Participation, on the other hand, is calculated based on interaction with Top Hat. Some semesters,
-                        I've used Top Hat more often than others. For example, I used to use it quite a bit for Peer
-                        Instruction. These days, I don't use it as much, but it may be useful in demonstrating a
-                        strong correlation with grades. 
-                        '''
+        Now, in order to get an attendance grade, you just enter some digits into TopHat at the start of class.
+        Participation, on the other hand, is calculated based on interaction with Top Hat. Some semesters,
+        I've used Top Hat more often than others. For example, I used to use it quite a bit for Peer
+        Instruction. These days, I don't use it as much, but it may be useful in demonstrating a
+        strong correlation with grades. 
+        '''
     ),
     dcc.Graph(id="grade-vs-participation"),
     html.P(
         '''
-                        At the time of writing, the correlation was slightly stronger with an R-squared of .28. Though,
-                        there's not much to brag about there. That said, it does imply that attendance and participation
-                        positively correlate with grades. I wouldn't go as far as to say that attending class will
-                        improve your grades, but I would be lying if I didn't tell you that it could. 
-                        '''
+        At the time of writing, the correlation was slightly stronger with an R-squared of .28. Though,
+        there's not much to brag about there. That said, it does imply that attendance and participation
+        positively correlate with grades. I wouldn't go as far as to say that attending class will
+        improve your grades, but I would be lying if I didn't tell you that it could. 
+        '''
     ),    
-    
-    
-    
     load_grade_data(),
     load_assignment_survey_data()
 ])
