@@ -60,7 +60,7 @@ def render_course_content_figure(jsonified_data):
 
 layout = html.Div(
     [
-        html.H1("Student Evaluations"),
+        html.H1("Teaching Evaluations"),
         html.P(
             """
             As an educator, I spend a lot of time assessing my students. Periodically, I give my students a chance
@@ -79,7 +79,7 @@ layout = html.Div(
             gap in teaching. 
             """
         ),
-        dcc.Graph(id="sei-stats"),
+        dcc.Graph(id="sei-stats", className="max-window"),
         html.P(
             """
             Also, as a qualitative researcher, I find the comments themselves to be more meaningful.
@@ -116,7 +116,7 @@ layout = html.Div(
             with my instruction than the course content itself. 
             '''
         ),
-        dcc.Graph(id="skill-and-responsiveness"),
+        dcc.Graph(id="skill-and-responsiveness", className="max-window"),
         html.H3('Contribution to Learning'),
         dcc.Markdown(
             '''
