@@ -6,40 +6,64 @@ I've created this patch notes document. The patches are listed
 by the most recent semester first and include any changes,
 updates, additions, or removals I made during or for that semester.
 
-## Spring 2024
+## Year 5 of Teaching
 
+- Became a lecturer at OSU
+- Started teaching software 2 (CSE 2231)
+- Taught 6 sections of 40 students of software 2
+
+**Spring 2024**
+
+- Started tracking patch notes
 - Drafted a VSCode monorepo for software 2 to pilot during Spring 2024
 
-## Autumn 2023
+**Autumn 2023**
 
-- Started teaching software 2 (CSE 2231)
 - Created checklists for all 10 projects in software 2
 - Created rubrics for all 10 projects in software 2
 - Piloted a portfolio project in software 2 where students create their own OSU component
 
-## Spring 2023
+## Year 4 of Teaching
+
+- Taught 4 sections of 40 students of software 1
+
+**Spring 2023**
 
 - Started allowing students in software 1 to resubmit projects after making corrections
+- Created checklists for all 11 projects in software 1
 
-## Autumn 2021
+## Year 3 of Teaching
 
-- Created rubrics for all of the software 1 projects
+- Taught 2 sections of 40 students of software 1
 
-## Autumn 2020 & Spring 2021
+**Spring 2022**
 
-- Changed departments and took a year off to do graduate research
+- Created checklist for all 11 projects in software 1
 
-## Spring 2020
+**Autumn 2021**
+
+- Created rubrics for all 11 projects in software 1
+- Started creating homework solutions for software 1
+
+## Year 2 of Teaching
+
+- Started teaching software 1 (CSE 2221)
+- Taught 2 sectiona of 40 students of software 1
+
+**Spring 2020**
 
 - Held a Small Group Instructional Diagnostic (SGID) with my software 1 class
 - Completed a portion of the semester online due to COVID
 
-## Autumn 2019
+**Autumn 2019**
 
-- Started teaching software 1 (CSE 2221)
-- Administered teaching team rubrics to teaching assistants only
+- Administered grading guidelines to teaching assistants only
 
-## Autumn 2018
+## Year 1 of Teaching
 
 - Started teaching introduction to Java (CSE 1223)
+- Taught 2 sections of 40 students of introduction to Java
+
+**Autumn 2018**
+
 - Learned to always ask students to request extensions in writing
