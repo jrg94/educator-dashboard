@@ -15,23 +15,25 @@ from core.constants import (assignment_type, avg_time, during_emotions_column,
                             satisfaction_mapping, std_time, class_review_col, time_col, homework_review_col)
 
 
-def _semester_order(data: pd.DataFrame):
+def _semester_order(data: pd.DataFrame) -> list:
     """
     Returns a sorted list of semesters in the expected order 
     (e.g., [Autumn 2018, Spring 2019, Autumn 2019, Spring 2020, ...]).
     
-    It works by parsing the semester string and calculating a
-    sortable numeric value where the year is used unless
-    the semester is in the autumn, in which case the year + .5
-    is used. 
+    It works by generating a multindex from all combinations
+    of years and seasons. Then, we convert that multindex to
+    a list of pairs, sort these pairs first by season then by
+    year, and finally concatenate them together. 
 
     :param data: the DataFrame provided by the user with an assumed Semester column
     :return: a list of sorted semesters
     """
-    return sorted(
-        data["Semester"].unique(), 
-        key=lambda x: int(x.split()[1]) + (.5 if x.split()[0] == "Autumn" else 0)
-    )
+    semesters = list(pd.MultiIndex.from_product(data.set_index(["Year", "Season"]).index.levels))
+    semesters.sort(key=lambda x: x[1], reverse=True)
+    semesters.sort(key=lambda x: x[0])
+    semesters = semesters[1:]
+    semesters = [f"{item[1]} {item[0]}" for item in semesters]
+    return semesters
 
 
 def create_time_fig(assignment_survey_data: pd.DataFrame, assignment: str, course: str):
