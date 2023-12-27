@@ -79,7 +79,7 @@ def render_rubric_scores_figure(jsonified_data):
     Output("grade-overview", "figure"),
     Input("grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_grade_overview_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_grades_fig(df)
 
@@ -88,7 +88,7 @@ def render_grade_overview_data(jsonified_data):
     Output("grade-vs-attendance", "figure"),
     Input("grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_grades_vs_attendance_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_correlation_fig(df, "TH-Attendance", "Top Hat Attendance")
 
@@ -97,7 +97,7 @@ def render_grade_overview_data(jsonified_data):
     Output("grade-vs-participation", "figure"),
     Input("grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_grades_vs_participation_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_correlation_fig(df, "Top Hat", "Top Hat Participation")
 
@@ -106,7 +106,7 @@ def render_grade_overview_data(jsonified_data):
     Output("project-calculations", "figure"),
     Input("grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_project_calculations_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_assignment_fig(df, "Project", 10)
 
@@ -115,7 +115,7 @@ def render_grade_overview_data(jsonified_data):
     Output("homework-calculations", "figure"),
     Input("grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_homework_calculations_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_assignment_fig(df, "Homework", 2)
 
@@ -124,7 +124,7 @@ def render_grade_overview_data(jsonified_data):
     Output("exams-calculations", "figure"),
     Input("grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_exam_calculations_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_assignment_fig(df, "Exam", 100)
 
@@ -133,7 +133,7 @@ def render_grade_overview_data(jsonified_data):
     Output("missing-projects", "figure"),
     Input("grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_missing_projects_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_missing_assignment_fig(df, "Project")
 
@@ -142,7 +142,7 @@ def render_grade_overview_data(jsonified_data):
     Output("missing-homeworks", "figure"),
     Input("grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_missing_homeworks_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_missing_assignment_fig(df, "Homework")
 
@@ -151,7 +151,7 @@ def render_grade_overview_data(jsonified_data):
     Output("missing-exams", "figure"),
     Input("grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_missing_exams_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_missing_assignment_fig(df, "Exam")
 
@@ -160,7 +160,7 @@ def render_grade_overview_data(jsonified_data):
     Output("project-trends", "figure"),
     Input("grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_project_trends_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_project_trend_fig(df, "Project")
 
@@ -169,7 +169,7 @@ def render_grade_overview_data(jsonified_data):
     Output("homework-trends", "figure"),
     Input("grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_homework_trends_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_project_trend_fig(df, "Homework")
 
@@ -178,7 +178,7 @@ def render_grade_overview_data(jsonified_data):
     Output("exam-trends", "figure"),
     Input("grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_exam_trends_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_project_trend_fig(df, "Exam")
 
@@ -189,10 +189,9 @@ def render_grade_overview_data(jsonified_data):
     Input("grade-data", "data"),
     Input("assignment-survey-data", "data")
 )
-def render_points_per_hour_graph(jsonified_grade_data, jsonified_assignment_survey_data):
+def render_points_per_hour_figure(jsonified_grade_data, jsonified_assignment_survey_data):
     grade_data = pd.read_json(StringIO(jsonified_grade_data))
-    assignment_survey_data = pd.read_json(
-        StringIO(jsonified_assignment_survey_data))
+    assignment_survey_data = pd.read_json(StringIO(jsonified_assignment_survey_data))
     return create_value_fig(grade_data, assignment_survey_data, "Project", 10)
 
 
