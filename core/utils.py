@@ -284,6 +284,16 @@ def create_course_eval_fig(course_eval_data, question, axes_labels):
 
 
 def create_value_fig(grade_data: pd.DataFrame, assignment_survey_data: pd.DataFrame, assignment: str, max_score: int, course: str):
+    """
+    Creates some more interesting visuals of the data by comparing the time students
+    report that they spend on the assignments against their actual grades.
+
+    :param grade_data: the collection of grades for a particular course
+    :param assignment_survey_data: the collection of survey responses from students
+    :param assignment: the name of the assignment type to be visualized (e.g., Project or Homework)
+    :param max_score: the maximum score for that assignment type
+    :param course: the course this assignment originates from
+    """
     # Setup grade data
     assignment_score_data = [name for name in grade_data.columns if assignment in name]
     assignment_calculations = grade_data[assignment_score_data].agg(["mean", "median"]).T
@@ -291,18 +301,20 @@ def create_value_fig(grade_data: pd.DataFrame, assignment_survey_data: pd.DataFr
     # Filter time data
     assignment_subset = assignment_survey_data[
         (assignment_survey_data[class_review_col] == course) & 
-        (assignment_survey_data[assignment_type] == "Project")
+        (assignment_survey_data[assignment_type] == assignment)
     ].copy()
 
+    col = project_review_col if assignment == "Project" else homework_review_col
+
     # Compute project statistics
-    assignment_subset[avg_time] = assignment_subset.groupby(project_review_col)[time_col].transform(lambda x: x.mean())
-    assignment_subset[median_time] = assignment_subset.groupby(project_review_col)[time_col].transform(lambda x: x.median())
-    assignment_subset[review_count] = assignment_subset.groupby(project_review_col)[time_col].transform(lambda x: x.count())
-    assignment_subset[std_time] = assignment_subset.groupby(project_review_col)[time_col].transform(lambda x: x.std())
+    assignment_subset[avg_time] = assignment_subset.groupby(col)[time_col].transform(lambda x: x.mean())
+    assignment_subset[median_time] = assignment_subset.groupby(col)[time_col].transform(lambda x: x.median())
+    assignment_subset[review_count] = assignment_subset.groupby(col)[time_col].transform(lambda x: x.count())
+    assignment_subset[std_time] = assignment_subset.groupby(col)[time_col].transform(lambda x: x.std())
     
     # Setup time data
-    assignment_subset = assignment_subset.drop_duplicates(subset=[project_review_col]).sort_values(by=project_review_col)
-    assignment_subset["Project #"] = "Project #" + assignment_subset[project_review_col].astype(int).astype(str)
+    assignment_subset = assignment_subset.drop_duplicates(subset=[col]).sort_values(by=col)
+    assignment_subset["Project #"] = "Project #" + assignment_subset[col].astype(int).astype(str)
     assignment_subset = assignment_subset.set_index(f"{assignment} #")[median_time]
     assignment_aggregate_data = assignment_calculations.join(assignment_subset)
     assignment_aggregate_data = assignment_aggregate_data.rename(columns={'mean': f'Average Score/{max_score}', 'median': f'Median Score/{max_score}'})
