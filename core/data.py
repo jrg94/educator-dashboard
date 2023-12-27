@@ -77,7 +77,7 @@ def load_course_eval_data() -> dcc.Store:
     return dcc.Store(id="course-eval-data", data=course_eval_data.to_json())    
 
 
-def load_grade_data() -> dcc.Store:
+def load_cse2221_grade_data() -> dcc.Store:
     """
     Loads the grade data from the remote CSV. The result is returned as a store object. 
     
@@ -85,4 +85,15 @@ def load_grade_data() -> dcc.Store:
     """
     grade_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/cse-2221-grades.csv')
     grade_data["Date"] = pd.to_datetime(grade_data["Date"])
-    return dcc.Store(id="grade-data", data=grade_data.to_json())
+    return dcc.Store(id="cse2221-grade-data", data=grade_data.to_json())
+
+
+def load_cse2231_grade_data() -> dcc.Store:
+    """
+    Loads the grade data from the remote CSV. The result is returned as a store object. 
+    
+    :return: the grade data as a store
+    """
+    grade_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/cse-2231-grades.csv')
+    grade_data["Date"] = pd.to_datetime(grade_data["Date"])
+    return dcc.Store(id="cse2231-grade-data", data=grade_data.to_json())

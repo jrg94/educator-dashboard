@@ -331,10 +331,10 @@ def generate_grade_overview(grade_data):
     project_columns = [name for name in grade_data.columns if "Project" in name]
     participation_columns = [name for name in grade_data.columns if "Participation" in name]
 
-    exam_grades = grade_data[exam_columns].sum(axis=1) / (100 * 3) * 100
-    homework_grades = grade_data[homework_columns].sum(axis=1) / (2 * 22) * 100
-    project_grades = grade_data[project_columns].sum(axis=1) / (10 * 11) * 100
-    participation_grades = grade_data[participation_columns].sum(axis=1) / (4 * 1) * 100
+    exam_grades = grade_data[exam_columns].sum(axis=1, numeric_only=True) / (100 * len(exam_columns)) * 100
+    homework_grades = grade_data[homework_columns].sum(axis=1, numeric_only=True) / (2 * len(homework_columns)) * 100
+    project_grades = grade_data[project_columns].sum(axis=1, numeric_only=True) / (10 * len(project_columns)) * 100
+    participation_grades = grade_data[participation_columns].sum(axis=1, numeric_only=True) / (4 * len(project_columns)) * 100
 
     overview_dict = {
         "Exams": exam_grades,
