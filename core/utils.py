@@ -12,7 +12,7 @@ from core.constants import (assignment_type, avg_time, during_emotions_column,
                             median_time, post_emotions_column,
                             pre_emotions_column, project_review_col,
                             review_count, rubric_heading, satisfaction_colors,
-                            satisfaction_mapping, std_time)
+                            satisfaction_mapping, std_time, class_review_col)
 
 
 def _semester_order(data: pd.DataFrame):
@@ -34,15 +34,17 @@ def _semester_order(data: pd.DataFrame):
     )
 
 
-def create_time_fig(assignment_survey_data: pd.DataFrame, col: str):
+def create_time_fig(assignment_survey_data: pd.DataFrame, col: str, course: str):
     """
     Creates a figure of the average and median time spent
     on each assignment.
     
     :param assignment_survey_data: the dataframe of all the data from the assignment survey
     :param col: the column from which to render the time figure (e.g., project or homework)
+    :param course: the course for which to create the time figure
     """
-    to_plot = assignment_survey_data \
+    to_plot = assignment_survey_data[assignment_survey_data[class_review_col] == course]
+    to_plot = to_plot \
         .drop_duplicates(subset=[col]) \
         .dropna(subset=[col]) \
         .sort_values(by=col)

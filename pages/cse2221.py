@@ -4,7 +4,7 @@ import dash
 import pandas as pd
 from dash import Input, Output, callback, dcc, html
 
-from core.constants import homework_review_col, project_review_col
+from core.constants import homework_review_col, project_review_col, software_1_filter
 from core.data import load_assignment_survey_data, load_cse2221_grade_data
 from core.utils import (create_assignment_fig, create_correlation_fig,
                         create_emotions_fig, create_grades_fig,
@@ -27,7 +27,7 @@ dash.register_page(
 )
 def render_project_time_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
-    return create_time_fig(df, col=project_review_col)
+    return create_time_fig(df, col=project_review_col, course=software_1_filter)
 
 
 @callback(
@@ -36,7 +36,7 @@ def render_project_time_figure(jsonified_data):
 )
 def render_homework_time_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
-    return create_time_fig(df, col=homework_review_col)
+    return create_time_fig(df, col=homework_review_col, course=software_1_filter)
 
 
 @callback(

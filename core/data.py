@@ -18,7 +18,7 @@ def load_assignment_survey_data() -> dcc.Store:
     # Load and clean data
     assignment_survey_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/assignment-survey-data.csv')
     assignment_survey_data["Timestamp"] = pd.to_datetime(assignment_survey_data["Timestamp"], format="%Y/%m/%d %I:%M:%S %p %Z")
-    assignment_survey_data = assignment_survey_data[assignment_survey_data[class_review_col].isna()]
+    assignment_survey_data[class_review_col] = assignment_survey_data[class_review_col].fillna("CSE 2221: Software 1")
     
     # Compute project statistics
     assignment_survey_data[avg_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.mean())
