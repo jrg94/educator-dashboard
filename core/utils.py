@@ -12,7 +12,7 @@ from core.constants import (assignment_type, avg_time, during_emotions_column,
                             median_time, post_emotions_column,
                             pre_emotions_column, project_review_col,
                             review_count, rubric_heading, satisfaction_colors,
-                            satisfaction_mapping, std_time)
+                            satisfaction_mapping, std_time, class_review_col, time_col, homework_review_col)
 
 
 def _semester_order(data: pd.DataFrame):
@@ -34,23 +34,40 @@ def _semester_order(data: pd.DataFrame):
     )
 
 
-def create_time_fig(assignment_survey_data: pd.DataFrame, col: str):
+def create_time_fig(assignment_survey_data: pd.DataFrame, assignment: str, course: str):
     """
-    Creates a figure of the average and median time spent
-    on each assignment.
+    Creates a figure of the average and median time spent on each assignment.
     
     :param assignment_survey_data: the dataframe of all the data from the assignment survey
-    :param col: the column from which to render the time figure (e.g., project or homework)
+    :param assignment: the assignment type (i.e., Homework or Project)
+    :param course: the course for which to create the time figure (e.g., CSE 2221: Software 1)
     """
-    to_plot = assignment_survey_data \
+    # Filter by course and assignment
+    assignment_subset = assignment_survey_data[
+        (assignment_survey_data[class_review_col] == course) & 
+        (assignment_survey_data[assignment_type] == assignment)
+    ].copy()
+
+    col = project_review_col if assignment == "Project" else homework_review_col
+
+    # Compute project statistics
+    assignment_subset[avg_time] = assignment_subset.groupby(col)[time_col].transform(lambda x: x.mean())
+    assignment_subset[median_time] = assignment_subset.groupby(col)[time_col].transform(lambda x: x.median())
+    assignment_subset[review_count] = assignment_subset.groupby(col)[time_col].transform(lambda x: x.count())
+    assignment_subset[std_time] = assignment_subset.groupby(col)[time_col].transform(lambda x: x.std())
+
+    # Clean up rows
+    to_plot = assignment_subset \
         .drop_duplicates(subset=[col]) \
         .dropna(subset=[col]) \
         .sort_values(by=col)
+    
     to_plot = to_plot.melt(
         id_vars=[item for item in to_plot.columns if item not in [avg_time, median_time]],
         var_name="Metric",
         value_name="Time (hours)"
     )
+
     time_fig = go.Figure(layout=dict(template='plotly'))
     time_fig = px.bar(
         to_plot,
@@ -93,6 +110,7 @@ def create_emotions_fig(assignment_survey_data: pd.DataFrame, col: str):
         during_emotions_column: "During Assignment",
         post_emotions_column: "Post-Assignment"
     })
+    emotions_figure = go.Figure(layout=dict(template='plotly'))
     emotions_figure = px.histogram(
         emotions_data,
         x="value",
@@ -110,6 +128,7 @@ def create_emotions_fig(assignment_survey_data: pd.DataFrame, col: str):
 def create_rubric_overview_fig(assignment_survey_data: pd.DataFrame):
     assignment_survey_data[rubric_heading] = assignment_survey_data[rubric_heading].map(satisfaction_mapping)
     data = assignment_survey_data[rubric_heading].value_counts().rename_axis("Response").reset_index(name="Number of Reviews")
+    rubric_fig = go.Figure(layout=dict(template='plotly'))
     rubric_fig = px.bar(
         data, 
         x="Response",
@@ -131,6 +150,7 @@ def create_rubric_breakdown_fig(assignment_survey_data: pd.DataFrame):
         .reset_index() \
         .melt(id_vars=[project_review_col], var_name="Response", value_name="Number of Reviews") \
         .dropna() 
+    rubric_breakdown_fig = go.Figure(layout=dict(template='plotly'))
     rubric_breakdown_fig = px.bar(
         data, 
         x="Response",
@@ -155,6 +175,7 @@ def create_rubric_breakdown_fig(assignment_survey_data: pd.DataFrame):
 
 def create_rubric_scores_fig(assignment_survey_data: pd.DataFrame):
     rubric_scores = assignment_survey_data.groupby(project_review_col)[rubric_heading].agg(["mean", "count"])
+    rubric_scores_fig = go.Figure(layout=dict(template='plotly'))    
     rubric_scores_fig = px.bar(
         rubric_scores, 
         y="mean", 
@@ -169,6 +190,7 @@ def create_rubric_scores_fig(assignment_survey_data: pd.DataFrame):
     )
     return rubric_scores_fig
 
+
 def create_sei_fig(sei_data: pd.DataFrame) -> plotly.graph_objs.Figure:
     """
     Creates an SEI data figure showing all of the SEI
@@ -181,6 +203,7 @@ def create_sei_fig(sei_data: pd.DataFrame) -> plotly.graph_objs.Figure:
     :return: the resulting SEI figure
     """
     sei_data["Semester"] = sei_data["Season"] + " " + sei_data["Year"].astype(str)
+    sei_fig = go.Figure(layout=dict(template='plotly'))    
     sei_fig = px.line(
         sei_data, 
         x="Semester", 
@@ -227,6 +250,7 @@ def create_sei_comment_fig(sei_comments: pd.DataFrame) -> plotly.graph_objs.Figu
     word_counts = word_counts.sort_values(by="Count", ascending=False)
     word_counts = word_counts.head(25)
     word_counts = word_counts.sort_values(by="Count")
+    sei_comment_fig = go.Figure(layout=dict(template='plotly'))    
     sei_comment_fig = px.bar(
         word_counts,
         x="Count",
@@ -260,17 +284,43 @@ def create_course_eval_fig(course_eval_data, question, axes_labels):
     return question_fig
 
 
-def create_value_fig(grade_data, assignment_survey_data, assignment, max_score):
+def create_value_fig(grade_data: pd.DataFrame, assignment_survey_data: pd.DataFrame, assignment: str, max_score: int, course: str):
+    """
+    Creates some more interesting visuals of the data by comparing the time students
+    report that they spend on the assignments against their actual grades.
+
+    :param grade_data: the collection of grades for a particular course
+    :param assignment_survey_data: the collection of survey responses from students
+    :param assignment: the name of the assignment type to be visualized (e.g., Project or Homework)
+    :param max_score: the maximum score for that assignment type
+    :param course: the course this assignment originates from
+    """
+    # Setup grade data
     assignment_score_data = [name for name in grade_data.columns if assignment in name]
     assignment_calculations = grade_data[assignment_score_data].agg(["mean", "median"]).T
-    assignment_time_data = assignment_survey_data[assignment_survey_data[assignment_type] == "Project"]
-    assignment_time_data = assignment_time_data.drop_duplicates(subset=[project_review_col]).sort_values(by=project_review_col)
-    assignment_time_data["Project #"] = "Project #" + assignment_time_data[project_review_col].astype(int).astype(str)
-    assignment_time_data = assignment_time_data.set_index(f"{assignment} #")[median_time]
-    assignment_aggregate_data = assignment_calculations.join(assignment_time_data)
+
+    # Filter time data
+    assignment_subset = assignment_survey_data[
+        (assignment_survey_data[class_review_col] == course) & 
+        (assignment_survey_data[assignment_type] == assignment)
+    ].copy()
+
+    col = project_review_col if assignment == "Project" else homework_review_col
+
+    # Compute project statistics
+    assignment_subset[avg_time] = assignment_subset.groupby(col)[time_col].transform(lambda x: x.mean())
+    assignment_subset[median_time] = assignment_subset.groupby(col)[time_col].transform(lambda x: x.median())
+    assignment_subset[review_count] = assignment_subset.groupby(col)[time_col].transform(lambda x: x.count())
+    assignment_subset[std_time] = assignment_subset.groupby(col)[time_col].transform(lambda x: x.std())
+    
+    # Setup time data
+    assignment_subset = assignment_subset.drop_duplicates(subset=[col]).sort_values(by=col)
+    assignment_subset["Project #"] = "Project #" + assignment_subset[col].astype(int).astype(str)
+    assignment_subset = assignment_subset.set_index(f"{assignment} #")[median_time]
+    assignment_aggregate_data = assignment_calculations.join(assignment_subset)
     assignment_aggregate_data = assignment_aggregate_data.rename(columns={'mean': f'Average Score/{max_score}', 'median': f'Median Score/{max_score}'})
     assignment_aggregate_data["Points per Hour"] = assignment_aggregate_data[f"Median Score/{max_score}"] / assignment_aggregate_data["Median Time (hours)"]
-    assignment_aggregate_data["Minutes per Point"] = assignment_aggregate_data["Median Time (hours)"] / assignment_aggregate_data[f"Median Score/{max_score}"] * 60
+    assignment_aggregate_data["Minutes per Point"] = assignment_aggregate_data[median_time] / assignment_aggregate_data[f"Median Score/{max_score}"] * 60
     assignment_aggregate_data = assignment_aggregate_data.reset_index()
     
     # Generate figures
@@ -287,6 +337,7 @@ def create_value_fig(grade_data, assignment_survey_data, assignment, max_score):
         title="Expected Value Per Project"
     )
     assignment_expected_time_fig.update_layout(showlegend=False)
+
     assignment_expected_effort_fig = px.bar(
         assignment_aggregate_data,
         x="index",
@@ -315,13 +366,15 @@ def create_correlation_fig(grade_data, correlating_factor, label):
         label: grade_data[correlating_factor]
     }
 
-    return px.scatter(
+    correlation_fig = go.Figure(layout=dict(template='plotly'))    
+    correlation_fig = px.scatter(
         pd.DataFrame(correlation),
         y="Grades",
         x=label,
         trendline="ols",
         title=f"Grades vs {label}"
     )
+    return correlation_fig
 
 
 def generate_grade_overview(grade_data):
@@ -331,10 +384,10 @@ def generate_grade_overview(grade_data):
     project_columns = [name for name in grade_data.columns if "Project" in name]
     participation_columns = [name for name in grade_data.columns if "Participation" in name]
 
-    exam_grades = grade_data[exam_columns].sum(axis=1) / (100 * 3) * 100
-    homework_grades = grade_data[homework_columns].sum(axis=1) / (2 * 22) * 100
-    project_grades = grade_data[project_columns].sum(axis=1) / (10 * 11) * 100
-    participation_grades = grade_data[participation_columns].sum(axis=1) / (4 * 1) * 100
+    exam_grades = grade_data[exam_columns].sum(axis=1) / (100 * len(exam_columns)) * 100
+    homework_grades = grade_data[homework_columns].sum(axis=1) / (2 * len(homework_columns)) * 100
+    project_grades = grade_data[project_columns].sum(axis=1) / (10 * len(project_columns)) * 100
+    participation_grades = grade_data[participation_columns].sum(axis=1) / (4 * len(participation_columns)) * 100
 
     overview_dict = {
         "Exams": exam_grades,
@@ -346,7 +399,7 @@ def generate_grade_overview(grade_data):
     return pd.DataFrame(overview_dict)
 
 
-def create_grades_fig(grade_data):
+def create_grades_fig(grade_data: pd.DataFrame):
     assignment_calculations = generate_grade_overview(grade_data).agg(["mean", "median"]).T
     row_count = len(grade_data.index)
     assignment_calculations["count"] = {
@@ -377,6 +430,7 @@ def create_assignment_fig(grade_data, assignment, total):
     assignment_data = [name for name in grade_data.columns if assignment in name]
     assignment_calculations = grade_data[assignment_data].agg(["mean", "median"]).T
     assignment_calculations.rename(columns={'mean': 'Average', 'median': 'Median'}, inplace=True)
+    assignment_calculations_fig = go.Figure(layout=dict(template='plotly'))    
     assignment_calculations_fig = px.bar(
         assignment_calculations,
         labels={
@@ -398,6 +452,7 @@ def create_missing_assignment_fig(grade_data, assignment):
     missing_assignment_data = missing_assignment_data.reset_index()
     missing_assignment_data.rename(columns={'index': 'Assignment', 0: 'Percent Missing'}, inplace=True)
     missing_assignment_data = missing_assignment_data.loc[missing_assignment_data["Assignment"].str.contains(assignment)]
+    missing_assignment_fig = go.Figure(layout=dict(template='plotly'))    
     missing_assignment_fig = px.bar(
         missing_assignment_data, 
         x="Assignment", 
@@ -420,6 +475,7 @@ def create_project_trend_fig(grade_data: pd.DataFrame, assignment: str):
         value_name="Average Score"
     ).dropna()
     
+    trend_fig = go.Figure(layout=dict(template='plotly'))    
     trend_fig = px.line(
         trend_data,
         x="Date",
@@ -429,4 +485,3 @@ def create_project_trend_fig(grade_data: pd.DataFrame, assignment: str):
         title=f"Average {assignment} Score by Date"
     )
     return trend_fig
-

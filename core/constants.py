@@ -17,6 +17,10 @@ median_time = "Median Time (hours)"
 review_count = "Number of Reviews"
 std_time = "Standard Deviation (hours)"
 
+# Assignment survey filter values
+software_1_filter = "CSE 2221: Software 1"
+software_2_filter = "CSE 2231: Software 2"
+
 # Various mappings for charts
 satisfaction_mapping = {
     1: 'Very Dissatisfied',

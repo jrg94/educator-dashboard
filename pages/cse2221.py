@@ -4,8 +4,8 @@ import dash
 import pandas as pd
 from dash import Input, Output, callback, dcc, html
 
-from core.constants import homework_review_col, project_review_col
-from core.data import load_assignment_survey_data, load_grade_data
+from core.constants import homework_review_col, project_review_col, software_1_filter
+from core.data import load_assignment_survey_data, load_cse2221_grade_data
 from core.utils import (create_assignment_fig, create_correlation_fig,
                         create_emotions_fig, create_grades_fig,
                         create_missing_assignment_fig,
@@ -27,7 +27,7 @@ dash.register_page(
 )
 def render_project_time_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
-    return create_time_fig(df, col=project_review_col)
+    return create_time_fig(df, assignment="Project", course=software_1_filter)
 
 
 @callback(
@@ -36,7 +36,7 @@ def render_project_time_figure(jsonified_data):
 )
 def render_homework_time_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
-    return create_time_fig(df, col=homework_review_col)
+    return create_time_fig(df, assignment="Homework", course=software_1_filter)
 
 
 @callback(
@@ -77,108 +77,108 @@ def render_rubric_scores_figure(jsonified_data):
 
 @callback(
     Output("grade-overview", "figure"),
-    Input("grade-data", "data")
+    Input("cse2221-grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_grade_overview_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_grades_fig(df)
 
 
 @callback(
     Output("grade-vs-attendance", "figure"),
-    Input("grade-data", "data")
+    Input("cse2221-grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_grades_vs_attendance_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_correlation_fig(df, "TH-Attendance", "Top Hat Attendance")
 
 
 @callback(
     Output("grade-vs-participation", "figure"),
-    Input("grade-data", "data")
+    Input("cse2221-grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_grades_vs_participation_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_correlation_fig(df, "Top Hat", "Top Hat Participation")
 
 
 @callback(
     Output("project-calculations", "figure"),
-    Input("grade-data", "data")
+    Input("cse2221-grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_project_calculations_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_assignment_fig(df, "Project", 10)
 
 
 @callback(
     Output("homework-calculations", "figure"),
-    Input("grade-data", "data")
+    Input("cse2221-grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_homework_calculations_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_assignment_fig(df, "Homework", 2)
 
 
 @callback(
     Output("exams-calculations", "figure"),
-    Input("grade-data", "data")
+    Input("cse2221-grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_exam_calculations_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_assignment_fig(df, "Exam", 100)
 
 
 @callback(
     Output("missing-projects", "figure"),
-    Input("grade-data", "data")
+    Input("cse2221-grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_missing_projects_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_missing_assignment_fig(df, "Project")
 
 
 @callback(
     Output("missing-homeworks", "figure"),
-    Input("grade-data", "data")
+    Input("cse2221-grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_missing_homeworks_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_missing_assignment_fig(df, "Homework")
 
 
 @callback(
     Output("missing-exams", "figure"),
-    Input("grade-data", "data")
+    Input("cse2221-grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_missing_exams_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_missing_assignment_fig(df, "Exam")
 
 
 @callback(
     Output("project-trends", "figure"),
-    Input("grade-data", "data")
+    Input("cse2221-grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_project_trends_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_project_trend_fig(df, "Project")
 
 
 @callback(
     Output("homework-trends", "figure"),
-    Input("grade-data", "data")
+    Input("cse2221-grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_homework_trends_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_project_trend_fig(df, "Homework")
 
 
 @callback(
     Output("exam-trends", "figure"),
-    Input("grade-data", "data")
+    Input("cse2221-grade-data", "data")
 )
-def render_grade_overview_data(jsonified_data):
+def render_exam_trends_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_project_trend_fig(df, "Exam")
 
@@ -186,14 +186,13 @@ def render_grade_overview_data(jsonified_data):
 @callback(
     Output("project-points-per-hour", "figure"),
     Output("project-hours-per-point", "figure"),
-    Input("grade-data", "data"),
+    Input("cse2221-grade-data", "data"),
     Input("assignment-survey-data", "data")
 )
-def render_points_per_hour_graph(jsonified_grade_data, jsonified_assignment_survey_data):
+def render_points_per_hour_figure(jsonified_grade_data, jsonified_assignment_survey_data):
     grade_data = pd.read_json(StringIO(jsonified_grade_data))
-    assignment_survey_data = pd.read_json(
-        StringIO(jsonified_assignment_survey_data))
-    return create_value_fig(grade_data, assignment_survey_data, "Project", 10)
+    assignment_survey_data = pd.read_json(StringIO(jsonified_assignment_survey_data))
+    return create_value_fig(grade_data, assignment_survey_data, "Project", 10, "CSE 2221: Software 1")
 
 
 # TODO: mix in the assignment survey with the grades rather than having them separate
@@ -434,6 +433,6 @@ layout = html.Div([
         improve your grades, but I would be lying if I didn't tell you that it could. 
         '''
     ),
-    load_grade_data(),
+    load_cse2221_grade_data(),
     load_assignment_survey_data()
 ])
