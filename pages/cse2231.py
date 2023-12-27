@@ -41,6 +41,15 @@ def render_project_calculations_figure(jsonified_data):
     return create_assignment_fig(df, "Project", 10)
 
 
+@callback(
+    Output("cse2231-exams-calculations", "figure"),
+    Input("cse2231-grade-data", "data")
+)
+def render_exam_calculations_figure(jsonified_data):
+    df = pd.read_json(StringIO(jsonified_data))
+    return create_assignment_fig(df, "Exam", 100)
+
+
 layout = html.Div([
     html.H1('CSE 2231: Software 2'),
     dcc.Graph(id="cse2231-grade-overview"),
@@ -48,5 +57,7 @@ layout = html.Div([
     dcc.Graph(id="cse2231-homework-calculations"),
     html.H2("Project Assignments"),
     dcc.Graph(id="cse2231-project-calculations"),
+    html.H2(children='Exams'),
+    dcc.Graph(id="cse2231-exams-calculations"),
     load_cse2231_grade_data()
 ])
