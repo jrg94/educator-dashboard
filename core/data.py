@@ -61,7 +61,6 @@ def load_cse2221_grade_data() -> dcc.Store:
     :return: the grade data as a store
     """
     grade_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/cse-2221-grades.csv')
-    grade_data["Date"] = pd.to_datetime(grade_data["Date"])
     return dcc.Store(id="cse2221-grade-data", data=grade_data.to_json())
 
 
@@ -72,6 +71,5 @@ def load_cse2231_grade_data() -> dcc.Store:
     :return: the grade data as a store
     """
     grade_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/cse-2231-grades.csv')
-    grade_data["Date"] = pd.to_datetime(grade_data["Date"])
     grade_data["Midterm Exam #1"] = pd.to_numeric(grade_data["Midterm Exam #1"], errors="coerce")
     return dcc.Store(id="cse2231-grade-data", data=grade_data.to_json())

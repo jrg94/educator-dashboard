@@ -120,7 +120,7 @@ def create_emotions_fig(assignment_survey_data: pd.DataFrame, col: str):
         facet_col=col,
         facet_col_wrap=2,
         labels={
-        "value": 'Emotion'    
+            "value": 'Emotion'    
         }
     )
     emotions_figure.for_each_annotation(lambda a: a.update(text=f'Homework {a.text.split("=")[-1].split(".")[0]}'))
@@ -216,7 +216,7 @@ def create_sei_fig(sei_data: pd.DataFrame) -> plotly.graph_objs.Figure:
         markers=True, 
         title="Student Evaluation of Instruction Trends by Cohort",
         category_orders={
-        "Semester": _semester_order(sei_data)
+            "Semester": _semester_order(sei_data)
         },
         hover_data=["Course"]
     )
@@ -380,7 +380,7 @@ def create_correlation_fig(grade_data, correlating_factor, label):
 
 
 def generate_grade_overview(grade_data):
-    grade_data = grade_data[grade_data["Date"] != "2020-05-07"]
+    grade_data = grade_data[(grade_data["Year"] != 2020) & (grade_data["Season"] != "Spring")]
     exam_columns = [name for name in grade_data.columns if "Exam" in name]
     homework_columns = [name for name in grade_data.columns if "Homework" in name]
     project_columns = [name for name in grade_data.columns if "Project" in name]
@@ -470,20 +470,29 @@ def create_project_trend_fig(grade_data: pd.DataFrame, assignment: str):
     Creates a semesterly line graph for each assignment of a
     particular type (e.g., Exam, Project, Homework, etc.)
     """
-    trend_data = grade_data.groupby("Date").mean(numeric_only=True)[[item for item in grade_data if assignment in item]]
+    grade_data["Semester"] = grade_data["Season"] + " " + grade_data["Year"].astype(str)
+
+    trend_data = grade_data.groupby(["Year", "Season"]).mean(numeric_only=True)[[item for item in grade_data if assignment in item]]
     trend_data = trend_data.reset_index().melt(
-        id_vars="Date",
+        id_vars=["Year", "Season"],
         var_name="Assignment", 
         value_name="Average Score"
     ).dropna()
+
+    trend_data = trend_data.sort_values(by="Season", ascending=False).sort_values(by="Year", kind="stable")
+    trend_data["Semester"] = trend_data["Season"] + " " + trend_data["Year"].astype(str)
+    print(trend_data.head(60))
     
     trend_fig = go.Figure(layout=dict(template='plotly'))    
     trend_fig = px.line(
         trend_data,
-        x="Date",
+        x="Semester",
         y="Average Score",
         color="Assignment",
         markers=True,
-        title=f"Average {assignment} Score by Date"
+        title=f"Average {assignment} Score by Date",
+        category_orders={
+            "Semester": _semester_order(grade_data)
+        },
     )
     return trend_fig
