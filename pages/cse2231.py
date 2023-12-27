@@ -5,7 +5,7 @@ import pandas as pd
 
 from core.data import load_cse2231_grade_data, load_assignment_survey_data
 from core.utils import create_grades_fig, create_assignment_fig, create_time_fig
-from core.constants import homework_review_col, software_2_filter
+from core.constants import homework_review_col, software_2_filter, project_review_col, software_2_filter
 
 dash.register_page(
     __name__,
@@ -57,7 +57,16 @@ def render_exam_calculations_figure(jsonified_data):
 )
 def render_homework_time_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
-    return create_time_fig(df, col=homework_review_col, course=software_2_filter)
+    return create_time_fig(df, assignment="Homework", course=software_2_filter)
+
+
+@callback(
+    Output("cse2231-project-time", "figure"),
+    Input("assignment-survey-data", "data")
+)
+def render_project_time_figure(jsonified_data):
+    df = pd.read_json(StringIO(jsonified_data))
+    return create_time_fig(df, assignment="Project", course=software_2_filter)
 
 
 layout = html.Div([
@@ -68,6 +77,7 @@ layout = html.Div([
     dcc.Graph(id="cse2231-homework-time"),
     html.H2("Project Assignments"),
     dcc.Graph(id="cse2231-project-calculations"),
+    dcc.Graph(id="cse2231-project-time"),
     html.H2(children='Exams'),
     dcc.Graph(id="cse2231-exams-calculations"),
     load_cse2231_grade_data(),

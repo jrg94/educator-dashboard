@@ -27,7 +27,7 @@ dash.register_page(
 )
 def render_project_time_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
-    return create_time_fig(df, col=project_review_col, course=software_1_filter)
+    return create_time_fig(df, assignment="Project", course=software_1_filter)
 
 
 @callback(
@@ -36,7 +36,7 @@ def render_project_time_figure(jsonified_data):
 )
 def render_homework_time_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
-    return create_time_fig(df, col=homework_review_col, course=software_1_filter)
+    return create_time_fig(df, assignment="Homework", course=software_1_filter)
 
 
 @callback(
@@ -192,7 +192,7 @@ def render_exam_trends_figure(jsonified_data):
 def render_points_per_hour_figure(jsonified_grade_data, jsonified_assignment_survey_data):
     grade_data = pd.read_json(StringIO(jsonified_grade_data))
     assignment_survey_data = pd.read_json(StringIO(jsonified_assignment_survey_data))
-    return create_value_fig(grade_data, assignment_survey_data, "Project", 10)
+    return create_value_fig(grade_data, assignment_survey_data, "Project", 10, "CSE 2221: Software 1")
 
 
 # TODO: mix in the assignment survey with the grades rather than having them separate

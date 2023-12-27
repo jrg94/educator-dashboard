@@ -12,7 +12,7 @@ from core.constants import (assignment_type, avg_time, during_emotions_column,
                             median_time, post_emotions_column,
                             pre_emotions_column, project_review_col,
                             review_count, rubric_heading, satisfaction_colors,
-                            satisfaction_mapping, std_time, class_review_col)
+                            satisfaction_mapping, std_time, class_review_col, time_col, homework_review_col)
 
 
 def _semester_order(data: pd.DataFrame):
@@ -34,25 +34,40 @@ def _semester_order(data: pd.DataFrame):
     )
 
 
-def create_time_fig(assignment_survey_data: pd.DataFrame, col: str, course: str):
+def create_time_fig(assignment_survey_data: pd.DataFrame, assignment: str, course: str):
     """
-    Creates a figure of the average and median time spent
-    on each assignment.
+    Creates a figure of the average and median time spent on each assignment.
     
     :param assignment_survey_data: the dataframe of all the data from the assignment survey
-    :param col: the column from which to render the time figure (e.g., project or homework)
-    :param course: the course for which to create the time figure
+    :param assignment: the assignment type (i.e., Homework or Project)
+    :param course: the course for which to create the time figure (e.g., CSE 2221: Software 1)
     """
-    to_plot = assignment_survey_data[assignment_survey_data[class_review_col] == course]
-    to_plot = to_plot \
+    # Filter by course and assignment
+    assignment_survey_data = assignment_survey_data[
+        (assignment_survey_data[class_review_col] == course) & 
+        (assignment_survey_data[assignment_type] == assignment)
+    ]
+
+    col = project_review_col if assignment == "Project" else homework_review_col
+
+    # Compute project statistics
+    assignment_survey_data[avg_time] = assignment_survey_data.groupby(col)[time_col].transform(lambda x: x.mean())
+    assignment_survey_data[median_time] = assignment_survey_data.groupby(col)[time_col].transform(lambda x: x.median())
+    assignment_survey_data[review_count] = assignment_survey_data.groupby(col)[time_col].transform(lambda x: x.count())
+    assignment_survey_data[std_time] = assignment_survey_data.groupby(col)[time_col].transform(lambda x: x.std())
+
+    # Clean up rows
+    to_plot = assignment_survey_data \
         .drop_duplicates(subset=[col]) \
         .dropna(subset=[col]) \
         .sort_values(by=col)
+    
     to_plot = to_plot.melt(
         id_vars=[item for item in to_plot.columns if item not in [avg_time, median_time]],
         var_name="Metric",
         value_name="Time (hours)"
     )
+
     time_fig = go.Figure(layout=dict(template='plotly'))
     time_fig = px.bar(
         to_plot,
@@ -268,17 +283,31 @@ def create_course_eval_fig(course_eval_data, question, axes_labels):
     return question_fig
 
 
-def create_value_fig(grade_data, assignment_survey_data, assignment, max_score):
+def create_value_fig(grade_data: pd.DataFrame, assignment_survey_data: pd.DataFrame, assignment: str, max_score: int, course: str):
+    # Setup grade data
     assignment_score_data = [name for name in grade_data.columns if assignment in name]
     assignment_calculations = grade_data[assignment_score_data].agg(["mean", "median"]).T
-    assignment_time_data = assignment_survey_data[assignment_survey_data[assignment_type] == "Project"]
-    assignment_time_data = assignment_time_data.drop_duplicates(subset=[project_review_col]).sort_values(by=project_review_col)
+
+    # Filter time data
+    assignment_survey_data = assignment_survey_data[
+        (assignment_survey_data[class_review_col] == course) & 
+        (assignment_survey_data[assignment_type] == "Project")
+    ]
+
+    # Compute project statistics
+    assignment_survey_data[avg_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.mean())
+    assignment_survey_data[median_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.median())
+    assignment_survey_data[review_count] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.count())
+    assignment_survey_data[std_time] = assignment_survey_data.groupby(project_review_col)[time_col].transform(lambda x: x.std())
+    
+    # Setup time data
+    assignment_time_data = assignment_survey_data.drop_duplicates(subset=[project_review_col]).sort_values(by=project_review_col)
     assignment_time_data["Project #"] = "Project #" + assignment_time_data[project_review_col].astype(int).astype(str)
     assignment_time_data = assignment_time_data.set_index(f"{assignment} #")[median_time]
     assignment_aggregate_data = assignment_calculations.join(assignment_time_data)
     assignment_aggregate_data = assignment_aggregate_data.rename(columns={'mean': f'Average Score/{max_score}', 'median': f'Median Score/{max_score}'})
     assignment_aggregate_data["Points per Hour"] = assignment_aggregate_data[f"Median Score/{max_score}"] / assignment_aggregate_data["Median Time (hours)"]
-    assignment_aggregate_data["Minutes per Point"] = assignment_aggregate_data["Median Time (hours)"] / assignment_aggregate_data[f"Median Score/{max_score}"] * 60
+    assignment_aggregate_data["Minutes per Point"] = assignment_aggregate_data[median_time] / assignment_aggregate_data[f"Median Score/{max_score}"] * 60
     assignment_aggregate_data = assignment_aggregate_data.reset_index()
     
     # Generate figures
