@@ -79,8 +79,7 @@ layout = html.Div([
         against the scores for various cohorts including my department, my college, and my university. In general,
         I outperform all three cohorts, but I'm noticing a downward trend in course organization. For context,
         I taught CSE 1223 in the Fall of 2018 and the Spring of 2019. I've been teaching CSE 2221 ever since, with
-        a year gap for research during Autumn 2020 and Spring 2021. **TODO**: the plot should clearly show the
-        gap in teaching. 
+        a year gap for research during Autumn 2020 and Spring 2021. 
         """
     ),
     dcc.Graph(id="sei-stats", className="max-window"),
@@ -128,10 +127,11 @@ layout = html.Div([
         their learning. In this section of the survey, I ask students four questions that attempt to chart how much
         students felt they learned over the course of the semester. In general, students believe they learned a great
         deal, with most students reporting only a fair amount of knowledge coming into the course and a very good
-        amount of knowledge at the end of the course. **TODO**: I should add a plot showing the scores for all four
-        questions with an additional plot showing the trajectory of learning over the semester.
+        amount of knowledge at the end of the course. 
         '''
     ),
+    # TODO: I should add a plot showing the scores for all four questions with an additional 
+    # plot showing the trajectory of learning over the semester.
     dcc.Graph(id="contribution-to-learning"),
     load_sei_data(),
     load_sei_comments_data(),

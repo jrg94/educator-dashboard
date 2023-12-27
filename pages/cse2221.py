@@ -232,13 +232,13 @@ layout = html.Div([
         '''
     ),
     dcc.Graph(id="homework-calculations"),
+    # TODO: look into possible causes of lack of submissions
     dcc.Markdown(
         '''
         As promised, here's a look at the trend of homework completion. As with projects, students tend
         to submit fewer assignments as the semester progresses. Though, I find it interesting that there
         are spikes in missing assignments at various points throughout the semester. I suspect that the 
         assignments that students submit least often are tied to larger review assignments before exams.
-        **TODO**: I should look into this more.
         '''
     ),
     dcc.Graph(id="missing-homeworks"),
@@ -271,12 +271,11 @@ layout = html.Div([
         Something new I tried in 2022 was asking students about the emotions they experienced
         before, during, and after assignments. For this, I borrowed the emotions from
         Control Value Theory and asked students retrospectively about their emotions. As it
-        is early in the semester, I decided to only plot the homework assignments. TODO: make 
-        this plot just a single image with all of the homework assignments in a single view as
-        well as a dropdown to filter by assignment. In 2024, we are not showing arrays of plots.
-        I hate it. 
+        is early in the semester, I decided to only plot the homework assignments. 
         '''
     ),
+    # TODO: make this plot just a single image with all of the homework assignments in a single view as
+    # well as a dropdown to filter by assignment. In 2024, we are not showing arrays of plots. I hate it.
     dcc.Graph(id="emotions", className="max-window"),
     html.H2("Project Assignments"),
     html.P(
@@ -302,9 +301,10 @@ layout = html.Div([
         semester I've taught the course. Personally, I like to see trends. For example, it's 
         helpful to know if project grades are getting better over time. What I'm finding is that's not
         the case. Frankly, I think most of this is due to grader influences, but I have not investigated
-        that. **TODO**: I should include grader influences in the plot. 
+        that.  
         '''
     ),
+    # TODO: consider including grader influences to the plots
     dcc.Graph(id="project-trends"),
     html.P(
         """
