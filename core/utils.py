@@ -190,6 +190,7 @@ def create_rubric_scores_fig(assignment_survey_data: pd.DataFrame):
     )
     return rubric_scores_fig
 
+
 def create_sei_fig(sei_data: pd.DataFrame) -> plotly.graph_objs.Figure:
     """
     Creates an SEI data figure showing all of the SEI
@@ -398,7 +399,7 @@ def generate_grade_overview(grade_data):
     return pd.DataFrame(overview_dict)
 
 
-def create_grades_fig(grade_data):
+def create_grades_fig(grade_data: pd.DataFrame):
     assignment_calculations = generate_grade_overview(grade_data).agg(["mean", "median"]).T
     row_count = len(grade_data.index)
     assignment_calculations["count"] = {

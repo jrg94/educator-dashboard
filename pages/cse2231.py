@@ -1,11 +1,13 @@
 from io import StringIO
-import dash
-from dash import html, dcc, callback, Input, Output
-import pandas as pd
 
-from core.data import load_cse2231_grade_data, load_assignment_survey_data
-from core.utils import create_grades_fig, create_assignment_fig, create_time_fig
-from core.constants import homework_review_col, software_2_filter, project_review_col, software_2_filter
+import dash
+import pandas as pd
+from dash import Input, Output, callback, dcc, html
+
+from core.constants import software_2_filter
+from core.data import load_assignment_survey_data, load_cse2231_grade_data
+from core.utils import (create_assignment_fig, create_grades_fig,
+                        create_missing_assignment_fig, create_time_fig)
 
 dash.register_page(
     __name__,
@@ -69,11 +71,21 @@ def render_project_time_figure(jsonified_data):
     return create_time_fig(df, assignment="Project", course=software_2_filter)
 
 
+@callback(
+    Output("cse2231-missing-homeworks", "figure"),
+    Input("cse2231-grade-data", "data")
+)
+def render_missing_homeworks_figure(jsonified_data):
+    df = pd.read_json(StringIO(jsonified_data))
+    return create_missing_assignment_fig(df, "Homework")
+
+
 layout = html.Div([
     html.H1('CSE 2231: Software 2'),
     dcc.Graph(id="cse2231-grade-overview"),
     html.H2(children='Homework Assignments'),
     dcc.Graph(id="cse2231-homework-calculations"),
+    dcc.Graph(id="cse2231-missing-homeworks"),
     dcc.Graph(id="cse2231-homework-time"),
     html.H2("Project Assignments"),
     dcc.Graph(id="cse2231-project-calculations"),
