@@ -9,7 +9,7 @@ from core.data import *
 from core.utils import *
 
 dash.register_page(
-    __name__, 
+    __name__,
     path='/evaluations',
     name="Evaluations",
     title="The Education Dashboard: Evaluations"
@@ -140,7 +140,7 @@ layout = html.Div([
         amount of knowledge at the end of the course. 
         '''
     ),
-    # TODO: I should add a plot showing the scores for all four questions with an additional 
+    # TODO: I should add a plot showing the scores for all four questions with an additional
     # plot showing the trajectory of learning over the semester.
     dcc.Loading(
         [dcc.Graph(id=ID_EVAL_CONTRIBUTION_FIG)],
