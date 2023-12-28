@@ -15,14 +15,14 @@ def load_assignment_survey_data() -> dcc.Store:
 
     # Sets types of columns
     assignment_survey_data["Timestamp"] = pd.to_datetime(
-        assignment_survey_data["Timestamp"], 
+        assignment_survey_data["Timestamp"],
         format="%Y/%m/%d %I:%M:%S %p %Z"
     )
 
     # Insert missing data
     assignment_survey_data[COLUMN_CLASS_REVIEW] = assignment_survey_data[COLUMN_CLASS_REVIEW] \
         .fillna(FILTER_SOFTWARE_1)
-    
+
     # Update emotions data as lists
     assignment_survey_data[COLUMN_PRE_EMOTIONS] = assignment_survey_data[COLUMN_PRE_EMOTIONS] \
         .astype(str) \
@@ -32,8 +32,8 @@ def load_assignment_survey_data() -> dcc.Store:
         .apply(lambda x: x.split(";"))
     assignment_survey_data[COLUMN_POST_EMOTIONS] = assignment_survey_data[COLUMN_POST_EMOTIONS] \
         .astype(str) \
-        .apply(lambda x: x.split(";"))    
-    
+        .apply(lambda x: x.split(";"))
+
     return dcc.Store(id=ID_ASSIGNMENT_SURVEY, data=assignment_survey_data.to_json())
 
 
