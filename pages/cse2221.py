@@ -363,108 +363,126 @@ layout = html.Div([
     ),
     dcc.Graph(id="project-points-per-hour"),
     dcc.Markdown(
-        '''
-        Interestingly, if we invert the previous plot, we get what I'm calling the "Expected Effort" metric.
-        Rather than describing the amount of points we expect to get for an hour of work, we begin talking
-        about how much time we expect to give for a point. The distinction is fairly minor, but it allows
-        us to see which projects require the most effort. In this case, the roles are reversed. Project 1
-        requires the least amount of effort, while project 8 requires the most.
-        '''
+        """
+        Interestingly, if we invert the previous plot, we get what I'm calling 
+        the "Expected Effort" metric. Rather than describing the amount of 
+        points we expect to get for an hour of work, we begin talking about how 
+        much time we expect to give for a point. The distinction is fairly 
+        minor, but it allows us to see which projects require the most effort. 
+        In this case, the roles are reversed. Project 1 requires the least 
+        amount of effort, while project 8 requires the most.
+        """
     ),
     dcc.Graph(id="project-hours-per-point"),
     html.P(
         """
-        Perhaps unrelated to all of the wonderful plots above, I also provide students with rubrics for
-        each of their projects. I don't recall exactly when I introduced the concept of rubrics, but it had
-        to have been during my second semester of teaching CSE2221 at the earliest. Out of curiosity, I started
-        asking my students about how much they liked and used the rubrics. This resulted in a variety of
-        great plots. The following plot gives the overview of the rubric ratings over all 11 projects. In general,
-        it appears students are fairly satisfied with the rubrics.
+        Perhaps unrelated to all of the wonderful plots above, I also provide 
+        students with rubrics for each of their projects. I don't recall exactly 
+        when I introduced the concept of rubrics, but it had to have been during 
+        my second semester of teaching CSE2221 at the earliest. Out of 
+        curiosity, I started asking my students about how much they liked and 
+        used the rubrics. This resulted in a variety of great plots. The 
+        following plot gives the overview of the rubric ratings over all 11 
+        projects. In general, it appears students are fairly satisfied with the 
+        rubrics.
         """
     ),
     dcc.Graph(id="rubric-overview"),
     dcc.Markdown(
         """
-        In case you were curious about each project individually, here is a breakdown of the rubric scores for each project. 
+        In case you were curious about each project individually, here is a 
+        breakdown of the rubric scores for each project. 
         """
     ),
-    dcc.Graph(id="rubric-breakdown", className="max-window"),
+    dcc.Graph(id="rubric-breakdown", className=CSS_FULL_SCREEN_FIG),
     dcc.Markdown(
         """
-        And just to be perfectly explicit, I also computed average scores for each rubric over all 11 projects.
-        These scores are computed by assigning Very Dissatisfied (1) to the lowest score and Very Satisfied (5) 
-        to the highest score. Then, we sum up all the values and divide by the number of reviews. As a result,
-        you can see that students are generally the least satisfied with the project 1 rubric and most satisfied
-        with the project 3 rubric. 
+        And just to be perfectly explicit, I also computed average scores for 
+        each rubric over all 11 projects. These scores are computed by assigning 
+        Very Dissatisfied (1) to the lowest score and Very Satisfied (5) to the 
+        highest score. Then, we sum up all the values and divide by the number 
+        of reviews. As a result, you can see that students are generally the 
+        least satisfied with the project 1 rubric and most satisfied with the 
+        project 3 rubric. 
         """
     ),
     dcc.Graph(id="rubric-scores"),
     html.H2(children='Exams'),
     dcc.Markdown(
-        '''
-        At this point, the last remaining assessments are the exams. In total, there are three exams, and the
-        general trend tends to be that scores go down as the semester progresses. I haven't quite figured
-        out why. 
-        '''
+        """
+        At this point, the last remaining assessments are the exams. In total, 
+        there are three exams, and the general trend tends to be that scores go 
+        down as the semester progresses. I haven't quite figured out why. 
+        """
     ),
     dcc.Graph(id="exams-calculations"),
     dcc.Markdown(
-        '''
-        As with projects and homework assignments, I find it important to also track the percentage of students
-        who skip exams. In general, it's pretty rare for a student to skip an exam, and it's usually due to some
-        extreme circumstance. That said, the trend remains the same for exams as well (i.e., fewer students attend
-        the exams as the semester progresses).
-        '''
+        """
+        As with projects and homework assignments, I find it important to also 
+        track the percentage of students who skip exams. In general, it's pretty 
+        rare for a student to skip an exam, and it's usually due to some extreme 
+        circumstance. That said, the trend remains the same for exams as well 
+        (i.e., fewer students attend the exams as the semester progresses).
+        """
     ),
     dcc.Graph(id="missing-exams"),
     dcc.Markdown(
-        '''
-        All that is left to talk about is the exam score trend over time. One thing that is worth noting is that
-        the exams were not consistent from semester to semester. For example, you'll notice that exams 2 and 3
-        are missing data points. The reason for this is that we eventually converted those exams to online quizzes
-        due to COVID. As a result, those quiz scores are omitted. It's also worth noting that the data points in
-        Summer 2019 are from before I started teaching the course (i.e., I was training to teach it at the time).
-        As a result, the first time I taught the course, my exam scores were quite low. Since then, things have
-        improved considerably. Well, except for the final exam. I'll be looking to provide more ways for
-        students to practice ahead of time. 
-        '''
+        """
+        All that is left to talk about is the exam score trend over time. One 
+        thing that is worth noting is that the exams were not consistent from 
+        semester to semester. For example, you'll notice that exams 2 and 3 are 
+        missing data points. The reason for this is that we eventually converted 
+        those exams to online quizzes due to COVID. As a result, those quiz 
+        scores are omitted. It's also worth noting that the data points in 
+        Summer 2019 are from before I started teaching the course (i.e., I was 
+        training to teach it at the time). As a result, the first time I taught 
+        the course, my exam scores were quite low. Since then, things have 
+        improved considerably. Well, except for the final exam. I'll be looking 
+        to provide more ways for students to practice ahead of time. 
+        """
     ),
     dcc.Graph(id="exam-trends"),
     html.H2("Participation and Attendance"),
     html.P(
         """
-        In general, attendance is not something I really care about. That said, it is something I track
-        as a proxy for participation when needed. It's also a useful tool for making sure students aren't
-        missing. Finally, I just like having the data because we can do more interesting analyses. 
-        For example, I was interested in seeing how the grades correlated with attendance as follows:
+        In general, attendance is not something I really care about. That said, 
+        it is something I track as a proxy for participation when needed. It's 
+        also a useful tool for making sure students aren't missing. Finally, I 
+        just like having the data because we can do more interesting analyses. 
+        For example, I was interested in seeing how the grades correlated with 
+        attendance as follows:
         """
     ),
     dcc.Graph(id="grade-vs-attendance"),
     html.P(
-        '''
-        At the moment, the connection between attendance and grades is pretty small. At the time of writing,
-        the correlation between attendance and grades gives an R-squared of .23. I can't remember off the top of my
-        head if this is a considered a good correlation in education, but online reasources point to this being
-        a weak to moderate positive correlation. 
-        '''
+        """
+        At the moment, the connection between attendance and grades is pretty 
+        small. At the time of writing, the correlation between attendance and 
+        grades gives an R-squared of .23. I can't remember off the top of my
+        head if this is a considered a good correlation in education, but online 
+        reasources point to this being a weak to moderate positive correlation. 
+        """
     ),
     html.P(
-        '''
-        Now, in order to get an attendance grade, you just enter some digits into TopHat at the start of class.
-        Participation, on the other hand, is calculated based on interaction with Top Hat. Some semesters,
-        I've used Top Hat more often than others. For example, I used to use it quite a bit for Peer
-        Instruction. These days, I don't use it as much, but it may be useful in demonstrating a
-        strong correlation with grades. 
-        '''
+        """
+        Now, in order to get an attendance grade, you just enter some digits 
+        into TopHat at the start of class. Participation, on the other hand, is 
+        calculated based on interaction with Top Hat. Some semesters, I've used 
+        Top Hat more often than others. For example, I used to use it quite a 
+        bit for Peer Instruction. These days, I don't use it as much, but it may 
+        be useful in demonstrating a strong correlation with grades. 
+        """
     ),
     dcc.Graph(id="grade-vs-participation"),
     html.P(
-        '''
-        At the time of writing, the correlation was slightly stronger with an R-squared of .28. Though,
-        there's not much to brag about there. That said, it does imply that attendance and participation
-        positively correlate with grades. I wouldn't go as far as to say that attending class will
-        improve your grades, but I would be lying if I didn't tell you that it could. 
-        '''
+        """
+        At the time of writing, the correlation was slightly stronger with an 
+        R-squared of .28. Though, there's not much to brag about there. That 
+        said, it does imply that attendance and participation positively 
+        correlate with grades. I wouldn't go as far as to say that attending 
+        class will improve your grades, but I would be lying if I didn't tell 
+        you that it could. 
+        """
     ),
     load_cse2221_grade_data(),
     load_assignment_survey_data()
