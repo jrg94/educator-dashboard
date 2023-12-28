@@ -266,7 +266,10 @@ layout = html.Div([
         quite the spread of homework averages in Autumn 2021. 
         """
     ),
-    dcc.Graph(id="homework-trends"),
+    dcc.Loading(
+        [dcc.Graph(id="homework-trends")],
+        type="graph"
+    ),
     html.P(
         """
         While grades are an interesting metric, they don't exactly give us the 
@@ -281,71 +284,82 @@ layout = html.Div([
     dcc.Graph(id="homework-time"),
     html.P(
         """
-        From this plot alone, it's clear that students are spending several hours a week on just the homework
-        assignments. That may be contributing to the lack of submissions. 
+        From this plot alone, it's clear that students are spending several 
+        hours a week on just the homework assignments. That may be contributing 
+        to the lack of submissions. 
         """
     ),
     html.P(
-        '''
-        Something new I tried in 2022 was asking students about the emotions they experienced
-        before, during, and after assignments. For this, I borrowed the emotions from
-        Control Value Theory and asked students retrospectively about their emotions. As it
-        is early in the semester, I decided to only plot the homework assignments. 
-        '''
+        """
+        Something new I tried in 2022 was asking students about the emotions 
+        they experienced before, during, and after assignments. For this, I 
+        borrowed the emotions from Control Value Theory and asked students 
+        retrospectively about their emotions. As it is early in the semester, I 
+        decided to only plot the homework assignments. 
+        """
     ),
     # TODO: make this plot just a single image with all of the homework assignments in a single view as
     # well as a dropdown to filter by assignment. In 2024, we are not showing arrays of plots. I hate it.
-    dcc.Graph(id="emotions", className="max-window"),
+    dcc.Graph(id="emotions", className=CSS_FULL_SCREEN_FIG),
     html.H2("Project Assignments"),
     html.P(
-        '''
-        As previously stated, students are asked to complete 11 projects over the course of the semester.
-        In total, this amounts to 30% of their grade. To kick things off, here are the average and median grades
-        for each project. The key takeaway here is that project 1 is a slam dunk while project 8 is a bit rough.
-        '''
+        """
+        As previously stated, students are asked to complete 11 projects over 
+        the course of the semester. In total, this amounts to 30% of their 
+        grade. To kick things off, here are the average and median grades for 
+        each project. The key takeaway here is that project 1 is a slam dunk 
+        while project 8 is a bit rough.
+        """
     ),
     dcc.Graph(id="project-calculations"),
     html.P(
-        '''
-        While medians and averages are helpful, I also think it's useful to look at just how many students
-        actually complete the projects. Or rather, what percentage of students skip out on projects, and
-        is there a trend to observe? If so (spoiler alert: students turn in less work as the semester 
-        progresses), that could potentially explain the low averages for certain projects. 
-        '''
+        """
+        While medians and averages are helpful, I also think it's useful to look 
+        at just how many students actually complete the projects. Or rather, 
+        what percentage of students skip out on projects, and is there a trend 
+        to observe? If so (spoiler alert: students turn in less work as the 
+        semester progresses), that could potentially explain the low averages 
+        for certain projects. 
+        """
     ),
     dcc.Graph(id="missing-projects"),
     dcc.Markdown(
-        '''
-        Unfortunately, one of the drawbacks of the plots above is that they aggregate the data for every
-        semester I've taught the course. Personally, I like to see trends. For example, it's 
-        helpful to know if project grades are getting better over time. What I'm finding is that's not
-        the case. Frankly, I think most of this is due to grader influences, but I have not investigated
-        that.  
-        '''
+        """
+        Unfortunately, one of the drawbacks of the plots above is that they 
+        aggregate the data for every semester I've taught the course. 
+        Personally, I like to see trends. For example, it's helpful to know if 
+        project grades are getting better over time. What I'm finding is that's 
+        not the case. Frankly, I think most of this is due to grader influences, 
+        but I have not investigated that.  
+        """
     ),
     # TODO: consider including grader influences to the plots
     dcc.Graph(id="project-trends"),
     html.P(
         """
-        As with the homework assignments, I also surveyed my students about how much time they spent on each
-        project. Based on the responses, I found that students spent between 2 and 7.5 hours on each project 
-        on average. In general, these values trend up as the semester progresses. If we assume that students 
-        then spend an average of 4 hours on each project, they will conduct roughly 44 hours of work over the 
-        course of the semester. 
+        As with the homework assignments, I also surveyed my students about how 
+        much time they spent on each project. Based on the responses, I found 
+        that students spent between 2 and 7.5 hours on each project on average. 
+        In general, these values trend up as the semester progresses. If we 
+        assume that students then spend an average of 4 hours on each project, 
+        they will conduct roughly 44 hours of work over the course of the 
+        semester. 
         """
     ),
     dcc.Graph(id="project-time"),
     dcc.Markdown(
-        '''
-        Next, we get into the "advanced" metrics. In this case, I thought it would be interesting to combine
-        some of the data found in the assignment survey with the grade data. For instance, remember how
-        I previously shared the amount of time students spent on each project on average? Well, I figured
-        it would be interesting to see how many points a student could expect to earn per hour on average.
-        Ultimately, I ended up calling this metric "Expected Value" because it gives us a sense of how
-        much value a student could get out of their time. With this metric, we're able to clearly see that 
-        project 1 offers the most bang for your buck. Meanwhile, Project 8 offers very little in terms of
-        value for your time. 
-        '''
+        """
+        Next, we get into the "advanced" metrics. In this case, I thought it 
+        would be interesting to combine some of the data found in the assignment 
+        survey with the grade data. For instance, remember how I previously 
+        shared the amount of time students spent on each project on average? 
+        Well, I figured it would be interesting to see how many points a student 
+        could expect to earn per hour on average. Ultimately, I ended up calling 
+        this metric "Expected Value" because it gives us a sense of how much 
+        value a student could get out of their time. With this metric, we're 
+        able to clearly see that project 1 offers the most bang for your buck. 
+        Meanwhile, Project 8 offers very little in terms of value for your time. 
+        """
     ),
     dcc.Graph(id="project-points-per-hour"),
     dcc.Markdown(
