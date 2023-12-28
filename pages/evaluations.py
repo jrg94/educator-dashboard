@@ -4,11 +4,9 @@ import dash
 import pandas as pd
 from dash import Input, Output, callback, dcc, html
 
-from core.constants import SCALE_LIKERT, SCALE_LIKERT_ALT
-from core.data import (load_course_eval_data, load_sei_comments_data,
-                       load_sei_data)
-from core.utils import (create_course_eval_fig, create_sei_comment_fig,
-                        create_sei_fig)
+from core.constants import *
+from core.data import *
+from core.utils import *
 
 dash.register_page(
     __name__, 
@@ -20,7 +18,7 @@ dash.register_page(
 
 @callback(
     Output("sei-stats", "figure"),
-    Input("sei-data", "data")
+    Input(ID_SEI_DATA, "data")
 )
 def render_sei_stats_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -29,7 +27,7 @@ def render_sei_stats_figure(jsonified_data):
 
 @callback(
     Output("sei-comments", "figure"),
-    Input("sei-comments-data", "data")
+    Input(ID_SEI_COMMENTS_DATA, "data")
 )
 def render_sei_comments_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -38,7 +36,7 @@ def render_sei_comments_figure(jsonified_data):
 
 @callback(
     Output("course-content", "figure"),
-    Input("course-eval-data", "data")
+    Input(ID_COURSE_EVAL_DATA, "data")
 )
 def render_course_content_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -47,7 +45,7 @@ def render_course_content_figure(jsonified_data):
 
 @callback(
     Output("skill-and-responsiveness", "figure"),
-    Input("course-eval-data", "data")
+    Input(ID_COURSE_EVAL_DATA, "data")
 )
 def render_skill_and_responsiveness_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -56,7 +54,7 @@ def render_skill_and_responsiveness_figure(jsonified_data):
 
 @callback(
     Output("contribution-to-learning", "figure"),
-    Input("course-eval-data", "data")
+    Input(ID_COURSE_EVAL_DATA, "data")
 )
 def render_course_content_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
