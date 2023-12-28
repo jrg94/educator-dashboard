@@ -82,14 +82,20 @@ layout = html.Div([
         a year gap for research during Autumn 2020 and Spring 2021. 
         """
     ),
-    dcc.Graph(id="sei-stats", className="max-window"),
+    dcc.Loading(
+        [dcc.Graph(id="sei-stats", className="max-window")],
+        type="graph"
+    ),
     html.P(
         """
         Also, as a qualitative researcher, I find the comments themselves to be more meaningful.
         Therefore, here's a plot of the most frequent terms in my SEI comments. 
         """
     ),
-    dcc.Graph(id="sei-comments", className="max-window"),
+    dcc.Loading(
+        [dcc.Graph(id="sei-comments", className="max-window")],
+        type="graph"
+    ),
     html.H2('Course Evaluation Survey Data'),
     dcc.Markdown(
         '''
