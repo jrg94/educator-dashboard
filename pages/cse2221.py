@@ -196,11 +196,13 @@ layout = html.Div([
     html.H1("CSE 2221: Software 1"),
     html.P(
         """
-        Software 1 (CSE 2221) is a course I started teaching in late 2019. The general purpose of the
-        course is to teach students about software components (i.e., APIs). The course, itself, is based
-        in Java, and the first third of the course focuses on Java basics. Then, in the second third
-        of the course, it focuses on problem solving techniques like recursion. Then, the final third
-        of the course focuses on data structures like sets, stacks, maps, and queues.
+        Software 1 (CSE 2221) is a course I started teaching in late 2019. The 
+        general purpose of the course is to teach students about software 
+        components (i.e., APIs). The course, itself, is based in Java, and the 
+        first third of the course focuses on Java basics. Then, in the second 
+        third of the course, it focuses on problem solving techniques like 
+        recursion. Then, the final third of the course focuses on data 
+        structures like sets, stacks, maps, and queues.
         """
     ),
     html.P(
