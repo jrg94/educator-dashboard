@@ -84,7 +84,7 @@ def render_grade_overview_figure(jsonified_data):
 
 
 @callback(
-    Output("grade-vs-attendance", "figure"),
+    Output(ID_CSE_2221_GRADES_ATTENDACNE_FIG, "figure"),
     Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_grades_vs_attendance_figure(jsonified_data):
@@ -292,7 +292,10 @@ layout = html.Div([
         here's how long students claimed they spent on each homework assignment.
         """
     ),
-    dcc.Graph(id="homework-time"),
+    dcc.Loading(
+        [dcc.Graph(id="homework-time")],
+        type="graph"
+    ),
     html.P(
         """
         From this plot alone, it's clear that students are spending several 
@@ -312,7 +315,15 @@ layout = html.Div([
     # TODO: make this plot just a single image with all of the homework
     # assignments in a single view as well as a dropdown to filter by
     # assignment. In 2024, we are not showing arrays of plots. I hate it.
-    dcc.Graph(id="emotions", className=CSS_FULL_SCREEN_FIG),
+    dcc.Loading(
+        [
+            dcc.Graph(
+                id=ID_CSE_2221_HOMEWORK_EMOTIONS_FIG, 
+                className=CSS_FULL_SCREEN_FIG
+            )
+        ],
+        type="graph"
+    ),
     html.H2("Project Assignments"),
     html.P(
         """
@@ -323,7 +334,10 @@ layout = html.Div([
         while project 8 is a bit rough.
         """
     ),
-    dcc.Graph(id="project-calculations"),
+    dcc.Loading(
+        [dcc.Graph(id="project-calculations")],
+        type="graph"
+    ),
     html.P(
         """
         While medians and averages are helpful, I also think it's useful to look 
@@ -334,7 +348,10 @@ layout = html.Div([
         for certain projects. 
         """
     ),
-    dcc.Graph(id="missing-projects"),
+    dcc.Loading(
+        [dcc.Graph(id="missing-projects")],
+        type="graph"
+    ),
     dcc.Markdown(
         """
         Unfortunately, one of the drawbacks of the plots above is that they 
@@ -346,7 +363,10 @@ layout = html.Div([
         """
     ),
     # TODO: consider including grader influences to the plots
-    dcc.Graph(id="project-trends"),
+    dcc.Loading(
+        [dcc.Graph(id="project-trends")],
+        type="graph"
+    ),
     html.P(
         """
         As with the homework assignments, I also surveyed my students about how 
@@ -358,7 +378,10 @@ layout = html.Div([
         semester. 
         """
     ),
-    dcc.Graph(id="project-time"),
+    dcc.Loading(
+        [dcc.Graph(id="project-time")],
+        type="graph"
+    ),
     dcc.Markdown(
         """
         Next, we get into the "advanced" metrics. In this case, I thought it 
@@ -373,7 +396,10 @@ layout = html.Div([
         Meanwhile, Project 8 offers very little in terms of value for your time. 
         """
     ),
-    dcc.Graph(id="project-points-per-hour"),
+    dcc.Loading(
+        [dcc.Graph(id="project-points-per-hour")],
+        type="graph"
+    ),
     dcc.Markdown(
         """
         Interestingly, if we invert the previous plot, we get what I'm calling 
@@ -385,7 +411,10 @@ layout = html.Div([
         amount of effort, while project 8 requires the most.
         """
     ),
-    dcc.Graph(id="project-hours-per-point"),
+    dcc.Loading(
+        [dcc.Graph(id="project-hours-per-point")],
+        type="graph"
+    ),
     html.P(
         """
         Perhaps unrelated to all of the wonderful plots above, I also provide 
@@ -399,7 +428,10 @@ layout = html.Div([
         rubrics.
         """
     ),
-    dcc.Graph(id="rubric-overview"),
+    dcc.Loading(
+        [dcc.Graph(id="rubric-overview")],
+        type="graph"
+    ),
     dcc.Markdown(
         """
         In case you were curious about each project individually, here is a 
