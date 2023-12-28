@@ -90,6 +90,9 @@ def load_cse2231_grade_data() -> dcc.Store:
     
     :return: the grade data as a store
     """
-    grade_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/cse-2231-grades.csv')
+    grade_data = pd.read_csv(URL_CSE_2231_GRADE_DATA)
+
+    # Sets types of columns
     grade_data["Midterm Exam #1"] = pd.to_numeric(grade_data["Midterm Exam #1"], errors="coerce")
-    return dcc.Store(id="cse2231-grade-data", data=grade_data.to_json())
+
+    return dcc.Store(id=ID_CSE_2231_GRADE_DATA, data=grade_data.to_json())
