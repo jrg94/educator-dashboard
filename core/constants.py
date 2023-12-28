@@ -30,7 +30,7 @@ FILTER_SOFTWARE_1 = "CSE 2221: Software 1"
 FILTER_SOFTWARE_2 = "CSE 2231: Software 2"
 
 # Data IDs
-ID_ASSIGNMENT_SURVEY = "assignment-survey-data"
+ID_ASSIGNMENT_SURVEY_DATA = "assignment-survey-data"
 ID_SEI_DATA = "sei-data"
 ID_SEI_COMMENTS_DATA = "sei-comments-data"
 ID_COURSE_EVAL_DATA = "course-eval-data"
@@ -39,6 +39,14 @@ ID_CSE_2231_GRADE_DATA = "cse2231-grade-data"
 
 # Figure IDs
 ID_CSE_2221_PROJECT_TIME_FIG = "project-time"
+ID_SEI_OVERVIEW_FIG = "sei-stats"
+ID_SEI_COMMENTS_FIG = "sei-comments"
+ID_EVAL_COURSE_CONTENT_FIG = "course-content"
+ID_EVAL_SKILL_FIG = "skill-and-responsiveness"
+ID_EVAL_CONTRIBUTION_FIG = "contribution-to-learning"
+
+# CSS Classes
+CSS_FULL_SCREEN_FIG = "max-window"
 
 # Various mappings for charts
 MAPPING_SATISFACTION = {

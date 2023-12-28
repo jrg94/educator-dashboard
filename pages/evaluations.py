@@ -17,7 +17,7 @@ dash.register_page(
 
 
 @callback(
-    Output("sei-stats", "figure"),
+    Output(ID_SEI_OVERVIEW_FIG, "figure"),
     Input(ID_SEI_DATA, "data")
 )
 def render_sei_stats_figure(jsonified_data):
@@ -26,7 +26,7 @@ def render_sei_stats_figure(jsonified_data):
 
 
 @callback(
-    Output("sei-comments", "figure"),
+    Output(ID_SEI_COMMENTS_FIG, "figure"),
     Input(ID_SEI_COMMENTS_DATA, "data")
 )
 def render_sei_comments_figure(jsonified_data):
@@ -35,7 +35,7 @@ def render_sei_comments_figure(jsonified_data):
 
 
 @callback(
-    Output("course-content", "figure"),
+    Output(ID_EVAL_COURSE_CONTENT_FIG, "figure"),
     Input(ID_COURSE_EVAL_DATA, "data")
 )
 def render_course_content_figure(jsonified_data):
@@ -44,7 +44,7 @@ def render_course_content_figure(jsonified_data):
 
 
 @callback(
-    Output("skill-and-responsiveness", "figure"),
+    Output(ID_EVAL_SKILL_FIG, "figure"),
     Input(ID_COURSE_EVAL_DATA, "data")
 )
 def render_skill_and_responsiveness_figure(jsonified_data):
@@ -53,7 +53,7 @@ def render_skill_and_responsiveness_figure(jsonified_data):
 
 
 @callback(
-    Output("contribution-to-learning", "figure"),
+    Output(ID_EVAL_CONTRIBUTION_FIG, "figure"),
     Input(ID_COURSE_EVAL_DATA, "data")
 )
 def render_course_content_figure(jsonified_data):
@@ -81,7 +81,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id="sei-stats", className="max-window")],
+        [dcc.Graph(id=ID_SEI_OVERVIEW_FIG, className=CSS_FULL_SCREEN_FIG)],
         type="graph"
     ),
     html.P(
@@ -91,7 +91,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id="sei-comments", className="max-window")],
+        [dcc.Graph(id=ID_SEI_COMMENTS_FIG, className=CSS_FULL_SCREEN_FIG)],
         type="graph"
     ),
     html.H2('Course Evaluation Survey Data'),
@@ -114,7 +114,7 @@ layout = html.Div([
         '''
     ),
     dcc.Loading(
-        [dcc.Graph(id="course-content")],
+        [dcc.Graph(id=ID_EVAL_COURSE_CONTENT_FIG)],
         type="graph"
     ),
     html.H3('Skill and Responsiveness of the Instructor'),
@@ -127,7 +127,7 @@ layout = html.Div([
         '''
     ),
     dcc.Loading(
-        [dcc.Graph(id="skill-and-responsiveness", className="max-window")],
+        [dcc.Graph(id=ID_EVAL_SKILL_FIG, className=CSS_FULL_SCREEN_FIG)],
         type="graph"
     ),
     html.H3('Contribution to Learning'),
@@ -143,7 +143,7 @@ layout = html.Div([
     # TODO: I should add a plot showing the scores for all four questions with an additional 
     # plot showing the trajectory of learning over the semester.
     dcc.Loading(
-        [dcc.Graph(id="contribution-to-learning")],
+        [dcc.Graph(id=ID_EVAL_CONTRIBUTION_FIG)],
         type="graph"
     ),
     load_sei_data(),

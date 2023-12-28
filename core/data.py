@@ -34,7 +34,7 @@ def load_assignment_survey_data() -> dcc.Store:
         .astype(str) \
         .apply(lambda x: x.split(";"))
 
-    return dcc.Store(id=ID_ASSIGNMENT_SURVEY, data=assignment_survey_data.to_json())
+    return dcc.Store(id=ID_ASSIGNMENT_SURVEY_DATA, data=assignment_survey_data.to_json())
 
 
 def load_sei_data() -> dcc.Store:

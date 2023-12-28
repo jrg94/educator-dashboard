@@ -19,7 +19,7 @@ dash.register_page(
 
 @callback(
     Output(ID_CSE_2221_PROJECT_TIME_FIG, "figure"),
-    Input(ID_ASSIGNMENT_SURVEY, "data")
+    Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
 )
 def render_project_time_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -28,7 +28,7 @@ def render_project_time_figure(jsonified_data):
 
 @callback(
     Output("homework-time", "figure"),
-    Input(ID_ASSIGNMENT_SURVEY, "data")
+    Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
 )
 def render_homework_time_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -37,7 +37,7 @@ def render_homework_time_figure(jsonified_data):
 
 @callback(
     Output("emotions", "figure"),
-    Input(ID_ASSIGNMENT_SURVEY, "data")
+    Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
 )
 def render_emotions_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -46,7 +46,7 @@ def render_emotions_figure(jsonified_data):
 
 @callback(
     Output("rubric-overview", "figure"),
-    Input(ID_ASSIGNMENT_SURVEY, "data")
+    Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
 )
 def render_rubric_overview_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -55,7 +55,7 @@ def render_rubric_overview_figure(jsonified_data):
 
 @callback(
     Output("rubric-breakdown", "figure"),
-    Input(ID_ASSIGNMENT_SURVEY, "data")
+    Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
 )
 def render_rubric_breakdown_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -64,7 +64,7 @@ def render_rubric_breakdown_figure(jsonified_data):
 
 @callback(
     Output("rubric-scores", "figure"),
-    Input(ID_ASSIGNMENT_SURVEY, "data")
+    Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
 )
 def render_rubric_scores_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -183,7 +183,7 @@ def render_exam_trends_figure(jsonified_data):
     Output("project-points-per-hour", "figure"),
     Output("project-hours-per-point", "figure"),
     Input(ID_CSE_2221_GRADE_DATA, "data"),
-    Input(ID_ASSIGNMENT_SURVEY, "data")
+    Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
 )
 def render_points_per_hour_figure(jsonified_grade_data, jsonified_assignment_survey_data):
     grade_data = pd.read_json(StringIO(jsonified_grade_data))
