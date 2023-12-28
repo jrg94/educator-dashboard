@@ -8,7 +8,6 @@ from core.constants import *
 from core.data import *
 from core.utils import *
 
-
 dash.register_page(
     __name__,
     path='/cse2221',
@@ -41,7 +40,11 @@ def render_homework_time_figure(jsonified_data):
 )
 def render_emotions_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
-    return create_emotions_fig(df, assignment="Homework", course=FILTER_SOFTWARE_1)
+    return create_emotions_fig(
+        df,
+        assignment="Homework",
+        course=FILTER_SOFTWARE_1
+    )
 
 
 @callback(
@@ -54,7 +57,7 @@ def render_rubric_overview_figure(jsonified_data):
 
 
 @callback(
-    Output("rubric-breakdown", "figure"),
+    Output(ID_CSE_2221_RUBRIC_BREAKDOWN_FIG, "figure"),
     Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
 )
 def render_rubric_breakdown_figure(jsonified_data):
@@ -63,7 +66,7 @@ def render_rubric_breakdown_figure(jsonified_data):
 
 
 @callback(
-    Output("rubric-scores", "figure"),
+    Output(ID_CSE_2221_RUBRIC_SCORES_FIG, "figure"),
     Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
 )
 def render_rubric_scores_figure(jsonified_data):
@@ -187,11 +190,19 @@ def render_exam_trends_figure(jsonified_data):
 )
 def render_points_per_hour_figure(jsonified_grade_data, jsonified_assignment_survey_data):
     grade_data = pd.read_json(StringIO(jsonified_grade_data))
-    assignment_survey_data = pd.read_json(StringIO(jsonified_assignment_survey_data))
-    return create_value_fig(grade_data, assignment_survey_data, "Project", 10, "CSE 2221: Software 1")
+    assignment_survey_data = pd.read_json(
+        StringIO(jsonified_assignment_survey_data)
+    )
+    return create_value_fig(
+        grade_data,
+        assignment_survey_data,
+        "Project",
+        10,
+        "CSE 2221: Software 1"
+    )
 
 
-# TODO: mix in the assignment survey with the grades rather than having them 
+# TODO: mix in the assignment survey with the grades rather than having them
 # separate
 layout = html.Div([
     html.H1("CSE 2221: Software 1"),
@@ -298,8 +309,9 @@ layout = html.Div([
         decided to only plot the homework assignments. 
         """
     ),
-    # TODO: make this plot just a single image with all of the homework assignments in a single view as
-    # well as a dropdown to filter by assignment. In 2024, we are not showing arrays of plots. I hate it.
+    # TODO: make this plot just a single image with all of the homework
+    # assignments in a single view as well as a dropdown to filter by
+    # assignment. In 2024, we are not showing arrays of plots. I hate it.
     dcc.Graph(id="emotions", className=CSS_FULL_SCREEN_FIG),
     html.H2("Project Assignments"),
     html.P(
