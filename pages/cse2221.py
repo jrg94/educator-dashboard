@@ -191,7 +191,8 @@ def render_points_per_hour_figure(jsonified_grade_data, jsonified_assignment_sur
     return create_value_fig(grade_data, assignment_survey_data, "Project", 10, "CSE 2221: Software 1")
 
 
-# TODO: mix in the assignment survey with the grades rather than having them separate
+# TODO: mix in the assignment survey with the grades rather than having them 
+# separate
 layout = html.Div([
     html.H1("CSE 2221: Software 1"),
     html.P(
@@ -207,10 +208,12 @@ layout = html.Div([
     ),
     html.P(
         """
-        In terms of assessment, students spend their time of a mix of homework assignments, programming
-        projects, and exams. Specifically, students complete 22 written homework assignments, 11
-        programming projects, and 3 exams. In addition, students are graded on participation. Here's a quick 
-        overview of what that has historically looked like in terms of average and median grades.
+        In terms of assessment, students spend their time of a mix of homework 
+        assignments, programming projects, and exams. Specifically, students 
+        complete 22 written homework assignments, 11 programming projects, and 3 
+        exams. In addition, students are graded on participation. Here's a quick 
+        overview of what that has historically looked like in terms of average 
+        and median grades.
         """
     ),
     dcc.Loading(
@@ -219,45 +222,60 @@ layout = html.Div([
     ),
     html.P(
         """
-        On the remainder of this page, we'll look at each type of assessment in more detail. 
+        On the remainder of this page, we'll look at each type of assessment in 
+        more detail. 
         """
     ),
     html.H2(children='Homework Assignments'),
     dcc.Markdown(
-        '''
-        As previously mentioned, we assign 22 homework assignments each semester. These assignments are graded
-        on completion for a maximum of 2 points each. Together, homeworks sum to just 6% of the students' overall
-        grade, which makes them a decent low stakes assignment. Naturally, here's the breakdown of average 
-        and median scores for each assignment. As you can see, students generally get full credit, but 
-        there are some students who pull the average down with incomplete assignments (more on that later).
-        '''
+        """
+        As previously mentioned, we assign 22 homework assignments each 
+        semester. These assignments are graded on completion for a maximum of 2 
+        points each. Together, homeworks sum to just 6% of the students' overall
+        grade, which makes them a decent low stakes assignment. Naturally, 
+        here's the breakdown of average and median scores for each assignment. 
+        As you can see, students generally get full credit, but there are some 
+        students who pull the average down with incomplete assignments (more on 
+        that later).
+        """
     ),
-    dcc.Graph(id="homework-calculations"),
+    dcc.Loading(
+        [dcc.Graph(id="homework-calculations")],
+        type="graph"
+    ),
     # TODO: look into possible causes of lack of submissions
     dcc.Markdown(
-        '''
-        As promised, here's a look at the trend of homework completion. As with projects, students tend
-        to submit fewer assignments as the semester progresses. Though, I find it interesting that there
-        are spikes in missing assignments at various points throughout the semester. I suspect that the 
-        assignments that students submit least often are tied to larger review assignments before exams.
-        '''
+        """
+        As promised, here's a look at the trend of homework completion. As with 
+        projects, students tend to submit fewer assignments as the semester 
+        progresses. Though, I find it interesting that there are spikes in 
+        missing assignments at various points throughout the semester. I suspect 
+        that the assignments that students submit least often are tied to larger 
+        review assignments before exams.
+        """
     ),
-    dcc.Graph(id="missing-homeworks"),
+    dcc.Loading(
+        [dcc.Graph(id="missing-homeworks")],
+        type="graph"
+    ),
     dcc.Markdown(
-        '''
-        In addition, here's a look at the trend of grades for the homework assignments. I find this plot really
-        interesting because it shows the spread of homework grades against each semester. For instance,
-        there is quite the spread of homework averages in Autumn 2021. 
-        '''
+        """
+        In addition, here's a look at the trend of grades for the homework 
+        assignments. I find this plot really interesting because it shows the 
+        spread of homework grades against each semester. For instance, there is 
+        quite the spread of homework averages in Autumn 2021. 
+        """
     ),
     dcc.Graph(id="homework-trends"),
     html.P(
         """
-        While grades are an interesting metric, they don't exactly give us the full context surrounding
-        the student experience. After all, there are a variety of reasons that a student might not do well
-        on a certain assignment or even choose not to submit one at all. As a result, I also ask students
-        to complete an assignment survey, which can be used to give us a variety of other interesting data
-        points. To kick things off, here's how long students claimed they spent on each homework assignment.
+        While grades are an interesting metric, they don't exactly give us the 
+        full context surrounding the student experience. After all, there are a 
+        variety of reasons that a student might not do well on a certain 
+        assignment or even choose not to submit one at all. As a result, I also 
+        ask students to complete an assignment survey, which can be used to give 
+        us a variety of other interesting data points. To kick things off, 
+        here's how long students claimed they spent on each homework assignment.
         """
     ),
     dcc.Graph(id="homework-time"),
