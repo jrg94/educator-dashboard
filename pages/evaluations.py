@@ -113,7 +113,10 @@ layout = html.Div([
         the course content. For example, at this time, there have been no "strongly disagree" responses. 
         '''
     ),
-    dcc.Graph(id="course-content"),
+    dcc.Loading(
+        [dcc.Graph(id="course-content")],
+        type="graph"
+    ),
     html.H3('Skill and Responsiveness of the Instructor'),
     html.P(
         '''
@@ -123,7 +126,10 @@ layout = html.Div([
         with my instruction than the course content itself. 
         '''
     ),
-    dcc.Graph(id="skill-and-responsiveness", className="max-window"),
+    dcc.Loading(
+        [dcc.Graph(id="skill-and-responsiveness", className="max-window")],
+        type="graph"
+    ),
     html.H3('Contribution to Learning'),
     dcc.Markdown(
         '''
@@ -136,7 +142,10 @@ layout = html.Div([
     ),
     # TODO: I should add a plot showing the scores for all four questions with an additional 
     # plot showing the trajectory of learning over the semester.
-    dcc.Graph(id="contribution-to-learning"),
+    dcc.Loading(
+        [dcc.Graph(id="contribution-to-learning")],
+        type="graph"
+    ),
     load_sei_data(),
     load_sei_comments_data(),
     load_course_eval_data()
