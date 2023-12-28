@@ -359,7 +359,7 @@ def create_value_fig(grade_data: pd.DataFrame, assignment_survey_data: pd.DataFr
     return assignment_expected_time_fig, assignment_expected_effort_fig
 
 
-def create_correlation_fig(grade_data, correlating_factor, label):
+def create_correlation_fig(grade_data: pd.DataFrame, correlating_factor, label):
     grade_overview = generate_grade_overview(grade_data)
 
     total_scores = grade_overview["Exams"] * .6 \

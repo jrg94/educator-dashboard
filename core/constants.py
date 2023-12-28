@@ -39,6 +39,10 @@ ID_CSE_2231_GRADE_DATA = "cse2231-grade-data"
 
 # Figure IDs
 ID_CSE_2221_PROJECT_TIME_FIG = "project-time"
+ID_CSE_2221_HOMEWORK_TIME_FIG = "homework-time"
+ID_CSE_2221_HOMEWORK_EMOTIONS_FIG = "emotions"
+ID_CSE_2221_RUBRIC_OVERVIEW_FIG = "rubric-overview"
+ID_CSE_2221_GRADE_OVERVIEW_FIG = "grade-overview"
 ID_SEI_OVERVIEW_FIG = "sei-stats"
 ID_SEI_COMMENTS_FIG = "sei-comments"
 ID_EVAL_COURSE_CONTENT_FIG = "course-content"

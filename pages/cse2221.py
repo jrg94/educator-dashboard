@@ -27,7 +27,7 @@ def render_project_time_figure(jsonified_data):
 
 
 @callback(
-    Output("homework-time", "figure"),
+    Output(ID_CSE_2221_HOMEWORK_TIME_FIG, "figure"),
     Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
 )
 def render_homework_time_figure(jsonified_data):
@@ -36,7 +36,7 @@ def render_homework_time_figure(jsonified_data):
 
 
 @callback(
-    Output("emotions", "figure"),
+    Output(ID_CSE_2221_HOMEWORK_EMOTIONS_FIG, "figure"),
     Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
 )
 def render_emotions_figure(jsonified_data):
@@ -45,7 +45,7 @@ def render_emotions_figure(jsonified_data):
 
 
 @callback(
-    Output("rubric-overview", "figure"),
+    Output(ID_CSE_2221_RUBRIC_OVERVIEW_FIG, "figure"),
     Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
 )
 def render_rubric_overview_figure(jsonified_data):
@@ -72,7 +72,7 @@ def render_rubric_scores_figure(jsonified_data):
 
 
 @callback(
-    Output("grade-overview", "figure"),
+    Output(ID_CSE_2221_GRADE_OVERVIEW_FIG, "figure"),
     Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_grade_overview_figure(jsonified_data):
@@ -211,7 +211,10 @@ layout = html.Div([
         overview of what that has historically looked like in terms of average and median grades.
         """
     ),
-    dcc.Graph(id="grade-overview"),
+    dcc.Loading(
+        [dcc.Graph(id=ID_CSE_2221_GRADE_OVERVIEW_FIG)],
+        type="graph"
+    ),
     html.P(
         """
         On the remainder of this page, we'll look at each type of assessment in more detail. 
