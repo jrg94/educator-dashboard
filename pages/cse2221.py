@@ -18,7 +18,7 @@ dash.register_page(
 
 
 @callback(
-    Output(ID_CSE2221_PROJECT_TIME_FIG, "figure"),
+    Output(ID_CSE_2221_PROJECT_TIME_FIG, "figure"),
     Input(ID_ASSIGNMENT_SURVEY, "data")
 )
 def render_project_time_figure(jsonified_data):

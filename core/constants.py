@@ -2,6 +2,10 @@ import plotly.express as px
 
 # Data URLS
 URL_ASSIGNMENT_SURVEY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assignment-survey-data.csv"
+URL_SEI_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-data.csv"
+URL_SEI_COMMENTS_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-comments.csv"
+URL_COURSE_EVAL_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/eval-data.csv"
+URL_CSE_2221_GRADE_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/cse-2221-grades.csv"
 
 # Column headings
 COLUMN_RUBRIC = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
@@ -28,9 +32,11 @@ FILTER_SOFTWARE_2 = "CSE 2231: Software 2"
 ID_ASSIGNMENT_SURVEY = "assignment-survey-data"
 ID_SEI_DATA = "sei-data"
 ID_SEI_COMMENTS_DATA = "sei-comments-data"
+ID_COURSE_EVAL_DATA = "course-eval-data"
+ID_CSE_2221_GRADE_DATA = "cse2221-grade-data"
 
 # Figure IDs
-ID_CSE2221_PROJECT_TIME_FIG = "project-time"
+ID_CSE_2221_PROJECT_TIME_FIG = "project-time"
 
 # Various mappings for charts
 MAPPING_SATISFACTION = {
