@@ -73,7 +73,7 @@ def render_rubric_scores_figure(jsonified_data):
 
 @callback(
     Output("grade-overview", "figure"),
-    Input("cse2221-grade-data", "data")
+    Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_grade_overview_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -82,7 +82,7 @@ def render_grade_overview_figure(jsonified_data):
 
 @callback(
     Output("grade-vs-attendance", "figure"),
-    Input("cse2221-grade-data", "data")
+    Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_grades_vs_attendance_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -91,7 +91,7 @@ def render_grades_vs_attendance_figure(jsonified_data):
 
 @callback(
     Output("grade-vs-participation", "figure"),
-    Input("cse2221-grade-data", "data")
+    Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_grades_vs_participation_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -100,7 +100,7 @@ def render_grades_vs_participation_figure(jsonified_data):
 
 @callback(
     Output("project-calculations", "figure"),
-    Input("cse2221-grade-data", "data")
+    Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_project_calculations_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -109,7 +109,7 @@ def render_project_calculations_figure(jsonified_data):
 
 @callback(
     Output("homework-calculations", "figure"),
-    Input("cse2221-grade-data", "data")
+    Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_homework_calculations_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -118,7 +118,7 @@ def render_homework_calculations_figure(jsonified_data):
 
 @callback(
     Output("exams-calculations", "figure"),
-    Input("cse2221-grade-data", "data")
+    Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_exam_calculations_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -127,7 +127,7 @@ def render_exam_calculations_figure(jsonified_data):
 
 @callback(
     Output("missing-projects", "figure"),
-    Input("cse2221-grade-data", "data")
+    Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_missing_projects_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -136,7 +136,7 @@ def render_missing_projects_figure(jsonified_data):
 
 @callback(
     Output("missing-homeworks", "figure"),
-    Input("cse2221-grade-data", "data")
+    Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_missing_homeworks_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -145,7 +145,7 @@ def render_missing_homeworks_figure(jsonified_data):
 
 @callback(
     Output("missing-exams", "figure"),
-    Input("cse2221-grade-data", "data")
+    Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_missing_exams_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -154,7 +154,7 @@ def render_missing_exams_figure(jsonified_data):
 
 @callback(
     Output("project-trends", "figure"),
-    Input("cse2221-grade-data", "data")
+    Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_project_trends_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -163,7 +163,7 @@ def render_project_trends_figure(jsonified_data):
 
 @callback(
     Output("homework-trends", "figure"),
-    Input("cse2221-grade-data", "data")
+    Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_homework_trends_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -172,7 +172,7 @@ def render_homework_trends_figure(jsonified_data):
 
 @callback(
     Output("exam-trends", "figure"),
-    Input("cse2221-grade-data", "data")
+    Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_exam_trends_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -182,7 +182,7 @@ def render_exam_trends_figure(jsonified_data):
 @callback(
     Output("project-points-per-hour", "figure"),
     Output("project-hours-per-point", "figure"),
-    Input("cse2221-grade-data", "data"),
+    Input(ID_CSE_2221_GRADE_DATA, "data"),
     Input(ID_ASSIGNMENT_SURVEY, "data")
 )
 def render_points_per_hour_figure(jsonified_grade_data, jsonified_assignment_survey_data):
