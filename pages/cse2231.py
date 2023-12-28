@@ -4,7 +4,7 @@ import dash
 import pandas as pd
 from dash import Input, Output, callback, dcc, html
 
-from core.constants import software_2_filter
+from core.constants import FILTER_SOFTWARE_2
 from core.data import load_assignment_survey_data, load_cse2231_grade_data
 from core.utils import (create_assignment_fig, create_grades_fig,
                         create_missing_assignment_fig, create_time_fig)
@@ -59,7 +59,7 @@ def render_exam_calculations_figure(jsonified_data):
 )
 def render_homework_time_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
-    return create_time_fig(df, assignment="Homework", course=software_2_filter)
+    return create_time_fig(df, assignment="Homework", course=FILTER_SOFTWARE_2)
 
 
 @callback(
@@ -68,7 +68,7 @@ def render_homework_time_figure(jsonified_data):
 )
 def render_project_time_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
-    return create_time_fig(df, assignment="Project", course=software_2_filter)
+    return create_time_fig(df, assignment="Project", course=FILTER_SOFTWARE_2)
 
 
 @callback(

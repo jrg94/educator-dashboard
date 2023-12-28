@@ -4,7 +4,7 @@ import dash
 import pandas as pd
 from dash import Input, Output, callback, dcc, html
 
-from core.constants import homework_review_col, project_review_col, software_1_filter
+from core.constants import COLUMN_HOMEWORK_REVIEW, FILTER_SOFTWARE_1
 from core.data import load_assignment_survey_data, load_cse2221_grade_data
 from core.utils import (create_assignment_fig, create_correlation_fig,
                         create_emotions_fig, create_grades_fig,
@@ -12,6 +12,8 @@ from core.utils import (create_assignment_fig, create_correlation_fig,
                         create_project_trend_fig, create_rubric_breakdown_fig,
                         create_rubric_overview_fig, create_rubric_scores_fig,
                         create_time_fig, create_value_fig)
+
+ID_PROJECT_TIME_FIG = "project-time"
 
 dash.register_page(
     __name__,
@@ -22,12 +24,12 @@ dash.register_page(
 
 
 @callback(
-    Output("project-time", "figure"),
+    Output(ID_PROJECT_TIME_FIG, "figure"),
     Input("assignment-survey-data", "data")
 )
 def render_project_time_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
-    return create_time_fig(df, assignment="Project", course=software_1_filter)
+    return create_time_fig(df, assignment="Project", course=FILTER_SOFTWARE_1)
 
 
 @callback(
@@ -36,7 +38,7 @@ def render_project_time_figure(jsonified_data):
 )
 def render_homework_time_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
-    return create_time_fig(df, assignment="Homework", course=software_1_filter)
+    return create_time_fig(df, assignment="Homework", course=FILTER_SOFTWARE_1)
 
 
 @callback(
@@ -45,7 +47,7 @@ def render_homework_time_figure(jsonified_data):
 )
 def render_emotions_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
-    return create_emotions_fig(df, col=homework_review_col)
+    return create_emotions_fig(df, col=COLUMN_HOMEWORK_REVIEW)
 
 
 @callback(

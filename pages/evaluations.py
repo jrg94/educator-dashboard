@@ -4,7 +4,7 @@ import dash
 import pandas as pd
 from dash import Input, Output, callback, dcc, html
 
-from core.constants import likert_scale, likert_scale_alt
+from core.constants import SCALE_LIKERT, SCALE_LIKERT_ALT
 from core.data import (load_course_eval_data, load_sei_comments_data,
                        load_sei_data)
 from core.utils import (create_course_eval_fig, create_sei_comment_fig,
@@ -42,7 +42,7 @@ def render_sei_comments_figure(jsonified_data):
 )
 def render_course_content_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
-    return create_course_eval_fig(df, "Course content", likert_scale)
+    return create_course_eval_fig(df, "Course content", SCALE_LIKERT)
 
 
 @callback(
@@ -51,7 +51,7 @@ def render_course_content_figure(jsonified_data):
 )
 def render_skill_and_responsiveness_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
-    return create_course_eval_fig(df, "Skill and responsiveness", likert_scale)
+    return create_course_eval_fig(df, "Skill and responsiveness", SCALE_LIKERT)
 
 
 @callback(
@@ -60,7 +60,7 @@ def render_skill_and_responsiveness_figure(jsonified_data):
 )
 def render_course_content_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
-    return create_course_eval_fig(df, "Contribution to learning", likert_scale_alt)
+    return create_course_eval_fig(df, "Contribution to learning", SCALE_LIKERT_ALT)
 
 
 layout = html.Div([

@@ -1,8 +1,8 @@
 import pandas as pd
 from dash import dcc
 
-from core.constants import (class_review_col, during_emotions_column,
-                            post_emotions_column, pre_emotions_column)
+from core.constants import (COLUMN_CLASS_REVIEW, COLUMN_DURING_EMOTIONS,
+                            COLUMN_POST_EMOTIONS, COLUMN_PRE_EMOTIONS)
 
 
 def load_assignment_survey_data() -> dcc.Store:
@@ -15,10 +15,10 @@ def load_assignment_survey_data() -> dcc.Store:
     # Load and clean data
     assignment_survey_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/assignment-survey-data.csv')
     assignment_survey_data["Timestamp"] = pd.to_datetime(assignment_survey_data["Timestamp"], format="%Y/%m/%d %I:%M:%S %p %Z")
-    assignment_survey_data[class_review_col] = assignment_survey_data[class_review_col].fillna("CSE 2221: Software 1")    
-    assignment_survey_data[pre_emotions_column] = assignment_survey_data[pre_emotions_column].astype(str).apply(lambda x: x.split(";"))
-    assignment_survey_data[during_emotions_column] = assignment_survey_data[during_emotions_column].astype(str).apply(lambda x: x.split(";"))
-    assignment_survey_data[post_emotions_column] = assignment_survey_data[post_emotions_column].astype(str).apply(lambda x: x.split(";"))    
+    assignment_survey_data[COLUMN_CLASS_REVIEW] = assignment_survey_data[COLUMN_CLASS_REVIEW].fillna("CSE 2221: Software 1")    
+    assignment_survey_data[COLUMN_PRE_EMOTIONS] = assignment_survey_data[COLUMN_PRE_EMOTIONS].astype(str).apply(lambda x: x.split(";"))
+    assignment_survey_data[COLUMN_DURING_EMOTIONS] = assignment_survey_data[COLUMN_DURING_EMOTIONS].astype(str).apply(lambda x: x.split(";"))
+    assignment_survey_data[COLUMN_POST_EMOTIONS] = assignment_survey_data[COLUMN_POST_EMOTIONS].astype(str).apply(lambda x: x.split(";"))    
     
     return dcc.Store(id="assignment-survey-data", data=assignment_survey_data.to_json())
 
