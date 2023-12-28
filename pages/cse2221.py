@@ -84,7 +84,7 @@ def render_grade_overview_figure(jsonified_data):
 
 
 @callback(
-    Output(ID_CSE_2221_GRADES_ATTENDACNE_FIG, "figure"),
+    Output(ID_CSE_2221_GRADES_ATTENDANCE_FIG, "figure"),
     Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_grades_vs_attendance_figure(jsonified_data):
@@ -93,7 +93,7 @@ def render_grades_vs_attendance_figure(jsonified_data):
 
 
 @callback(
-    Output("grade-vs-participation", "figure"),
+    Output(ID_CSE_2221_GRADES_PARTICIPATION_FIG, "figure"),
     Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_grades_vs_participation_figure(jsonified_data):
@@ -438,7 +438,10 @@ layout = html.Div([
         breakdown of the rubric scores for each project. 
         """
     ),
-    dcc.Graph(id="rubric-breakdown", className=CSS_FULL_SCREEN_FIG),
+    dcc.Loading(
+        [dcc.Graph(id="rubric-breakdown", className=CSS_FULL_SCREEN_FIG)],
+        type="graph"
+    ),
     dcc.Markdown(
         """
         And just to be perfectly explicit, I also computed average scores for 
@@ -450,7 +453,10 @@ layout = html.Div([
         project 3 rubric. 
         """
     ),
-    dcc.Graph(id="rubric-scores"),
+    dcc.Loading(
+        [dcc.Graph(id="rubric-scores")],
+        type="graph"
+    ),
     html.H2(children='Exams'),
     dcc.Markdown(
         """
@@ -459,7 +465,10 @@ layout = html.Div([
         down as the semester progresses. I haven't quite figured out why. 
         """
     ),
-    dcc.Graph(id="exams-calculations"),
+    dcc.Loading(
+        [dcc.Graph(id="exams-calculations")],
+        type="graph"
+    ),
     dcc.Markdown(
         """
         As with projects and homework assignments, I find it important to also 
@@ -469,7 +478,10 @@ layout = html.Div([
         (i.e., fewer students attend the exams as the semester progresses).
         """
     ),
-    dcc.Graph(id="missing-exams"),
+    dcc.Loading(
+        [dcc.Graph(id="missing-exams")],
+        type="graph"
+    ),
     dcc.Markdown(
         """
         All that is left to talk about is the exam score trend over time. One 
