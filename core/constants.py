@@ -21,6 +21,13 @@ COLUMN_STANDARD_DEVIATION = "Standard Deviation (hours)"
 FILTER_SOFTWARE_1 = "CSE 2221: Software 1"
 FILTER_SOFTWARE_2 = "CSE 2231: Software 2"
 
+# Data IDs
+ID_ASSIGNMENT_SURVEY = "assignment-survey-data"
+ID_SEI_DATA = "sei-data"
+
+# Figure IDs
+ID_CSE2221_PROJECT_TIME_FIG = "project-time"
+
 # Various mappings for charts
 MAPPING_SATISFACTION = {
     1: 'Very Dissatisfied',

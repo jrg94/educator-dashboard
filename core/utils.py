@@ -8,11 +8,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from nltk.corpus import stopwords
 
-from core.constants import (COLUMN_ASSIGNMENT_TYPE, COLUMN_AVERAGE_TIME, COLUMN_DURING_EMOTIONS,
-                            COLUMN_MEDIAN_TIME, COLUMN_POST_EMOTIONS,
-                            COLUMN_PRE_EMOTIONS, COLUMN_PROJECT_REVIEW,
-                            COLUMN_REVIEW_COUNT, COLUMN_RUBRIC, COLORS_SATISFACTION,
-                            MAPPING_SATISFACTION, COLUMN_STANDARD_DEVIATION, COLUMN_CLASS_REVIEW, COOUMN_TIME, COLUMN_HOMEWORK_REVIEW)
+from core.constants import *
 
 
 def _semester_order(data: pd.DataFrame) -> list:
@@ -481,7 +477,6 @@ def create_project_trend_fig(grade_data: pd.DataFrame, assignment: str):
 
     trend_data = trend_data.sort_values(by="Season", ascending=False).sort_values(by="Year", kind="stable")
     trend_data["Semester"] = trend_data["Season"] + " " + trend_data["Year"].astype(str)
-    print(trend_data.head(60))
     
     trend_fig = go.Figure(layout=dict(template='plotly'))    
     trend_fig = px.line(

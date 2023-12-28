@@ -4,16 +4,10 @@ import dash
 import pandas as pd
 from dash import Input, Output, callback, dcc, html
 
-from core.constants import COLUMN_HOMEWORK_REVIEW, FILTER_SOFTWARE_1
-from core.data import load_assignment_survey_data, load_cse2221_grade_data
-from core.utils import (create_assignment_fig, create_correlation_fig,
-                        create_emotions_fig, create_grades_fig,
-                        create_missing_assignment_fig,
-                        create_project_trend_fig, create_rubric_breakdown_fig,
-                        create_rubric_overview_fig, create_rubric_scores_fig,
-                        create_time_fig, create_value_fig)
+from core.constants import *
+from core.data import *
+from core.utils import *
 
-ID_PROJECT_TIME_FIG = "project-time"
 
 dash.register_page(
     __name__,
@@ -24,8 +18,8 @@ dash.register_page(
 
 
 @callback(
-    Output(ID_PROJECT_TIME_FIG, "figure"),
-    Input("assignment-survey-data", "data")
+    Output(ID_CSE2221_PROJECT_TIME_FIG, "figure"),
+    Input(ID_ASSIGNMENT_SURVEY, "data")
 )
 def render_project_time_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -34,7 +28,7 @@ def render_project_time_figure(jsonified_data):
 
 @callback(
     Output("homework-time", "figure"),
-    Input("assignment-survey-data", "data")
+    Input(ID_ASSIGNMENT_SURVEY, "data")
 )
 def render_homework_time_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -43,7 +37,7 @@ def render_homework_time_figure(jsonified_data):
 
 @callback(
     Output("emotions", "figure"),
-    Input("assignment-survey-data", "data")
+    Input(ID_ASSIGNMENT_SURVEY, "data")
 )
 def render_emotions_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -52,7 +46,7 @@ def render_emotions_figure(jsonified_data):
 
 @callback(
     Output("rubric-overview", "figure"),
-    Input("assignment-survey-data", "data")
+    Input(ID_ASSIGNMENT_SURVEY, "data")
 )
 def render_rubric_overview_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -61,7 +55,7 @@ def render_rubric_overview_figure(jsonified_data):
 
 @callback(
     Output("rubric-breakdown", "figure"),
-    Input("assignment-survey-data", "data")
+    Input(ID_ASSIGNMENT_SURVEY, "data")
 )
 def render_rubric_breakdown_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -70,7 +64,7 @@ def render_rubric_breakdown_figure(jsonified_data):
 
 @callback(
     Output("rubric-scores", "figure"),
-    Input("assignment-survey-data", "data")
+    Input(ID_ASSIGNMENT_SURVEY, "data")
 )
 def render_rubric_scores_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
@@ -189,7 +183,7 @@ def render_exam_trends_figure(jsonified_data):
     Output("project-points-per-hour", "figure"),
     Output("project-hours-per-point", "figure"),
     Input("cse2221-grade-data", "data"),
-    Input("assignment-survey-data", "data")
+    Input(ID_ASSIGNMENT_SURVEY, "data")
 )
 def render_points_per_hour_figure(jsonified_grade_data, jsonified_assignment_survey_data):
     grade_data = pd.read_json(StringIO(jsonified_grade_data))

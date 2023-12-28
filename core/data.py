@@ -1,8 +1,7 @@
 import pandas as pd
 from dash import dcc
 
-from core.constants import (COLUMN_CLASS_REVIEW, COLUMN_DURING_EMOTIONS,
-                            COLUMN_POST_EMOTIONS, COLUMN_PRE_EMOTIONS)
+from core.constants import *
 
 
 def load_assignment_survey_data() -> dcc.Store:
@@ -20,7 +19,7 @@ def load_assignment_survey_data() -> dcc.Store:
     assignment_survey_data[COLUMN_DURING_EMOTIONS] = assignment_survey_data[COLUMN_DURING_EMOTIONS].astype(str).apply(lambda x: x.split(";"))
     assignment_survey_data[COLUMN_POST_EMOTIONS] = assignment_survey_data[COLUMN_POST_EMOTIONS].astype(str).apply(lambda x: x.split(";"))    
     
-    return dcc.Store(id="assignment-survey-data", data=assignment_survey_data.to_json())
+    return dcc.Store(id=ID_ASSIGNMENT_SURVEY, data=assignment_survey_data.to_json())
 
 
 def load_sei_data() -> dcc.Store:
@@ -30,7 +29,7 @@ def load_sei_data() -> dcc.Store:
     :return: the SEI data as a store
     """
     sei_data = pd.read_csv('https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-data.csv')
-    return dcc.Store(id="sei-data", data=sei_data.to_json())
+    return dcc.Store(id=ID_SEI_DATA, data=sei_data.to_json())
 
 
 def load_sei_comments_data() -> dcc.Store:
