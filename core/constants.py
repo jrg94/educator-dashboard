@@ -1,5 +1,8 @@
 import plotly.express as px
 
+# Data URLS
+URL_ASSIGNMENT_SURVEY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assignment-survey-data.csv"
+
 # Column headings
 COLUMN_RUBRIC = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
 COLUMN_PROJECT_REVIEW = "Which project are you reviewing (enter a # between 1 and 11)?"
@@ -24,6 +27,7 @@ FILTER_SOFTWARE_2 = "CSE 2231: Software 2"
 # Data IDs
 ID_ASSIGNMENT_SURVEY = "assignment-survey-data"
 ID_SEI_DATA = "sei-data"
+ID_SEI_COMMENTS_DATA = "sei-comments-data"
 
 # Figure IDs
 ID_CSE2221_PROJECT_TIME_FIG = "project-time"
