@@ -88,14 +88,22 @@ def create_time_fig(assignment_survey_data: pd.DataFrame, assignment: str, cours
     return time_fig
 
 
-def create_emotions_fig(assignment_survey_data: pd.DataFrame, col: str):
+def create_emotions_fig(assignment_survey_data: pd.DataFrame, assignment: str, course: str):
     """
     Creates a plot of the emotions data for the different kinds of assignments.
     
     :param assignment_survey_data: the dataframe of all the data from the assignment survey
-    :param col: the column from which to render the emotions figure (e.g., project or homework)
+    :param assignment: the column from which to render the emotions figure (e.g., project or homework)
     """
-    emotions_data = assignment_survey_data.explode(COLUMN_PRE_EMOTIONS)
+    # Filter by course and assignment
+    emotions_data = assignment_survey_data[
+        (assignment_survey_data[COLUMN_CLASS_REVIEW] == course) & 
+        (assignment_survey_data[COLUMN_ASSIGNMENT_TYPE] == assignment)
+    ].copy()
+
+    col = COLUMN_PROJECT_REVIEW if assignment == "Project" else COLUMN_HOMEWORK_REVIEW
+
+    emotions_data = emotions_data.explode(COLUMN_PRE_EMOTIONS)
     emotions_data = emotions_data.explode(COLUMN_DURING_EMOTIONS)
     emotions_data = emotions_data.explode(COLUMN_POST_EMOTIONS)
     emotions_data = emotions_data[emotions_data[COLUMN_PRE_EMOTIONS].isin(["Joy", "Hope", "Hopelessness", "Relief", "Anxiety"])]

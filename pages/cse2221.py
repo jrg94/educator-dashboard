@@ -41,7 +41,7 @@ def render_homework_time_figure(jsonified_data):
 )
 def render_emotions_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
-    return create_emotions_fig(df, col=COLUMN_HOMEWORK_REVIEW)
+    return create_emotions_fig(df, assignment="Homework", course=FILTER_SOFTWARE_1)
 
 
 @callback(
