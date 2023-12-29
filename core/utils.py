@@ -493,7 +493,7 @@ def create_project_trend_fig(grade_data: pd.DataFrame, assignment: str):
         y="Average Score",
         color="Assignment",
         markers=True,
-        title=f"Average {assignment} Score by Date",
+        title=f"Average {assignment} Score by Semester",
         category_orders={
             "Semester": _semester_order(grade_data)
         },

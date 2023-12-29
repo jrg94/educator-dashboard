@@ -163,14 +163,53 @@ layout = html.Div([
         [dcc.Graph(id=ID_CSE_2231_MISSING_HOMEWORKS_FIG)],
         type="graph"
     ),
+    html.P(
+        """
+        As with software 1, I also share a survey with my software 2 students to 
+        get a feel for how long it takes them to complete homeworks. 
+        Unfortunately, this semester, students didn't really complete it. That 
+        said, there are a few responses. 
+        """
+    ),
     dcc.Loading(
         [dcc.Graph(id=ID_CSE_2231_HOMEWORK_TIME_FIG)],
         type="graph"
     ),
     html.H2("Project Assignments"),
+    html.P(
+        """
+        As far as projects are concerned in software 2, there are 10 in total.
+        However, unlike software 1, 9 of the 10 projects are completed in pairs.
+        In total, these 10 projects make up 30% of each student's final grade. 
+        The following plot gives an overview of the average and media grades for
+        each project. 
+        """
+    ),
     dcc.Loading(
         [dcc.Graph(id=ID_CSE_2231_PROJECT_GRADES_FIG)],
         type="graph"
+    ),
+    html.P(
+        """
+        Something I should mention at this point is that project grades are
+        very high on average compared to software 1. There are variety of
+        potential reasons for this. On one hand, this could be due to the 
+        student teams, which could result in students checking over each other's 
+        workm(i.e., rising tides lift all boats kind of argument). On the other 
+        hand, I have more recently started allowing resubmissions of projects, 
+        so students can fix issues in their code. The latter is more likely as 
+        you see a clear drop off in averages for projects near the end of the
+        semester. These projects cannot be resubmitted because I have a hard
+        deadline for all submissions as the last day of class. 
+        """
+    ),
+    html.P(
+        """
+        Not to muddy the waters, but another variable at play could be the
+        rubrics. I've been running rubrics for a long time, so I don't 
+        anticipate then having a noticeable effect on software 2 over software 
+        1. That said, I do think they play a role in higher grades overview. 
+        """
     ),
     dcc.Loading(
         [dcc.Graph(id=ID_CSE_2231_PROJECT_TIME_FIG)],
