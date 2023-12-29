@@ -17,7 +17,7 @@ dash.register_page(
 
 
 @callback(
-    Output("cse2231-grade-overview", "figure"),
+    Output(ID_CSE_2231_GRADES_OVERVIEW_FIG, "figure"),
     Input(ID_CSE_2231_GRADE_DATA, "data")
 )
 def render_grade_overview_figure(jsonified_data):
@@ -26,7 +26,7 @@ def render_grade_overview_figure(jsonified_data):
 
 
 @callback(
-    Output("cse2231-homework-calculations", "figure"),
+    Output(ID_CSE_2231_HOMEWORK_GRADES_FIG, "figure"),
     Input(ID_CSE_2231_GRADE_DATA, "data")
 )
 def render_homework_calculations_figure(jsonified_data):
@@ -35,7 +35,7 @@ def render_homework_calculations_figure(jsonified_data):
 
 
 @callback(
-    Output("cse2231-project-calculations", "figure"),
+    Output(ID_CSE_2231_PROJECT_GRADES_FIG, "figure"),
     Input(ID_CSE_2231_GRADE_DATA, "data")
 )
 def render_project_calculations_figure(jsonified_data):
@@ -82,12 +82,12 @@ def render_project_time_figure(jsonified_data):
 layout = html.Div([
     html.H1("CSE 2231: Software 2"),
     dcc.Loading(
-        [dcc.Graph(id="cse2231-grade-overview")],
+        [dcc.Graph(id=ID_CSE_2231_GRADES_OVERVIEW_FIG)],
         type="graph"
     ),
     html.H2("Homework Assignments"),
     dcc.Loading(
-        [dcc.Graph(id="cse2231-homework-calculations")],
+        [dcc.Graph(id=ID_CSE_2231_HOMEWORK_GRADES_FIG)],
         type="graph"
     ),
     dcc.Loading(
@@ -100,7 +100,7 @@ layout = html.Div([
     ),
     html.H2("Project Assignments"),
     dcc.Loading(
-        [dcc.Graph(id="cse2231-project-calculations")],
+        [dcc.Graph(id=ID_CSE_2231_PROJECT_GRADES_FIG)],
         type="graph"
     ),
     dcc.Loading(

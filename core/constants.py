@@ -50,9 +50,14 @@ ID_CSE_2221_GRADE_OVERVIEW_FIG = "grade-overview"
 ID_CSE_2221_GRADES_ATTENDANCE_FIG = "grade-vs-attendance"
 ID_CSE_2221_GRADES_PARTICIPATION_FIG = "grade-vs-participation"
 
+ID_CSE_2231_GRADES_OVERVIEW_FIG = "cse2231-grade-overview"
+
 ID_CSE_2221_PROJECT_GRADES_FIG = "project-calculations"
 ID_CSE_2221_HOMEWORK_GRADES_FIG = "homework-calculations"
 ID_CSE_2221_EXAM_GRADES_FIG = "exams-calculations"
+
+ID_CSE_2231_PROJECT_GRADES_FIG = "cse2231-project-calculations"
+ID_CSE_2231_HOMEWORK_GRADES_FIG = "cse2231-homework-calculations"
 
 ID_CSE_2221_MISSING_PROJECTS_FIG = "missing-projects"
 ID_CSE_2221_MISSING_HOMEWORKS_FIG = "missing-homeworks"
