@@ -102,9 +102,27 @@ layout = html.Div([
         we've neglected over the course sequence about the Java language. 
         """
     ),
+    html.P(
+        """
+        As far as assessments are concerned, the expectations are roughly the
+        same as software 1. In general, students complete a series of homework
+        assignments, projects, and exams. However, there are significantly
+        more homework assignments in software 2 at a total of 37. There is
+        also one fewer project at a total of 10, which are completed in pairs.
+        Meanwhile, exam expectations are exactly the same. In addition, students
+        are assessed on participation. Here's a quick overview of the
+        averages for each of these assessments.
+        """
+    ),
     dcc.Loading(
         [dcc.Graph(id=ID_CSE_2231_GRADES_OVERVIEW_FIG)],
         type="graph"
+    ),
+    html.P(
+        """
+        As always, the remainder of this page is dedicated to a breakdown
+        of each assessment type. 
+        """
     ),
     html.H2("Homework Assignments"),
     dcc.Loading(
