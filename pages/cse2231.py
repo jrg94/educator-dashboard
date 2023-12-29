@@ -148,6 +148,17 @@ layout = html.Div([
         [dcc.Graph(id=ID_CSE_2231_HOMEWORK_GRADES_FIG)],
         type="graph"
     ),
+    html.P(
+        """
+        As promised, here's what the trend of missing assignments looks like for
+        homeworks. One that jumps right out at me is homework 27! I wonder
+        what's going on there. I can't say for certain why this assignment is
+        most often forgotten, but it's one of two assignments due the same day 
+        as a project. The other assignment being homework 14, which doesn't look
+        out of the ordinary. Homework 27 is, however, the fourth homework of
+        the week, which might play a role in its lack of submissions. 
+        """
+    ),
     dcc.Loading(
         [dcc.Graph(id=ID_CSE_2231_MISSING_HOMEWORKS_FIG)],
         type="graph"
