@@ -79,6 +79,15 @@ def render_project_time_figure(jsonified_data):
     return create_time_fig(df, assignment="Project", course=FILTER_SOFTWARE_2)
 
 
+@callback(
+    Output(ID_CSE_2231_MISSING_PROJECTS_FIG, "figure"),
+    Input(ID_CSE_2231_GRADE_DATA, "data")
+)
+def render_missing_homeworks_figure(jsonified_data):
+    df = pd.read_json(StringIO(jsonified_data))
+    return create_missing_assignment_fig(df, "Project")
+
+
 layout = html.Div([
     html.H1("CSE 2231: Software 2"),
     html.P(
@@ -195,7 +204,7 @@ layout = html.Div([
         very high on average compared to software 1. There are variety of
         potential reasons for this. On one hand, this could be due to the 
         student teams, which could result in students checking over each other's 
-        workm(i.e., rising tides lift all boats kind of argument). On the other 
+        work (i.e., rising tides lift all boats kind of argument). On the other 
         hand, I have more recently started allowing resubmissions of projects, 
         so students can fix issues in their code. The latter is more likely as 
         you see a clear drop off in averages for projects near the end of the
@@ -209,6 +218,25 @@ layout = html.Div([
         rubrics. I've been running rubrics for a long time, so I don't 
         anticipate then having a noticeable effect on software 2 over software 
         1. That said, I do think they play a role in higher grades overview. 
+        """
+    ),
+    html.P(
+        """
+        At any rate, let's take a look at how many projects are missing. You
+        may be surprised to find out that once students are in teams the number
+        of projects that go unsubmitted is near zero. I would say that
+        certainly contributes to much higher grades overall. 
+        """
+    ),
+    dcc.Loading(
+        [dcc.Graph(id=ID_CSE_2231_MISSING_PROJECTS_FIG)],
+        type="graph"
+    ),
+    html.P(
+        """
+        Of course, in addition to grades, I find it important to also consider
+        how long it takes to complete each project. Unfortunately, almost no
+        students have contributed to this knowledge. 
         """
     ),
     dcc.Loading(

@@ -69,6 +69,7 @@ ID_CSE_2221_MISSING_HOMEWORKS_FIG = "missing-homeworks"
 ID_CSE_2221_MISSING_EXAMS_FIG = "missing-exams"
 
 ID_CSE_2231_MISSING_HOMEWORKS_FIG = "cse2231-missing-homeworks"
+ID_CSE_2231_MISSING_PROJECTS_FIG = "cse2231-missing-projects"
 
 ID_CSE_2221_PROJECT_TRENDS_FIG = "project-trends"
 ID_CSE_2221_HOMEWORK_TRENDS_FIG = "homework-trends"
