@@ -17,6 +17,7 @@ updates, additions, or removals I made during or for that semester.
 - Started tracking patch notes
 - Drafted a VSCode monorepo for software 2 to pilot during Spring 2024
 - Updated dashboard to include software 2 statistics
+- Created slides for all lectures of software 2
 
 **Autumn 2023**
 

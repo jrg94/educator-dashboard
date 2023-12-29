@@ -318,7 +318,7 @@ layout = html.Div([
     dcc.Loading(
         [
             dcc.Graph(
-                id=ID_CSE_2221_HOMEWORK_EMOTIONS_FIG, 
+                id=ID_CSE_2221_HOMEWORK_EMOTIONS_FIG,
                 className=CSS_FULL_SCREEN_FIG
             )
         ],
@@ -441,7 +441,7 @@ layout = html.Div([
     dcc.Loading(
         [
             dcc.Graph(
-                id=ID_CSE_2221_RUBRIC_BREAKDOWN_FIG, 
+                id=ID_CSE_2221_RUBRIC_BREAKDOWN_FIG,
                 className=CSS_FULL_SCREEN_FIG
             )
         ],
