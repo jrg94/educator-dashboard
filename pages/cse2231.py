@@ -81,6 +81,27 @@ def render_project_time_figure(jsonified_data):
 
 layout = html.Div([
     html.H1("CSE 2231: Software 2"),
+    html.P(
+        """
+        Software 2 (CSE 2231) is a course I started teaching in Autumn 2023. 
+        Naturally, it follows software 1, which is a course I previously taught.
+        The purpose of software 2 is to flip the script on students. No longer
+        are they clients of APIs (though, there is no avoiding this). Instead,
+        they're implementors of those APIs. 
+        """
+    ),
+    html.P(
+        """
+        In terms of course design, software 2 is broken into three main parts.
+        During the first part of the course, students focus on what we call
+        "kernel implementations", which are the students' first exposure to
+        developing APIs. I've deemed the second part of the course "compilers"
+        because it focuses primarily on compiler techniques like parsing, 
+        tokenizing, and code generation. Finally, the last third of the course
+        focuses on what we call "loose ends", which is basically everything
+        we've neglected over the course sequence about the Java language. 
+        """
+    ),
     dcc.Loading(
         [dcc.Graph(id=ID_CSE_2231_GRADES_OVERVIEW_FIG)],
         type="graph"
