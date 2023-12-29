@@ -4,10 +4,9 @@ import dash
 import pandas as pd
 from dash import Input, Output, callback, dcc, html
 
-from core.constants import FILTER_SOFTWARE_2
-from core.data import load_assignment_survey_data, load_cse2231_grade_data
-from core.utils import (create_assignment_fig, create_grades_fig,
-                        create_missing_assignment_fig, create_time_fig)
+from core.constants import *
+from core.data import *
+from core.utils import *
 
 dash.register_page(
     __name__,
@@ -81,17 +80,38 @@ def render_missing_homeworks_figure(jsonified_data):
 
 
 layout = html.Div([
-    html.H1('CSE 2231: Software 2'),
-    dcc.Graph(id="cse2231-grade-overview"),
-    html.H2(children='Homework Assignments'),
-    dcc.Graph(id="cse2231-homework-calculations"),
-    dcc.Graph(id="cse2231-missing-homeworks"),
-    dcc.Graph(id="cse2231-homework-time"),
+    html.H1("CSE 2231: Software 2"),
+    dcc.Loading(
+        [dcc.Graph(id="cse2231-grade-overview")],
+        type="graph"
+    ),
+    html.H2("Homework Assignments"),
+    dcc.Loading(
+        [dcc.Graph(id="cse2231-homework-calculations")],
+        type="graph"
+    ),
+    dcc.Loading(
+        [dcc.Graph(id="cse2231-missing-homeworks")],
+        type="graph"
+    ),
+    dcc.Loading(
+        [dcc.Graph(id="cse2231-homework-time")],
+        type="graph"
+    ),
     html.H2("Project Assignments"),
-    dcc.Graph(id="cse2231-project-calculations"),
-    dcc.Graph(id="cse2231-project-time"),
-    html.H2(children='Exams'),
-    dcc.Graph(id="cse2231-exams-calculations"),
+    dcc.Loading(
+        [dcc.Graph(id="cse2231-project-calculations")],
+        type="graph"
+    ),
+    dcc.Loading(
+        [dcc.Graph(id="cse2231-project-time")],
+        type="graph"
+    ),
+    html.H2("Exams"),
+    dcc.Loading(
+        [dcc.Graph(id="cse2231-exams-calculations")],
+        type="graph"
+    ),
     load_cse2231_grade_data(),
     load_assignment_survey_data()
 ])
