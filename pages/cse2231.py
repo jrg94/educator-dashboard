@@ -44,7 +44,7 @@ def render_project_calculations_figure(jsonified_data):
 
 
 @callback(
-    Output("cse2231-exams-calculations", "figure"),
+    Output(ID_CSE_2231_EXAM_GRADES_FIG, "figure"),
     Input(ID_CSE_2231_GRADE_DATA, "data")
 )
 def render_exam_calculations_figure(jsonified_data):
@@ -53,7 +53,7 @@ def render_exam_calculations_figure(jsonified_data):
 
 
 @callback(
-    Output("cse2231-homework-time", "figure"),
+    Output(ID_CSE_2231_HOMEWORK_TIME_FIG, "figure"),
     Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
 )
 def render_homework_time_figure(jsonified_data):
@@ -62,7 +62,7 @@ def render_homework_time_figure(jsonified_data):
 
 
 @callback(
-    Output("cse2231-missing-homeworks", "figure"),
+    Output(ID_CSE_2231_MISSING_HOMEWORKS_FIG, "figure"),
     Input(ID_CSE_2231_GRADE_DATA, "data")
 )
 def render_missing_homeworks_figure(jsonified_data):
@@ -71,7 +71,7 @@ def render_missing_homeworks_figure(jsonified_data):
 
 
 @callback(
-    Output("cse2231-project-time", "figure"),
+    Output(ID_CSE_2231_PROJECT_TIME_FIG, "figure"),
     Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
 )
 def render_project_time_figure(jsonified_data):
@@ -91,11 +91,11 @@ layout = html.Div([
         type="graph"
     ),
     dcc.Loading(
-        [dcc.Graph(id="cse2231-missing-homeworks")],
+        [dcc.Graph(id=ID_CSE_2231_MISSING_HOMEWORKS_FIG)],
         type="graph"
     ),
     dcc.Loading(
-        [dcc.Graph(id="cse2231-homework-time")],
+        [dcc.Graph(id=ID_CSE_2231_HOMEWORK_TIME_FIG)],
         type="graph"
     ),
     html.H2("Project Assignments"),
@@ -104,12 +104,12 @@ layout = html.Div([
         type="graph"
     ),
     dcc.Loading(
-        [dcc.Graph(id="cse2231-project-time")],
+        [dcc.Graph(id=ID_CSE_2231_PROJECT_TIME_FIG)],
         type="graph"
     ),
     html.H2("Exams"),
     dcc.Loading(
-        [dcc.Graph(id="cse2231-exams-calculations")],
+        [dcc.Graph(id=ID_CSE_2231_EXAM_GRADES_FIG)],
         type="graph"
     ),
     load_cse2231_grade_data(),

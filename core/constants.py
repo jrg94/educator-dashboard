@@ -40,6 +40,10 @@ ID_CSE_2231_GRADE_DATA = "cse2231-grade-data"
 # Figure IDs
 ID_CSE_2221_PROJECT_TIME_FIG = "project-time"
 ID_CSE_2221_HOMEWORK_TIME_FIG = "homework-time"
+
+ID_CSE_2231_PROJECT_TIME_FIG = "cse2231-project-time"
+ID_CSE_2231_HOMEWORK_TIME_FIG = "cse2231-homework-time"
+
 ID_CSE_2221_HOMEWORK_EMOTIONS_FIG = "emotions"
 
 ID_CSE_2221_RUBRIC_OVERVIEW_FIG = "rubric-overview"
@@ -58,10 +62,13 @@ ID_CSE_2221_EXAM_GRADES_FIG = "exams-calculations"
 
 ID_CSE_2231_PROJECT_GRADES_FIG = "cse2231-project-calculations"
 ID_CSE_2231_HOMEWORK_GRADES_FIG = "cse2231-homework-calculations"
+ID_CSE_2231_EXAM_GRADES_FIG = "cse2231-exam-calculations"
 
 ID_CSE_2221_MISSING_PROJECTS_FIG = "missing-projects"
 ID_CSE_2221_MISSING_HOMEWORKS_FIG = "missing-homeworks"
 ID_CSE_2221_MISSING_EXAMS_FIG = "missing-exams"
+
+ID_CSE_2231_MISSING_HOMEWORKS_FIG = "cse2231-missing-homeworks"
 
 ID_CSE_2221_PROJECT_TRENDS_FIG = "project-trends"
 ID_CSE_2221_HOMEWORK_TRENDS_FIG = "homework-trends"
