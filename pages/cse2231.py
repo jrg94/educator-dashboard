@@ -125,6 +125,25 @@ layout = html.Div([
         """
     ),
     html.H2("Homework Assignments"),
+    html.P(
+        """
+        Once again, students are tasked with completing 37 written homework
+        assignments in software 2. Given a 15-week semester, this means students
+        are asked to complete roughly 2 written assignments a week. However, to
+        be completely fair, most homework assignments are just lab preparation,
+        so all of the work is closely connected to the day-to-day. 
+        """
+    ),
+    html.P(
+        """
+        Like software 1, homework assignments take up just 6% of the overall
+        grade. In addition, each assignment is graded on completion, not 
+        correctness. Therefore, as you'll see below, the median homework grades
+        are high (i.e., over half the class always submits something). 
+        Therefore, the average grade is usually most influence by lack of 
+        submissions (as you'll see later).
+        """
+    ),  
     dcc.Loading(
         [dcc.Graph(id=ID_CSE_2231_HOMEWORK_GRADES_FIG)],
         type="graph"
