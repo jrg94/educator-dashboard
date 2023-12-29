@@ -102,7 +102,7 @@ def render_grades_vs_participation_figure(jsonified_data):
 
 
 @callback(
-    Output("project-calculations", "figure"),
+    Output(ID_CSE_2221_PROJECT_GRADES_FIG, "figure"),
     Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_project_calculations_figure(jsonified_data):
@@ -111,7 +111,7 @@ def render_project_calculations_figure(jsonified_data):
 
 
 @callback(
-    Output("homework-calculations", "figure"),
+    Output(ID_CSE_2221_HOMEWORK_GRADES_FIG, "figure"),
     Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_homework_calculations_figure(jsonified_data):
@@ -120,7 +120,7 @@ def render_homework_calculations_figure(jsonified_data):
 
 
 @callback(
-    Output("exams-calculations", "figure"),
+    Output(ID_CSE_2221_EXAM_GRADES_FIG, "figure"),
     Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_exam_calculations_figure(jsonified_data):
@@ -129,7 +129,7 @@ def render_exam_calculations_figure(jsonified_data):
 
 
 @callback(
-    Output("missing-projects", "figure"),
+    Output(ID_CSE_2221_MISSING_PROJECTS_FIG, "figure"),
     Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_missing_projects_figure(jsonified_data):
@@ -138,7 +138,7 @@ def render_missing_projects_figure(jsonified_data):
 
 
 @callback(
-    Output("missing-homeworks", "figure"),
+    Output(ID_CSE_2221_MISSING_HOMEWORKS_FIG, "figure"),
     Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_missing_homeworks_figure(jsonified_data):
@@ -147,7 +147,7 @@ def render_missing_homeworks_figure(jsonified_data):
 
 
 @callback(
-    Output("missing-exams", "figure"),
+    Output(ID_CSE_2221_MISSING_EXAMS_FIG, "figure"),
     Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_missing_exams_figure(jsonified_data):
@@ -198,7 +198,7 @@ def render_points_per_hour_figure(jsonified_grade_data, jsonified_assignment_sur
         assignment_survey_data,
         "Project",
         10,
-        "CSE 2221: Software 1"
+        FILTER_SOFTWARE_1
     )
 
 
@@ -497,7 +497,10 @@ layout = html.Div([
         to provide more ways for students to practice ahead of time. 
         """
     ),
-    dcc.Graph(id="exam-trends"),
+    dcc.Loading(
+        [dcc.Graph(id="exam-trends")],
+        type="graph"
+    ),
     html.H2("Participation and Attendance"),
     html.P(
         """
@@ -509,7 +512,10 @@ layout = html.Div([
         attendance as follows:
         """
     ),
-    dcc.Graph(id="grade-vs-attendance"),
+    dcc.Loading(
+        [dcc.Graph(id="grade-vs-attendance")],
+        type="graph"
+    ),
     html.P(
         """
         At the moment, the connection between attendance and grades is pretty 
@@ -529,7 +535,10 @@ layout = html.Div([
         be useful in demonstrating a strong correlation with grades. 
         """
     ),
-    dcc.Graph(id="grade-vs-participation"),
+    dcc.Loading(
+        [dcc.Graph(id="grade-vs-participation")],
+        type="graph"
+    ),
     html.P(
         """
         At the time of writing, the correlation was slightly stronger with an 
