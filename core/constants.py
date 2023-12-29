@@ -58,6 +58,13 @@ ID_CSE_2221_MISSING_PROJECTS_FIG = "missing-projects"
 ID_CSE_2221_MISSING_HOMEWORKS_FIG = "missing-homeworks"
 ID_CSE_2221_MISSING_EXAMS_FIG = "missing-exams"
 
+ID_CSE_2221_PROJECT_TRENDS_FIG = "project-trends"
+ID_CSE_2221_HOMEWORK_TRENDS_FIG = "homework-trends"
+ID_CSE_2221_EXAM_TRENDS_FIG = "exam-trends"
+
+ID_CSE_2221_VALUE_FIG = "project-points-per-hour"
+ID_CSE_2221_EFFORT_FIG = "project-hours-per-point"
+
 ID_SEI_OVERVIEW_FIG = "sei-stats"
 ID_SEI_COMMENTS_FIG = "sei-comments"
 

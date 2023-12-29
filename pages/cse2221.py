@@ -156,7 +156,7 @@ def render_missing_exams_figure(jsonified_data):
 
 
 @callback(
-    Output("project-trends", "figure"),
+    Output(ID_CSE_2221_PROJECT_TRENDS_FIG, "figure"),
     Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_project_trends_figure(jsonified_data):
@@ -165,7 +165,7 @@ def render_project_trends_figure(jsonified_data):
 
 
 @callback(
-    Output("homework-trends", "figure"),
+    Output(ID_CSE_2221_HOMEWORK_TRENDS_FIG, "figure"),
     Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_homework_trends_figure(jsonified_data):
@@ -174,7 +174,7 @@ def render_homework_trends_figure(jsonified_data):
 
 
 @callback(
-    Output("exam-trends", "figure"),
+    Output(ID_CSE_2221_EXAM_TRENDS_FIG, "figure"),
     Input(ID_CSE_2221_GRADE_DATA, "data")
 )
 def render_exam_trends_figure(jsonified_data):
@@ -183,8 +183,8 @@ def render_exam_trends_figure(jsonified_data):
 
 
 @callback(
-    Output("project-points-per-hour", "figure"),
-    Output("project-hours-per-point", "figure"),
+    Output(ID_CSE_2221_VALUE_FIG, "figure"),
+    Output(ID_CSE_2221_EFFORT_FIG, "figure"),
     Input(ID_CSE_2221_GRADE_DATA, "data"),
     Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
 )
@@ -237,7 +237,7 @@ layout = html.Div([
         more detail. 
         """
     ),
-    html.H2(children='Homework Assignments'),
+    html.H2("Homework Assignments"),
     dcc.Markdown(
         """
         As previously mentioned, we assign 22 homework assignments each 
@@ -251,7 +251,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id="homework-calculations")],
+        [dcc.Graph(id=ID_CSE_2221_HOMEWORK_GRADES_FIG)],
         type="graph"
     ),
     # TODO: look into possible causes of lack of submissions
@@ -266,7 +266,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id="missing-homeworks")],
+        [dcc.Graph(id=ID_CSE_2221_MISSING_HOMEWORKS_FIG)],
         type="graph"
     ),
     dcc.Markdown(
@@ -278,7 +278,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id="homework-trends")],
+        [dcc.Graph(id=ID_CSE_2221_HOMEWORK_TRENDS_FIG)],
         type="graph"
     ),
     html.P(
@@ -293,7 +293,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id="homework-time")],
+        [dcc.Graph(id=ID_CSE_2221_HOMEWORK_TIME_FIG)],
         type="graph"
     ),
     html.P(
@@ -335,7 +335,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id="project-calculations")],
+        [dcc.Graph(id=ID_CSE_2221_PROJECT_GRADES_FIG)],
         type="graph"
     ),
     html.P(
@@ -349,7 +349,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id="missing-projects")],
+        [dcc.Graph(id=ID_CSE_2221_MISSING_PROJECTS_FIG)],
         type="graph"
     ),
     dcc.Markdown(
@@ -364,7 +364,7 @@ layout = html.Div([
     ),
     # TODO: consider including grader influences to the plots
     dcc.Loading(
-        [dcc.Graph(id="project-trends")],
+        [dcc.Graph(id=ID_CSE_2221_PROJECT_TRENDS_FIG)],
         type="graph"
     ),
     html.P(
@@ -379,7 +379,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id="project-time")],
+        [dcc.Graph(id=ID_CSE_2221_PROJECT_TIME_FIG)],
         type="graph"
     ),
     dcc.Markdown(
@@ -397,7 +397,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id="project-points-per-hour")],
+        [dcc.Graph(id=ID_CSE_2221_VALUE_FIG)],
         type="graph"
     ),
     dcc.Markdown(
@@ -412,7 +412,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id="project-hours-per-point")],
+        [dcc.Graph(id=ID_CSE_2221_EFFORT_FIG)],
         type="graph"
     ),
     html.P(
@@ -429,7 +429,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id="rubric-overview")],
+        [dcc.Graph(id=ID_CSE_2221_RUBRIC_OVERVIEW_FIG)],
         type="graph"
     ),
     dcc.Markdown(
@@ -439,7 +439,12 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id="rubric-breakdown", className=CSS_FULL_SCREEN_FIG)],
+        [
+            dcc.Graph(
+                id=ID_CSE_2221_RUBRIC_BREAKDOWN_FIG, 
+                className=CSS_FULL_SCREEN_FIG
+            )
+        ],
         type="graph"
     ),
     dcc.Markdown(
@@ -454,10 +459,10 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id="rubric-scores")],
+        [dcc.Graph(id=ID_CSE_2221_RUBRIC_SCORES_FIG)],
         type="graph"
     ),
-    html.H2(children='Exams'),
+    html.H2("Exams"),
     dcc.Markdown(
         """
         At this point, the last remaining assessments are the exams. In total, 
@@ -466,7 +471,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id="exams-calculations")],
+        [dcc.Graph(id=ID_CSE_2221_EXAM_GRADES_FIG)],
         type="graph"
     ),
     dcc.Markdown(
@@ -479,7 +484,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id="missing-exams")],
+        [dcc.Graph(id=ID_CSE_2221_MISSING_EXAMS_FIG)],
         type="graph"
     ),
     dcc.Markdown(
@@ -498,7 +503,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id="exam-trends")],
+        [dcc.Graph(id=ID_CSE_2221_EXAM_TRENDS_FIG)],
         type="graph"
     ),
     html.H2("Participation and Attendance"),
@@ -513,7 +518,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id="grade-vs-attendance")],
+        [dcc.Graph(id=ID_CSE_2221_GRADES_ATTENDANCE_FIG)],
         type="graph"
     ),
     html.P(
@@ -536,7 +541,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id="grade-vs-participation")],
+        [dcc.Graph(id=ID_CSE_2221_GRADES_PARTICIPATION_FIG)],
         type="graph"
     ),
     html.P(
