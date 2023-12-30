@@ -35,24 +35,6 @@ def render_homework_calculations_figure(jsonified_data):
 
 
 @callback(
-    Output(ID_CSE_2231_PROJECT_GRADES_FIG, "figure"),
-    Input(ID_CSE_2231_GRADE_DATA, "data")
-)
-def render_project_calculations_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_assignment_fig(df, "Project", 10)
-
-
-@callback(
-    Output(ID_CSE_2231_EXAM_GRADES_FIG, "figure"),
-    Input(ID_CSE_2231_GRADE_DATA, "data")
-)
-def render_exam_calculations_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_assignment_fig(df, "Exam", 100)
-
-
-@callback(
     Output(ID_CSE_2231_HOMEWORK_TIME_FIG, "figure"),
     Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
 )
@@ -71,6 +53,15 @@ def render_missing_homeworks_figure(jsonified_data):
 
 
 @callback(
+    Output(ID_CSE_2231_PROJECT_GRADES_FIG, "figure"),
+    Input(ID_CSE_2231_GRADE_DATA, "data")
+)
+def render_project_calculations_figure(jsonified_data):
+    df = pd.read_json(StringIO(jsonified_data))
+    return create_assignment_fig(df, "Project", 10)
+
+
+@callback(
     Output(ID_CSE_2231_PROJECT_TIME_FIG, "figure"),
     Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
 )
@@ -86,6 +77,24 @@ def render_project_time_figure(jsonified_data):
 def render_missing_homeworks_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_missing_assignment_fig(df, "Project")
+
+
+@callback(
+    Output(ID_CSE_2231_EXAM_GRADES_FIG, "figure"),
+    Input(ID_CSE_2231_GRADE_DATA, "data")
+)
+def render_exam_calculations_figure(jsonified_data):
+    df = pd.read_json(StringIO(jsonified_data))
+    return create_assignment_fig(df, "Exam", 100)
+
+
+@callback(
+    Output(ID_CSE_2231_MISSING_EXAMS_FIG, "figure"),
+    Input(ID_CSE_2231_GRADE_DATA, "data")
+)
+def render_missing_homeworks_figure(jsonified_data):
+    df = pd.read_json(StringIO(jsonified_data))
+    return create_missing_assignment_fig(df, "Exam")
 
 
 layout = html.Div([
@@ -244,9 +253,59 @@ layout = html.Div([
         type="graph"
     ),
     html.H2("Exams"),
+    html.P(
+        """
+        As in software 1, software 2 features three exams that account for 60%
+        of the students' overall grade. Here's a quick overview of the grades
+        for each exam. 
+        """
+    ),
     dcc.Loading(
         [dcc.Graph(id=ID_CSE_2231_EXAM_GRADES_FIG)],
         type="graph"
+    ),
+    html.P(
+        """
+        At a quick glance, the trend of exam grades going down over time seems
+        to hold in software 2 as well. However, you may notice high exam scores.
+        I am actually somewhat surprised by this as I didn't do anything
+        different in terms of exam design, even though I have that power now.
+        That said, I did shift to online exams for the second and third exams,
+        which demonstrated no real difference in overall grades to me (though,
+        maybe a 5% increase overall). 
+        """
+    ),
+    html.P(
+        """
+        As usual, I have my theories about the differences in overall grades
+        between the two courses. One theory is that software 2 has students
+        that have beaten the challenge of software 1 and are therefore better
+        prepared for software 2. However, I don't really buy that theory because
+        there are a few things I've done differently than before. To start, 
+        I offer retakes for folks who perform particularly poorly. That's not
+        really new, but I felt like I had more students take me up on that offer
+        than before. Second, I piloted a new project this semester, which I used
+        as an exam replacement. Students in general got near perfect grades on 
+        the extra project, so it's no surprise to me that the midterm grades
+        were so high. If you want to truly compare software 1 grades against
+        software 2 grades, you'd have to compare the finals. That said, I'll
+        save those analytics for another day. 
+        """
+    ),
+    html.P(
+        """
+        In the meantime, here's the data on missing exams.
+        """
+    ),
+    dcc.Loading(
+        [dcc.Graph(id=ID_CSE_2231_MISSING_EXAMS_FIG)],
+        type="graph"
+    ),
+    html.P(
+        """
+        Missing exams were already an exceedingly rare occurence, but the shift
+        to online exams seems to have eliminated the problem almost entirely.
+        """
     ),
     load_cse2231_grade_data(),
     load_assignment_survey_data()
