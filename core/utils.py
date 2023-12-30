@@ -8,11 +8,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from nltk.corpus import stopwords
 
-from core.constants import (assignment_type, avg_time, during_emotions_column,
-                            median_time, post_emotions_column,
-                            pre_emotions_column, project_review_col,
-                            review_count, rubric_heading, satisfaction_colors,
-                            satisfaction_mapping, std_time, class_review_col, time_col, homework_review_col)
+from core.constants import *
 
 
 def _semester_order(data: pd.DataFrame) -> list:
@@ -46,17 +42,17 @@ def create_time_fig(assignment_survey_data: pd.DataFrame, assignment: str, cours
     """
     # Filter by course and assignment
     assignment_subset = assignment_survey_data[
-        (assignment_survey_data[class_review_col] == course) & 
-        (assignment_survey_data[assignment_type] == assignment)
+        (assignment_survey_data[COLUMN_CLASS_REVIEW] == course) & 
+        (assignment_survey_data[COLUMN_ASSIGNMENT_TYPE] == assignment)
     ].copy()
 
-    col = project_review_col if assignment == "Project" else homework_review_col
+    col = COLUMN_PROJECT_REVIEW if assignment == "Project" else COLUMN_HOMEWORK_REVIEW
 
     # Compute project statistics
-    assignment_subset[avg_time] = assignment_subset.groupby(col)[time_col].transform(lambda x: x.mean())
-    assignment_subset[median_time] = assignment_subset.groupby(col)[time_col].transform(lambda x: x.median())
-    assignment_subset[review_count] = assignment_subset.groupby(col)[time_col].transform(lambda x: x.count())
-    assignment_subset[std_time] = assignment_subset.groupby(col)[time_col].transform(lambda x: x.std())
+    assignment_subset[COLUMN_AVERAGE_TIME] = assignment_subset.groupby(col)[COOUMN_TIME].transform(lambda x: x.mean())
+    assignment_subset[COLUMN_MEDIAN_TIME] = assignment_subset.groupby(col)[COOUMN_TIME].transform(lambda x: x.median())
+    assignment_subset[COLUMN_REVIEW_COUNT] = assignment_subset.groupby(col)[COOUMN_TIME].transform(lambda x: x.count())
+    assignment_subset[COLUMN_STANDARD_DEVIATION] = assignment_subset.groupby(col)[COOUMN_TIME].transform(lambda x: x.std())
 
     # Clean up rows
     to_plot = assignment_subset \
@@ -65,7 +61,7 @@ def create_time_fig(assignment_survey_data: pd.DataFrame, assignment: str, cours
         .sort_values(by=col)
     
     to_plot = to_plot.melt(
-        id_vars=[item for item in to_plot.columns if item not in [avg_time, median_time]],
+        id_vars=[item for item in to_plot.columns if item not in [COLUMN_AVERAGE_TIME, COLUMN_MEDIAN_TIME]],
         var_name="Metric",
         value_name="Time (hours)"
     )
@@ -79,8 +75,8 @@ def create_time_fig(assignment_survey_data: pd.DataFrame, assignment: str, cours
         text_auto=".2s",
         barmode='group',
         title="Average and Median Assignment Time",
-        error_y=std_time,
-        hover_data=[review_count]
+        error_y=COLUMN_STANDARD_DEVIATION,
+        hover_data=[COLUMN_REVIEW_COUNT]
     )
     time_fig.update_traces(
         textfont_size=12, 
@@ -92,25 +88,33 @@ def create_time_fig(assignment_survey_data: pd.DataFrame, assignment: str, cours
     return time_fig
 
 
-def create_emotions_fig(assignment_survey_data: pd.DataFrame, col: str):
+def create_emotions_fig(assignment_survey_data: pd.DataFrame, assignment: str, course: str):
     """
     Creates a plot of the emotions data for the different kinds of assignments.
     
     :param assignment_survey_data: the dataframe of all the data from the assignment survey
-    :param col: the column from which to render the emotions figure (e.g., project or homework)
+    :param assignment: the column from which to render the emotions figure (e.g., project or homework)
     """
-    emotions_data = assignment_survey_data.explode(pre_emotions_column)
-    emotions_data = emotions_data.explode(during_emotions_column)
-    emotions_data = emotions_data.explode(post_emotions_column)
-    emotions_data = emotions_data[emotions_data[pre_emotions_column].isin(["Joy", "Hope", "Hopelessness", "Relief", "Anxiety"])]
-    emotions_data = emotions_data[emotions_data[during_emotions_column].isin(["Enjoyment", "Anger", "Frustration", "Boredom"])]
-    emotions_data = emotions_data[emotions_data[post_emotions_column].isin(["Joy", "Pride", "Gratitude", "Sadness", "Shame", "Anger"])]
-    emotions_data = emotions_data.groupby(col)[[pre_emotions_column, during_emotions_column, post_emotions_column]].value_counts() 
-    emotions_data = emotions_data.reset_index().melt(id_vars=col, value_vars=[pre_emotions_column, during_emotions_column, post_emotions_column])
+    # Filter by course and assignment
+    emotions_data = assignment_survey_data[
+        (assignment_survey_data[COLUMN_CLASS_REVIEW] == course) & 
+        (assignment_survey_data[COLUMN_ASSIGNMENT_TYPE] == assignment)
+    ].copy()
+
+    col = COLUMN_PROJECT_REVIEW if assignment == "Project" else COLUMN_HOMEWORK_REVIEW
+
+    emotions_data = emotions_data.explode(COLUMN_PRE_EMOTIONS)
+    emotions_data = emotions_data.explode(COLUMN_DURING_EMOTIONS)
+    emotions_data = emotions_data.explode(COLUMN_POST_EMOTIONS)
+    emotions_data = emotions_data[emotions_data[COLUMN_PRE_EMOTIONS].isin(["Joy", "Hope", "Hopelessness", "Relief", "Anxiety"])]
+    emotions_data = emotions_data[emotions_data[COLUMN_DURING_EMOTIONS].isin(["Enjoyment", "Anger", "Frustration", "Boredom"])]
+    emotions_data = emotions_data[emotions_data[COLUMN_POST_EMOTIONS].isin(["Joy", "Pride", "Gratitude", "Sadness", "Shame", "Anger"])]
+    emotions_data = emotions_data.groupby(col)[[COLUMN_PRE_EMOTIONS, COLUMN_DURING_EMOTIONS, COLUMN_POST_EMOTIONS]].value_counts() 
+    emotions_data = emotions_data.reset_index().melt(id_vars=col, value_vars=[COLUMN_PRE_EMOTIONS, COLUMN_DURING_EMOTIONS, COLUMN_POST_EMOTIONS])
     emotions_data = emotions_data.replace({
-        pre_emotions_column: "Pre-Assignment",
-        during_emotions_column: "During Assignment",
-        post_emotions_column: "Post-Assignment"
+        COLUMN_PRE_EMOTIONS: "Pre-Assignment",
+        COLUMN_DURING_EMOTIONS: "During Assignment",
+        COLUMN_POST_EMOTIONS: "Post-Assignment"
     })
     emotions_figure = go.Figure(layout=dict(template='plotly'))
     emotions_figure = px.histogram(
@@ -128,29 +132,29 @@ def create_emotions_fig(assignment_survey_data: pd.DataFrame, col: str):
 
 
 def create_rubric_overview_fig(assignment_survey_data: pd.DataFrame):
-    assignment_survey_data[rubric_heading] = assignment_survey_data[rubric_heading].map(satisfaction_mapping)
-    data = assignment_survey_data[rubric_heading].value_counts().rename_axis("Response").reset_index(name="Number of Reviews")
+    assignment_survey_data[COLUMN_RUBRIC] = assignment_survey_data[COLUMN_RUBRIC].map(MAPPING_SATISFACTION)
+    data = assignment_survey_data[COLUMN_RUBRIC].value_counts().rename_axis("Response").reset_index(name="Number of Reviews")
     rubric_fig = go.Figure(layout=dict(template='plotly'))
     rubric_fig = px.bar(
         data, 
         x="Response",
         y="Number of Reviews",
         color="Response",
-        category_orders={"Response": list(satisfaction_mapping.values())},
+        category_orders={"Response": list(MAPPING_SATISFACTION.values())},
         text_auto=True,
         title="Project Rubric Satisfaction Overview",
-        color_discrete_map=satisfaction_colors
+        color_discrete_map=COLORS_SATISFACTION
     )
     return rubric_fig
 
 
 def create_rubric_breakdown_fig(assignment_survey_data: pd.DataFrame):
-    assignment_survey_data[rubric_heading] = assignment_survey_data[rubric_heading].map(satisfaction_mapping)
-    data = assignment_survey_data.groupby(project_review_col)[rubric_heading] \
+    assignment_survey_data[COLUMN_RUBRIC] = assignment_survey_data[COLUMN_RUBRIC].map(MAPPING_SATISFACTION)
+    data = assignment_survey_data.groupby(COLUMN_PROJECT_REVIEW)[COLUMN_RUBRIC] \
         .value_counts() \
         .unstack() \
         .reset_index() \
-        .melt(id_vars=[project_review_col], var_name="Response", value_name="Number of Reviews") \
+        .melt(id_vars=[COLUMN_PROJECT_REVIEW], var_name="Response", value_name="Number of Reviews") \
         .dropna() 
     rubric_breakdown_fig = go.Figure(layout=dict(template='plotly'))
     rubric_breakdown_fig = px.bar(
@@ -158,25 +162,25 @@ def create_rubric_breakdown_fig(assignment_survey_data: pd.DataFrame):
         x="Response",
         y="Number of Reviews",
         color="Response",
-        facet_col=project_review_col, 
+        facet_col=COLUMN_PROJECT_REVIEW, 
         facet_col_wrap=2,
         text_auto=True,
         category_orders={
-            "Response": list(satisfaction_mapping.values()),
-            project_review_col: list(range(1, 12))
+            "Response": list(MAPPING_SATISFACTION.values()),
+            COLUMN_PROJECT_REVIEW: list(range(1, 12))
         },
         labels={
-            rubric_heading: 'Response',
+            COLUMN_RUBRIC: 'Response',
         },
         title="Rubric Satisfaction By Project",
-        color_discrete_map=satisfaction_colors
+        color_discrete_map=COLORS_SATISFACTION
     )
     rubric_breakdown_fig.for_each_annotation(lambda a: a.update(text=f'Project {a.text.split("=")[-1]}'))
     return rubric_breakdown_fig
 
 
 def create_rubric_scores_fig(assignment_survey_data: pd.DataFrame):
-    rubric_scores = assignment_survey_data.groupby(project_review_col)[rubric_heading].agg(["mean", "count"])
+    rubric_scores = assignment_survey_data.groupby(COLUMN_PROJECT_REVIEW)[COLUMN_RUBRIC].agg(["mean", "count"])
     rubric_scores_fig = go.Figure(layout=dict(template='plotly'))    
     rubric_scores_fig = px.bar(
         rubric_scores, 
@@ -263,7 +267,7 @@ def create_sei_comment_fig(sei_comments: pd.DataFrame) -> plotly.graph_objs.Figu
 
 
 def create_course_eval_fig(course_eval_data, question, axes_labels):
-    colors = dict(zip(axes_labels, satisfaction_colors.values()))
+    colors = dict(zip(axes_labels, COLORS_SATISFACTION.values()))
     question_data = course_eval_data.melt(
         id_vars=[item for item in course_eval_data.columns if question not in item],
         var_name="Question",
@@ -303,26 +307,26 @@ def create_value_fig(grade_data: pd.DataFrame, assignment_survey_data: pd.DataFr
 
     # Filter time data
     assignment_subset = assignment_survey_data[
-        (assignment_survey_data[class_review_col] == course) & 
-        (assignment_survey_data[assignment_type] == assignment)
+        (assignment_survey_data[COLUMN_CLASS_REVIEW] == course) & 
+        (assignment_survey_data[COLUMN_ASSIGNMENT_TYPE] == assignment)
     ].copy()
 
-    col = project_review_col if assignment == "Project" else homework_review_col
+    col = COLUMN_PROJECT_REVIEW if assignment == "Project" else COLUMN_HOMEWORK_REVIEW
 
     # Compute project statistics
-    assignment_subset[avg_time] = assignment_subset.groupby(col)[time_col].transform(lambda x: x.mean())
-    assignment_subset[median_time] = assignment_subset.groupby(col)[time_col].transform(lambda x: x.median())
-    assignment_subset[review_count] = assignment_subset.groupby(col)[time_col].transform(lambda x: x.count())
-    assignment_subset[std_time] = assignment_subset.groupby(col)[time_col].transform(lambda x: x.std())
+    assignment_subset[COLUMN_AVERAGE_TIME] = assignment_subset.groupby(col)[COOUMN_TIME].transform(lambda x: x.mean())
+    assignment_subset[COLUMN_MEDIAN_TIME] = assignment_subset.groupby(col)[COOUMN_TIME].transform(lambda x: x.median())
+    assignment_subset[COLUMN_REVIEW_COUNT] = assignment_subset.groupby(col)[COOUMN_TIME].transform(lambda x: x.count())
+    assignment_subset[COLUMN_STANDARD_DEVIATION] = assignment_subset.groupby(col)[COOUMN_TIME].transform(lambda x: x.std())
     
     # Setup time data
     assignment_subset = assignment_subset.drop_duplicates(subset=[col]).sort_values(by=col)
     assignment_subset["Project #"] = "Project #" + assignment_subset[col].astype(int).astype(str)
-    assignment_subset = assignment_subset.set_index(f"{assignment} #")[median_time]
+    assignment_subset = assignment_subset.set_index(f"{assignment} #")[COLUMN_MEDIAN_TIME]
     assignment_aggregate_data = assignment_calculations.join(assignment_subset)
     assignment_aggregate_data = assignment_aggregate_data.rename(columns={'mean': f'Average Score/{max_score}', 'median': f'Median Score/{max_score}'})
     assignment_aggregate_data["Points per Hour"] = assignment_aggregate_data[f"Median Score/{max_score}"] / assignment_aggregate_data["Median Time (hours)"]
-    assignment_aggregate_data["Minutes per Point"] = assignment_aggregate_data[median_time] / assignment_aggregate_data[f"Median Score/{max_score}"] * 60
+    assignment_aggregate_data["Minutes per Point"] = assignment_aggregate_data[COLUMN_MEDIAN_TIME] / assignment_aggregate_data[f"Median Score/{max_score}"] * 60
     assignment_aggregate_data = assignment_aggregate_data.reset_index()
     
     # Generate figures
@@ -355,7 +359,7 @@ def create_value_fig(grade_data: pd.DataFrame, assignment_survey_data: pd.DataFr
     return assignment_expected_time_fig, assignment_expected_effort_fig
 
 
-def create_correlation_fig(grade_data, correlating_factor, label):
+def create_correlation_fig(grade_data: pd.DataFrame, correlating_factor, label):
     grade_overview = generate_grade_overview(grade_data)
 
     total_scores = grade_overview["Exams"] * .6 \
@@ -481,7 +485,6 @@ def create_project_trend_fig(grade_data: pd.DataFrame, assignment: str):
 
     trend_data = trend_data.sort_values(by="Season", ascending=False).sort_values(by="Year", kind="stable")
     trend_data["Semester"] = trend_data["Season"] + " " + trend_data["Year"].astype(str)
-    print(trend_data.head(60))
     
     trend_fig = go.Figure(layout=dict(template='plotly'))    
     trend_fig = px.line(
@@ -490,7 +493,7 @@ def create_project_trend_fig(grade_data: pd.DataFrame, assignment: str):
         y="Average Score",
         color="Assignment",
         markers=True,
-        title=f"Average {assignment} Score by Date",
+        title=f"Average {assignment} Score by Semester",
         category_orders={
             "Semester": _semester_order(grade_data)
         },

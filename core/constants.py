@@ -1,49 +1,117 @@
 import plotly.express as px
 
-# Column headings
-rubric_heading = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
-project_review_col = "Which project are you reviewing (enter a # between 1 and 11)?"
-homework_review_col = "Which homework assignment are you reviewing (enter a # between 1 and 37)?"
-class_review_col = "Which of the following classes is this assignment for?"
-pre_emotions_column = "Which of the following emotions did you experience **before** starting this project (select all that apply)?"
-during_emotions_column = "Which of the following emotions did you experience while completing this project (select all that apply)?"
-post_emotions_column = "Which of the following emotions did you experience **after** completing this project (select all that apply)?"
-time_col = "How much time did you spend on this assignment in hours?"
-assignment_type = "Are you reviewing a project or a homework assignment?"
+# Data URLS
+URL_ASSIGNMENT_SURVEY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assignment-survey-data.csv"
+URL_SEI_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-data.csv"
+URL_SEI_COMMENTS_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-comments.csv"
+URL_COURSE_EVAL_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/eval-data.csv"
+URL_CSE_2221_GRADE_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/cse-2221-grades.csv"
+URL_CSE_2231_GRADE_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/cse-2231-grades.csv"
 
-# Added headings
-avg_time = "Average Time (hours)"
-median_time = "Median Time (hours)"
-review_count = "Number of Reviews"
-std_time = "Standard Deviation (hours)"
+# Column headings
+COLUMN_RUBRIC = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
+COLUMN_PROJECT_REVIEW = "Which project are you reviewing (enter a # between 1 and 11)?"
+COLUMN_HOMEWORK_REVIEW = "Which homework assignment are you reviewing (enter a # between 1 and 37)?"
+COLUMN_CLASS_REVIEW = "Which of the following classes is this assignment for?"
+COLUMN_PRE_EMOTIONS = "Which of the following emotions did you experience **before** starting this project (select all that apply)?"
+COLUMN_DURING_EMOTIONS = "Which of the following emotions did you experience while completing this project (select all that apply)?"
+COLUMN_POST_EMOTIONS = "Which of the following emotions did you experience **after** completing this project (select all that apply)?"
+COOUMN_TIME = "How much time did you spend on this assignment in hours?"
+COLUMN_ASSIGNMENT_TYPE = "Are you reviewing a project or a homework assignment?"
+
+# Added column headings
+COLUMN_AVERAGE_TIME = "Average Time (hours)"
+COLUMN_MEDIAN_TIME = "Median Time (hours)"
+COLUMN_REVIEW_COUNT = "Number of Reviews"
+COLUMN_STANDARD_DEVIATION = "Standard Deviation (hours)"
 
 # Assignment survey filter values
-software_1_filter = "CSE 2221: Software 1"
-software_2_filter = "CSE 2231: Software 2"
+FILTER_SOFTWARE_1 = "CSE 2221: Software 1"
+FILTER_SOFTWARE_2 = "CSE 2231: Software 2"
+
+# Data IDs
+ID_ASSIGNMENT_SURVEY_DATA = "assignment-survey-data"
+ID_SEI_DATA = "sei-data"
+ID_SEI_COMMENTS_DATA = "sei-comments-data"
+ID_COURSE_EVAL_DATA = "course-eval-data"
+ID_CSE_2221_GRADE_DATA = "cse2221-grade-data"
+ID_CSE_2231_GRADE_DATA = "cse2231-grade-data"
+
+# Figure IDs
+ID_CSE_2221_PROJECT_TIME_FIG = "project-time"
+ID_CSE_2221_HOMEWORK_TIME_FIG = "homework-time"
+
+ID_CSE_2231_PROJECT_TIME_FIG = "cse2231-project-time"
+ID_CSE_2231_HOMEWORK_TIME_FIG = "cse2231-homework-time"
+
+ID_CSE_2221_HOMEWORK_EMOTIONS_FIG = "emotions"
+
+ID_CSE_2221_RUBRIC_OVERVIEW_FIG = "rubric-overview"
+ID_CSE_2221_RUBRIC_BREAKDOWN_FIG = "rubric-breakdown"
+ID_CSE_2221_RUBRIC_SCORES_FIG = "rubric-scores"
+
+ID_CSE_2221_GRADE_OVERVIEW_FIG = "grade-overview"
+ID_CSE_2221_GRADES_ATTENDANCE_FIG = "grade-vs-attendance"
+ID_CSE_2221_GRADES_PARTICIPATION_FIG = "grade-vs-participation"
+
+ID_CSE_2231_GRADES_OVERVIEW_FIG = "cse2231-grade-overview"
+
+ID_CSE_2221_PROJECT_GRADES_FIG = "project-calculations"
+ID_CSE_2221_HOMEWORK_GRADES_FIG = "homework-calculations"
+ID_CSE_2221_EXAM_GRADES_FIG = "exams-calculations"
+
+ID_CSE_2231_PROJECT_GRADES_FIG = "cse2231-project-calculations"
+ID_CSE_2231_HOMEWORK_GRADES_FIG = "cse2231-homework-calculations"
+ID_CSE_2231_EXAM_GRADES_FIG = "cse2231-exam-calculations"
+
+ID_CSE_2221_MISSING_PROJECTS_FIG = "missing-projects"
+ID_CSE_2221_MISSING_HOMEWORKS_FIG = "missing-homeworks"
+ID_CSE_2221_MISSING_EXAMS_FIG = "missing-exams"
+
+ID_CSE_2231_MISSING_HOMEWORKS_FIG = "cse2231-missing-homeworks"
+ID_CSE_2231_MISSING_PROJECTS_FIG = "cse2231-missing-projects"
+ID_CSE_2231_MISSING_EXAMS_FIG = "cse2231-missing-exams"
+
+ID_CSE_2221_PROJECT_TRENDS_FIG = "project-trends"
+ID_CSE_2221_HOMEWORK_TRENDS_FIG = "homework-trends"
+ID_CSE_2221_EXAM_TRENDS_FIG = "exam-trends"
+
+ID_CSE_2221_VALUE_FIG = "project-points-per-hour"
+ID_CSE_2221_EFFORT_FIG = "project-hours-per-point"
+
+ID_SEI_OVERVIEW_FIG = "sei-stats"
+ID_SEI_COMMENTS_FIG = "sei-comments"
+
+ID_EVAL_COURSE_CONTENT_FIG = "course-content"
+ID_EVAL_SKILL_FIG = "skill-and-responsiveness"
+ID_EVAL_CONTRIBUTION_FIG = "contribution-to-learning"
+
+# CSS Classes
+CSS_FULL_SCREEN_FIG = "max-window"
 
 # Various mappings for charts
-satisfaction_mapping = {
+MAPPING_SATISFACTION = {
     1: 'Very Dissatisfied',
     2: 'Dissatisfied',
     3: 'Neutral',
     4: 'Satisfied',
     5: 'Very Satisfied'
 }
-likert_scale = [
+SCALE_LIKERT = [
     "Strongly disagree", 
     "Disagree",
     "Neutral", 
     "Agree",
     "Strongly agree"
 ]
-likert_scale_alt = [
+SCALE_LIKERT_ALT = [
     "Poor", 
     "Fair", 
     "Satisfactory", 
     "Very good", 
     "Excellent"
 ]
-satisfaction_colors = dict(zip(
-    satisfaction_mapping.values(),
+COLORS_SATISFACTION = dict(zip(
+    MAPPING_SATISFACTION.values(),
     px.colors.sequential.Viridis[::2]
 ))

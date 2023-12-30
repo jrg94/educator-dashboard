@@ -17,12 +17,16 @@ updates, additions, or removals I made during or for that semester.
 - Started tracking patch notes
 - Drafted a VSCode monorepo for software 2 to pilot during Spring 2024
 - Updated dashboard to include software 2 statistics
+- Created slides for all lectures of software 2
 
 **Autumn 2023**
 
 - Created checklists for all 10 projects in software 2
 - Created rubrics for all 10 projects in software 2
 - Piloted a portfolio project in software 2 where students create their own OSU component
+- Offered the portfolio project as a midterm exam replacement option
+- Converted exams to online format using Carmen quizzes
+- Extended duration of exams from 55 minutes to 80 minutes
 
 ## Year 4 of Teaching
 
