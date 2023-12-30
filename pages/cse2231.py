@@ -307,6 +307,15 @@ layout = html.Div([
         to online exams seems to have eliminated the problem almost entirely.
         """
     ),
+    html.H2("Participation and Attendance"),
+    html.P(
+        """
+        Participation is not something that I tracked this year, but I did track
+        attendance. Unfortunately, I failed to export attendance grades as a
+        percentage and instead exported as days attended. As a result, existing
+        plots won't work as expected, so there are none here. 
+        """
+    ),
     load_cse2231_grade_data(),
     load_assignment_survey_data()
 ])
