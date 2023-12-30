@@ -525,9 +525,9 @@ layout = html.Div([
         """
         At the moment, the connection between attendance and grades is pretty 
         small. At the time of writing, the correlation between attendance and 
-        grades gives an R-squared of .23. I can't remember off the top of my
+        grades gives an R-squared of .13. I can't remember off the top of my
         head if this is a considered a good correlation in education, but online 
-        reasources point to this being a weak to moderate positive correlation. 
+        resources point to this being a weak positive correlation. 
         """
     ),
     html.P(
@@ -547,7 +547,7 @@ layout = html.Div([
     html.P(
         """
         At the time of writing, the correlation was slightly stronger with an 
-        R-squared of .28. Though, there's not much to brag about there. That 
+        R-squared of .30. Though, there's not much to brag about there. That 
         said, it does imply that attendance and participation positively 
         correlate with grades. I wouldn't go as far as to say that attending 
         class will improve your grades, but I would be lying if I didn't tell 
