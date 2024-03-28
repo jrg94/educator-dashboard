@@ -1,12 +1,12 @@
 import plotly.express as px
 
 # Data URLS
-URL_ASSIGNMENT_SURVEY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assignment-survey-data.csv"
-URL_SEI_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-data.csv"
-URL_SEI_COMMENTS_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-comments.csv"
-URL_COURSE_EVAL_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/eval-data.csv"
-URL_CSE_2221_GRADE_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/cse-2221-grades.csv"
-URL_CSE_2231_GRADE_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/cse-2231-grades.csv"
+URL_ASSIGNMENT_SURVEY = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/assignment-survey-data.csv"
+URL_SEI_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/sei-data.csv"
+URL_SEI_COMMENTS_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/sei-comments.csv"
+URL_COURSE_EVAL_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/eval-data.csv"
+URL_CSE_2221_GRADE_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/cse-2221-grades.csv"
+URL_CSE_2231_GRADE_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/cse-2231-grades.csv"
 
 # Column headings
 COLUMN_RUBRIC = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
