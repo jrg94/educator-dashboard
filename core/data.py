@@ -74,6 +74,18 @@ def load_course_eval_data() -> dcc.Store:
     return dcc.Store(id=ID_COURSE_EVAL_DATA, data=course_eval_data.to_json())
 
 
+def load_history() -> dcc.Store:
+    """
+    Loads the grade data from the remote CSV. The result is returned as a store object. 
+
+    :return: the grade data as a store
+    """
+    grade_data = pd.read_csv(URL_GRADING_HISTORY)
+    teaching_data = pd.read_csv(URL_TEACHING_HISTORY)
+    grade_data = grade_data.merge(teaching_data, on="Section ID")
+    return dcc.Store(id=ID_HISTORY, data=grade_data.to_json())
+
+
 def load_cse2221_grade_data() -> dcc.Store:
     """
     Loads the grade data from the remote CSV. The result is returned as a store object. 

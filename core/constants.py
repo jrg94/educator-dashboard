@@ -45,6 +45,8 @@ ID_COURSE_EVAL_DATA = "course-eval-data"
 ID_CSE_2221_GRADE_DATA = "cse2221-grade-data"
 ID_CSE_2231_GRADE_DATA = "cse2231-grade-data"
 
+ID_HISTORY = "history"
+
 # Figure IDs
 ID_CSE_2221_PROJECT_TIME_FIG = "project-time"
 ID_CSE_2221_HOMEWORK_TIME_FIG = "homework-time"

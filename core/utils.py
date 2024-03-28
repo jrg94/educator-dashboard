@@ -405,18 +405,21 @@ def generate_grade_overview(grade_data):
     return pd.DataFrame(overview_dict)
 
 
-def create_grades_fig(grade_data: pd.DataFrame):
-    assignment_calculations = generate_grade_overview(grade_data).agg(["mean", "median"]).T
-    row_count = len(grade_data.index)
-    assignment_calculations["count"] = {
-        "Exams": row_count * 3,
-        "Projects": row_count * 11,
-        "Homeworks": row_count * 22,
-        "Participation": row_count
-    }
+def create_grades_fig(grade_data: pd.DataFrame):    
+    #assignment_calculations = generate_grade_overview(grade_data).agg(["mean", "median"]).T
+    #row_count = len(grade_data.index)
+    #assignment_calculations["count"] = {
+    #    "Exams": row_count * 3,
+    #    "Projects": row_count * 11,
+    #    "Homeworks": row_count * 22,
+    #    "Participation": row_count
+    #}
+    print(grade_data["Title"].str.split())
+    grade_data["Assignment Type"] = [1]
+    print(grade_data)
     grade_fig = go.Figure(layout=dict(template='plotly'))
     grade_fig = px.bar(
-        assignment_calculations,
+        grade_data,
         labels={
             "index": "Assignment Type",
             "value": "Grade/100%",
