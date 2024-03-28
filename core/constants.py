@@ -8,6 +8,14 @@ URL_COURSE_EVAL_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08
 URL_CSE_2221_GRADE_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/cse-2221-grades.csv"
 URL_CSE_2231_GRADE_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/cse-2231-grades.csv"
 
+URL_ASSIGNMENT_SURVEY_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assignment-survey-history.csv"
+URL_EVALUATION_SURVEY_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/evaluation-survey-history.csv"
+URL_GRADING_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/grading-history.csv"
+URL_SEI_COMMENTS_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-comments-history.csv"
+URL_SEI_QUESTIONS_LOOKUP = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-questions-lookup.csv"
+URL_SEI_RATINGS_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-ratings-history.csv"
+URL_TEACHING_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/teaching-history.csv"
+
 # Column headings
 COLUMN_RUBRIC = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
 COLUMN_PROJECT_REVIEW = "Which project are you reviewing (enter a # between 1 and 11)?"
