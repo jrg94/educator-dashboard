@@ -15,14 +15,22 @@ dash.register_page(
     title="The Education Dashboard: CSE 2231"
 )
 
-
 @callback(
     Output(ID_CSE_2231_GRADES_OVERVIEW_FIG, "figure"),
-    Input(ID_CSE_2231_GRADE_DATA, "data")
+    Input(ID_EDUCATION_DATA, "data")
 )
-def render_grade_overview_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_grades_fig(df)
+def render_grade_overview_figure(education_data):
+    education_df = pd.read_json(StringIO(education_data))
+    # Filter
+    education_df = education_df[education_df["Course Number"] == 2231]
+    education_df = education_df[education_df["Grade"] != "EX"]
+    education_df = education_df[education_df["Total"] != 0]
+    # Type cast
+    education_df["Grade"] = pd.to_numeric(education_df["Grade"])
+    education_df["Total"] = pd.to_numeric(education_df["Total"])
+    # Precompute columns 
+    education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
+    return create_grades_fig(education_df)
 
 
 @callback(
@@ -317,5 +325,6 @@ layout = html.Div([
         """
     ),
     load_cse2231_grade_data(),
-    load_assignment_survey_data()
+    load_assignment_survey_data(),
+    load_education_data()
 ])
