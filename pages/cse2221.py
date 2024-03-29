@@ -76,12 +76,19 @@ def render_rubric_scores_figure(jsonified_data):
 
 @callback(
     Output(ID_CSE_2221_GRADE_OVERVIEW_FIG, "figure"),
-    Input(ID_HISTORY, "data")
+    Input(ID_EDUCATION_DATA, "data")
 )
-def render_grade_overview_figure(history):
-    history_df = pd.read_json(StringIO(history))
-    history_df = history_df[history_df["Course Number"] == 2221]
-    return create_grades_fig(history_df)
+def render_grade_overview_figure(education_data):
+    education_df = pd.read_json(StringIO(education_data))
+    # Filter
+    education_df = education_df[education_df["Course Number"] == 2221]
+    education_df = education_df[education_df["Grade"] != "EX"]
+    # Type cast
+    education_df["Grade"] = pd.to_numeric(education_df["Grade"])
+    education_df["Total"] = pd.to_numeric(education_df["Total"])
+    # Precompute columns 
+    education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
+    return create_grades_fig(education_df)
 
 
 @callback(

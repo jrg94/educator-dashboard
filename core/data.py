@@ -90,7 +90,7 @@ def load_education_data() -> dcc.Store:
         .merge(assignment_group_lookup, on="Assignment Group ID") \
         .merge(teaching_history, on="Section ID") \
         .merge(course_lookup, on="Course ID")
-    return dcc.Store(id=ID_HISTORY, data=education_data.to_json())
+    return dcc.Store(id=ID_EDUCATION_DATA, data=education_data.to_json())
 
 
 def load_cse2221_grade_data() -> dcc.Store:
