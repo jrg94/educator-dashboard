@@ -557,5 +557,5 @@ layout = html.Div([
     ),
     load_cse2221_grade_data(),
     load_assignment_survey_data(),
-    load_history()
+    load_education_data()
 ])

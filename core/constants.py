@@ -8,7 +8,10 @@ URL_COURSE_EVAL_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08
 URL_CSE_2221_GRADE_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/cse-2221-grades.csv"
 URL_CSE_2231_GRADE_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/cse-2231-grades.csv"
 
+URL_ASSIGNMENT_GROUP_LOOKUP = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assignment-group-lookup.csv"
+URL_ASSIGNMENT_LOOKUP = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assignment-lookup.csv"
 URL_ASSIGNMENT_SURVEY_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assignment-survey-history.csv"
+URL_COURSE_LOOKUP = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/course-lookup.csv"
 URL_EVALUATION_SURVEY_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/evaluation-survey-history.csv"
 URL_GRADING_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/grading-history.csv"
 URL_SEI_COMMENTS_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-comments-history.csv"
