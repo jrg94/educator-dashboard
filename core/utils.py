@@ -490,6 +490,7 @@ def create_assignment_fig(education_df: pd.DataFrame, course_number: int, assign
             "Assignment Name": education_df.sort_values("Assignment ID")["Assignment Name"].unique()
         }
     )
+    assignment_calculations_fig.update_yaxes(range=[0, 100])
     
     return assignment_calculations_fig
 

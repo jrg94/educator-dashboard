@@ -235,12 +235,15 @@ layout = html.Div([
     ),
     html.P(
         """
-        In terms of assessment, students spend their time of a mix of homework 
+        In terms of assessment, students spend their time on a mix of homework 
         assignments, programming projects, and exams. Specifically, students 
         complete 22 written homework assignments, 11 programming projects, and 3 
-        exams. In addition, students are graded on participation. Here's a quick 
-        overview of what that has historically looked like in terms of average 
-        and median grades.
+        exams. In addition, students are graded on participation. While this
+        is the norm for the course, there have been assessments given from 
+        time to time under various circumstances. For example, in the Spring of
+        2020, we briefly switched over from midterms to quizzes. As a result, 
+        the following plot details the average and median grades for all 
+        categories of assessments, even if some categories are not the norm.
         """
     ),
     dcc.Loading(
@@ -249,21 +252,18 @@ layout = html.Div([
     ),
     html.P(
         """
-        On the remainder of this page, we'll look at each type of assessment in 
+        On the remainder of this page, we'll break down the assignments in
         more detail. 
         """
     ),
-    html.H2("Homework Assignments"),
+    html.H2("Assignment Breakdown"),
     dcc.Markdown(
         """
-        As previously mentioned, we assign 22 homework assignments each 
-        semester. These assignments are graded on completion for a maximum of 2 
-        points each. Together, homeworks sum to just 6% of the students' overall
-        grade, which makes them a decent low stakes assignment. Naturally, 
-        here's the breakdown of average and median scores for each assignment. 
-        As you can see, students generally get full credit, but there are some 
-        students who pull the average down with incomplete assignments (more on 
-        that later).
+        Each category above can be broken down into plots of the individual
+        assignments over the course of the semester. For example, the default
+        plot below shows the final exam median and average in all my years of
+        teaching. Feel free to use the dropdown to explore each assignment
+        type. 
         """
     ),
     dcc.Dropdown(id=ID_ASSIGNMENT_GROUP_FILTER),
@@ -351,10 +351,7 @@ layout = html.Div([
         while project 8 is a bit rough.
         """
     ),
-    dcc.Loading(
-        [dcc.Graph(id=ID_CSE_2221_PROJECT_GRADES_FIG)],
-        type="graph"
-    ),
+
     html.P(
         """
         While medians and averages are helpful, I also think it's useful to look 
@@ -486,10 +483,6 @@ layout = html.Div([
         there are three exams, and the general trend tends to be that scores go 
         down as the semester progresses. I haven't quite figured out why. 
         """
-    ),
-    dcc.Loading(
-        [dcc.Graph(id=ID_CSE_2221_EXAM_GRADES_FIG)],
-        type="graph"
     ),
     dcc.Markdown(
         """
