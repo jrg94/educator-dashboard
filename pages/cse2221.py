@@ -15,6 +15,8 @@ dash.register_page(
     title="The Education Dashboard: CSE 2221"
 )
 
+# Graph Callbacks
+
 @callback(
     Output(ID_CSE_2221_GRADE_OVERVIEW_FIG, "figure"),
     Input(ID_EDUCATION_DATA, "data")
@@ -26,11 +28,12 @@ def render_grade_overview_figure(education_data):
 
 @callback(
     Output(ID_CSE_2221_HOMEWORK_GRADES_FIG, "figure"),
-    Input(ID_EDUCATION_DATA, "data")
+    Input(ID_EDUCATION_DATA, "data"),
+    Input(ID_ASSIGNMENT_GROUP_FILTER, "value")
 )
-def render_homework_calculations_figure(education_data):
+def render_homework_calculations_figure(education_data, assignment_group):
     education_df = pd.read_json(StringIO(education_data))
-    return create_assignment_fig(education_df, "Homework", 2)
+    return create_assignment_fig(education_df, 2221, assignment_group)
 
 
 @callback(
@@ -199,6 +202,20 @@ def render_points_per_hour_figure(jsonified_grade_data, jsonified_assignment_sur
         10,
         FILTER_SOFTWARE_1
     )
+    
+    
+# Dropdown callbacks
+
+@callback(
+    Output(ID_ASSIGNMENT_GROUP_FILTER, "options"),
+    Output(ID_ASSIGNMENT_GROUP_FILTER, "value"),
+    Input(ID_EDUCATION_DATA, "data")
+)
+def update_dropdown_filter(education_data):
+    education_df = pd.read_json(StringIO(education_data))
+    education_df = education_df[education_df["Course Number"] == 2221]
+    assignment_groups = sorted(education_df["Assignment Group Name"].unique())
+    return assignment_groups, assignment_groups[0]
 
 
 # TODO: mix in the assignment survey with the grades rather than having them
@@ -249,9 +266,7 @@ layout = html.Div([
         that later).
         """
     ),
-    dcc.Dropdown(
-        
-    ),
+    dcc.Dropdown(id=ID_ASSIGNMENT_GROUP_FILTER),
     dcc.Loading(
         [dcc.Graph(id=ID_CSE_2221_HOMEWORK_GRADES_FIG)],
         type="graph"
