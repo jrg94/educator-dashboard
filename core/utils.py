@@ -470,7 +470,7 @@ def create_assignment_fig(education_df: pd.DataFrame, course_number: int, assign
     education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
     
     # Perform analysis
-    to_plot = education_df.groupby("Assignment Name")["Percentage"].aggregate({"mean", "median"})
+    to_plot = education_df.groupby("Assignment Name")["Percentage"].aggregate({"mean", "median", "count"})
     
     # Plot figure
     assignment_calculations_fig = go.Figure(layout=dict(template='plotly'))    
@@ -481,14 +481,16 @@ def create_assignment_fig(education_df: pd.DataFrame, course_number: int, assign
             "value": f"Percentage",
             "variable": "Metric",
             "mean": "Average",
-            "median": "Median"
+            "median": "Median",
+            "count": "Count"
         },
         barmode='group',
         text_auto=".2s",
         title=f"Average and Median {assignment_group} Grades".title(),
         category_orders={
             "Assignment Name": education_df.sort_values("Assignment ID")["Assignment Name"].unique()
-        }
+        },
+        hover_data=["count"]
     )
     assignment_calculations_fig.update_yaxes(range=[0, 100])
     

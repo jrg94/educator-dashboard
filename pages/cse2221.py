@@ -31,7 +31,7 @@ def render_grade_overview_figure(education_data):
     Input(ID_EDUCATION_DATA, "data"),
     Input(ID_ASSIGNMENT_GROUP_FILTER, "value")
 )
-def render_homework_calculations_figure(education_data, assignment_group):
+def render_assignment_calculations_figure(education_data, assignment_group):
     education_df = pd.read_json(StringIO(education_data))
     return create_assignment_fig(education_df, 2221, assignment_group)
 
