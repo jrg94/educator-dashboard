@@ -21,16 +21,7 @@ dash.register_page(
 )
 def render_grade_overview_figure(education_data):
     education_df = pd.read_json(StringIO(education_data))
-    # Filter
-    education_df = education_df[education_df["Course Number"] == 2231]
-    education_df = education_df[education_df["Grade"] != "EX"]
-    education_df = education_df[education_df["Total"] != 0]
-    # Type cast
-    education_df["Grade"] = pd.to_numeric(education_df["Grade"])
-    education_df["Total"] = pd.to_numeric(education_df["Total"])
-    # Precompute columns 
-    education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
-    return create_grades_fig(education_df)
+    return create_grades_fig(education_df, 2231)
 
 
 @callback(

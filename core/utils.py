@@ -405,8 +405,32 @@ def generate_grade_overview(grade_data):
     return pd.DataFrame(overview_dict)
 
 
-def create_grades_fig(education_df: pd.DataFrame):    
+def create_grades_fig(education_df: pd.DataFrame, course: int) -> go.Figure:
+    """
+    A helper function which generates a grade overview figure
+    by assignment type.
+    
+    :param education_df: the dataframe containing all of the education data
+    :param course: the course code (e.g., 2221, 2231, etc.)
+    :return: the figure
+    """
+    
+    # Filter
+    education_df = education_df[education_df["Course Number"] == course]
+    education_df = education_df[education_df["Grade"] != "EX"]
+    education_df = education_df[education_df["Total"] != 0]
+    
+    # Type cast
+    education_df["Grade"] = pd.to_numeric(education_df["Grade"])
+    education_df["Total"] = pd.to_numeric(education_df["Total"])
+    
+    # Precompute columns 
+    education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
+        
+    # Perform analysis
     to_plot = education_df.groupby("Assignment Group Name")["Percentage"].aggregate({"mean", "median", "count"})
+    
+    # Plot figure
     grade_fig = go.Figure(layout=dict(template='plotly'))
     grade_fig = px.bar(
         to_plot,

@@ -15,6 +15,23 @@ dash.register_page(
     title="The Education Dashboard: CSE 2221"
 )
 
+@callback(
+    Output(ID_CSE_2221_GRADE_OVERVIEW_FIG, "figure"),
+    Input(ID_EDUCATION_DATA, "data")
+)
+def render_grade_overview_figure(education_data):
+    education_df = pd.read_json(StringIO(education_data))
+    return create_grades_fig(education_df, 2221)
+
+
+@callback(
+    Output(ID_CSE_2221_HOMEWORK_GRADES_FIG, "figure"),
+    Input(ID_EDUCATION_DATA, "data")
+)
+def render_homework_calculations_figure(education_data):
+    education_df = pd.read_json(StringIO(education_data))
+    return create_assignment_fig(education_df, "Homework", 2)
+
 
 @callback(
     Output(ID_CSE_2221_PROJECT_TIME_FIG, "figure"),
@@ -75,23 +92,6 @@ def render_rubric_scores_figure(jsonified_data):
 
 
 @callback(
-    Output(ID_CSE_2221_GRADE_OVERVIEW_FIG, "figure"),
-    Input(ID_EDUCATION_DATA, "data")
-)
-def render_grade_overview_figure(education_data):
-    education_df = pd.read_json(StringIO(education_data))
-    # Filter
-    education_df = education_df[education_df["Course Number"] == 2221]
-    education_df = education_df[education_df["Grade"] != "EX"]
-    # Type cast
-    education_df["Grade"] = pd.to_numeric(education_df["Grade"])
-    education_df["Total"] = pd.to_numeric(education_df["Total"])
-    # Precompute columns 
-    education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
-    return create_grades_fig(education_df)
-
-
-@callback(
     Output(ID_CSE_2221_GRADES_ATTENDANCE_FIG, "figure"),
     Input(ID_CSE_2221_GRADE_DATA, "data")
 )
@@ -116,15 +116,6 @@ def render_grades_vs_participation_figure(jsonified_data):
 def render_project_calculations_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_assignment_fig(df, "Project", 10)
-
-
-@callback(
-    Output(ID_CSE_2221_HOMEWORK_GRADES_FIG, "figure"),
-    Input(ID_CSE_2221_GRADE_DATA, "data")
-)
-def render_homework_calculations_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_assignment_fig(df, "Homework", 2)
 
 
 @callback(
@@ -257,6 +248,9 @@ layout = html.Div([
         students who pull the average down with incomplete assignments (more on 
         that later).
         """
+    ),
+    dcc.Dropdown(
+        
     ),
     dcc.Loading(
         [dcc.Graph(id=ID_CSE_2221_HOMEWORK_GRADES_FIG)],
