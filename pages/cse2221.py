@@ -22,6 +22,10 @@ dash.register_page(
     Input(ID_EDUCATION_DATA, "data")
 )
 def render_grade_overview_figure(education_data):
+    """
+    The first plot you would see on the page. It gives an overview
+    of the types of assessments that have been given in CSE 2221. 
+    """
     education_df = pd.read_json(StringIO(education_data))
     return create_grades_fig(education_df, 2221)
 
@@ -32,6 +36,10 @@ def render_grade_overview_figure(education_data):
     Input(ID_ASSIGNMENT_GROUP_FILTER, "value")
 )
 def render_assignment_calculations_figure(education_data, assignment_group):
+    """
+    The second plot you would see, which gives a breakdown of the averages and
+    medians per assignment.
+    """
     education_df = pd.read_json(StringIO(education_data))
     return create_assignment_fig(education_df, 2221, assignment_group)
 
@@ -252,17 +260,17 @@ layout = html.Div([
     ),
     html.P(
         """
-        On the remainder of this page, we'll break down the assignments in
+        On the remainder of this page, we'll break down the assessments in
         more detail. 
         """
     ),
-    html.H2("Assignment Breakdown"),
+    html.H2("Assessment Breakdown"),
     dcc.Markdown(
         """
         Each category above can be broken down into plots of the individual
-        assignments over the course of the semester. For example, the default
+        assessments over the course of the semester. For example, the default
         plot below shows the final exam median and average in all my years of
-        teaching. Feel free to use the dropdown to explore each assignment
+        teaching. Feel free to use the dropdown to explore each assessment
         type. 
         """
     ),
