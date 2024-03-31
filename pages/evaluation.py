@@ -66,7 +66,7 @@ def render_course_content_figure(jsonified_data):
 
 
 layout = html.Div([
-    html.H1("Teaching Evaluations"),
+    html.H1("Teaching Evaluation"),
     html.P(
         """
         As an educator, I spend a lot of time assessing my students. 

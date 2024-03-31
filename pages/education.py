@@ -229,7 +229,7 @@ def update_dropdown_filter(education_data):
 # TODO: mix in the assignment survey with the grades rather than having them
 # separate
 layout = html.Div([
-    html.H1("CSE 2221: Software 1"),
+    html.H1("Education"),
     html.P(
         """
         Software 1 (CSE 2221) is a course I started teaching in late 2019. The 
