@@ -10,8 +10,8 @@ from core.utils import *
 
 dash.register_page(
     __name__,
-    path='/cse2221',
-    name="CSE2221",
+    path='/education',
+    name="Education",
     title="The Education Dashboard: CSE 2221"
 )
 
