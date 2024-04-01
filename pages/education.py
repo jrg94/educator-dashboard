@@ -219,11 +219,16 @@ def render_points_per_hour_figure(jsonified_grade_data, jsonified_assignment_sur
 @callback(
     Output(ID_ASSIGNMENT_GROUP_FILTER, "options"),
     Output(ID_ASSIGNMENT_GROUP_FILTER, "value"),
-    Input(ID_EDUCATION_DATA, "data")
+    Input(ID_EDUCATION_DATA, "data"),
+    Input(ID_COURSE_FILTER, "value")
 )
-def update_dropdown_assessment_filter(education_data):
+def update_dropdown_assessment_filter(education_data, course_filter):
+    """
+    A callback for populating the assessment group dropdown.
+    The labels and values are the same. 
+    """
     education_df = pd.read_json(StringIO(education_data))
-    education_df = education_df[education_df["Course Number"] == 2221]
+    education_df = education_df[education_df["Course ID"] == course_filter]
     assignment_groups = sorted(education_df["Assignment Group Name"].unique())
     return assignment_groups, assignment_groups[0]
 
