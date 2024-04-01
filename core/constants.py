@@ -100,6 +100,7 @@ ID_EVAL_SKILL_FIG = "skill-and-responsiveness"
 ID_EVAL_CONTRIBUTION_FIG = "contribution-to-learning"
 
 ID_ASSIGNMENT_GROUP_FILTER = "assignment-type-filter"
+ID_COURSE_FILTER ="course-filter"
 
 # CSS Classes
 CSS_FULL_SCREEN_FIG = "max-window"

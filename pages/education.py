@@ -3,6 +3,7 @@ from io import StringIO
 import dash
 import pandas as pd
 from dash import Input, Output, callback, dcc, html
+import dash_bootstrap_components as dbc
 
 from core.constants import *
 from core.data import *
@@ -226,45 +227,59 @@ def update_dropdown_filter(education_data):
     return assignment_groups, assignment_groups[0]
 
 
+@callback(
+    Output(ID_COURSE_FILTER, "options"),
+    Output(ID_COURSE_FILTER, "value"),
+    Input(ID_EDUCATION_DATA, "data")
+)
+def update_dropdown_filter(education_data):
+    education_df = pd.read_json(StringIO(education_data))
+    course_ids = sorted(education_df["Course ID"].unique())
+    options = []
+    for course_id in course_ids:
+        course_data = education_df[education_df["Course ID"] == course_id].iloc[0]
+        label = f"{course_data['Course Department']} {course_data['Course Number']}: {course_data['Course Name']}"
+        value = course_id
+        options.append({"label": label, "value": value})
+    return options, course_ids[0]
+
+
 # TODO: mix in the assignment survey with the grades rather than having them
 # separate
 layout = html.Div([
+    dbc.Navbar(
+        dbc.Container(
+            [
+                dcc.Dropdown(id=ID_COURSE_FILTER)
+            ]
+        ),
+        color="dark",
+        dark=True,
+        sticky="top"
+    ),
     html.H1("Education"),
     html.P(
         """
-        Software 1 (CSE 2221) is a course I started teaching in late 2019. The 
-        general purpose of the course is to teach students about software 
-        components (i.e., APIs). The course, itself, is based in Java, and the 
-        first third of the course focuses on Java basics. Then, in the second 
-        third of the course, it focuses on problem solving techniques like 
-        recursion. Then, the final third of the course focuses on data 
-        structures like sets, stacks, maps, and queues.
+        I started teaching in 2018, and I haven't looked back since. The goal
+        of this page is to give you an overview the course I've taught with
+        some pretty pictures. To browse a course, use the dropdown at the 
+        bottom of the screen. All of the following plots will regenerate for 
+        you. 
         """
     ),
+    html.H2("Assessment Breakdown"),
     html.P(
         """
-        In terms of assessment, students spend their time on a mix of homework 
-        assignments, programming projects, and exams. Specifically, students 
-        complete 22 written homework assignments, 11 programming projects, and 3 
-        exams. In addition, students are graded on participation. While this
-        is the norm for the course, there have been assessments given from 
-        time to time under various circumstances. For example, in the Spring of
-        2020, we briefly switched over from midterms to quizzes. As a result, 
-        the following plot details the average and median grades for all 
-        categories of assessments, even if some categories are not the norm.
-        """
+        To kick things off, here's a plot of the average and median grades
+        grouped by assignment type (e.g., projects, homework, labs, etc.).
+        This should give you an overview of the types of assessments I've
+        used in my classes. 
+        """  
     ),
     dcc.Loading(
         [dcc.Graph(id=ID_CSE_2221_GRADE_OVERVIEW_FIG)],
         type="graph"
     ),
-    html.P(
-        """
-        On the remainder of this page, we'll break down the assessments in
-        more detail. 
-        """
-    ),
-    html.H2("Assessment Breakdown"),
     dcc.Markdown(
         """
         Each category above can be broken down into plots of the individual
