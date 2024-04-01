@@ -25,8 +25,8 @@ dash.register_page(
 )
 def render_grade_overview_figure(education_data: str, course_filter: int) -> go.Figure:
     """
-    The first plot you would see on the page. It gives an overview
-    of the types of assessments that have been given in CSE 2221. 
+    Plots an overview of the types of assessments that have been given in
+    the current course. 
     
     :param education_data: the jsonified education dataframe
     :param course_filter: the course ID
@@ -76,27 +76,122 @@ def render_grade_overview_figure(education_data: str, course_filter: int) -> go.
 @callback(
     Output(ID_CSE_2221_HOMEWORK_GRADES_FIG, "figure"),
     Input(ID_EDUCATION_DATA, "data"),
-    Input(ID_ASSIGNMENT_GROUP_FILTER, "value"),
+    Input(ID_ASSESSMENT_GROUP_FILTER, "value"),
     Input(ID_COURSE_FILTER, "value")
 )
-def render_assignment_calculations_figure(education_data: str, assignment_group_filter: str, course_filter: int):
+def render_assessment_calculations_figure(education_data: str, assessment_group_filter: str, course_filter: int):
     """
-    The second plot you would see, which gives a breakdown of the averages and
-    medians per assignment.
+    Plots a breakdown of the averages and medians per assessment for a specific
+    course and assessment group. 
+    
+    :param education_data: the jsonified education dataframe
+    :param course_filter: the course ID
+    :param assessment_group_filter: the assessment group  # TODO: make this an ID for consistency
+    :return: the grade overview figure object
     """
+    # Convert the data back into a dataframe
     education_df = pd.read_json(StringIO(education_data))
-    return create_assignment_fig(education_df, course_filter, assignment_group_filter)
+    
+    # Filter
+    education_df = education_df[education_df["Course ID"] == course_filter]
+    education_df = education_df[education_df["Assignment Group Name"] == assessment_group_filter]
+    education_df = education_df[education_df["Grade"] != "EX"]
+    education_df = education_df[education_df["Total"] != 0]
+    
+    # Type cast
+    education_df["Grade"] = pd.to_numeric(education_df["Grade"])
+    education_df["Total"] = pd.to_numeric(education_df["Total"])
+    
+    # Precompute columns 
+    education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
+    
+    # Perform analysis
+    to_plot = education_df.groupby("Assignment Name")["Percentage"].aggregate({"mean", "median", "count"})
+    
+    # Helpful variables
+    course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
+    assignment_types = education_df.sort_values("Assignment ID")["Assignment Name"].unique()
+    
+    # Plot figure
+    assignment_calculations_fig = go.Figure(layout=dict(template='plotly'))    
+    assignment_calculations_fig = px.bar(
+        to_plot,
+        labels={
+            "index": "Project Name",
+            "value": "Percentage",
+            "variable": "Metric",
+            "mean": "Average",
+            "median": "Median",
+            "count": "Count"
+        },
+        barmode='group',
+        text_auto=".2s",
+        title=f"Average and Median Grades for {assessment_group_filter} in {course_code}",
+        category_orders={
+            "Assignment Name": assignment_types
+        },
+        hover_data=["count"]
+    )
+    assignment_calculations_fig.update_yaxes(range=[0, 100])
+    
+    return assignment_calculations_fig
 
 
 @callback(
     Output(ID_CSE_2221_MISSING_HOMEWORKS_FIG, "figure"),
     Input(ID_EDUCATION_DATA, "data"),
-    Input(ID_ASSIGNMENT_GROUP_FILTER, "value"),
+    Input(ID_ASSESSMENT_GROUP_FILTER, "value"),
     Input(ID_COURSE_FILTER, "value")
 )
-def render_missing_homeworks_figure(jsonified_data, assignment_group_filter, course_filter):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_missing_assignment_fig(df, assignment_group_filter, course_filter)
+def render_missing_assessments_figure(education_data: str, assignment_group_filter: str, course_filter: int):
+    """
+    Plots a breakdown of the averages and medians per assessment for a specific
+    course and assessment group. 
+    
+    :param education_data: the jsonified education dataframe
+    :param course_filter: the course ID
+    :param assessment_group_filter: the assessment group  # TODO: make this an ID for consistency
+    :return: the grade overview figure object
+    """
+    # Convert the data back into a dataframe
+    education_df = pd.read_json(StringIO(education_data))
+    
+    # Filter
+    education_df = education_df[education_df["Course ID"] == course_filter]
+    education_df = education_df[education_df["Assignment Group Name"] == assignment_group_filter]
+    education_df = education_df[education_df["Grade"] != "EX"]
+    education_df = education_df[education_df["Total"] != 0]
+    
+    # Type cast
+    education_df["Grade"] = pd.to_numeric(education_df["Grade"])
+    
+    # Helpful values
+    course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
+    assignment_types = education_df.sort_values("Assignment ID")["Assignment Name"].unique()
+    
+    # Helper function
+    def number_missing(series):
+        return len(series[series == 0])
+    
+    # Perform analysis
+    to_plot = education_df.groupby("Assignment Name")["Grade"].agg(["count", number_missing])
+    to_plot["Percent Missing"] = to_plot["number_missing"] / to_plot["count"] * 100
+    
+    # Plot figure
+    missing_assignment_fig = go.Figure(layout=dict(template='plotly'))    
+    missing_assignment_fig = px.bar(
+        to_plot, 
+        y="Percent Missing", 
+        text_auto=".2s", 
+        title=f"Percent of Missing {assignment_group_filter} in {course_code}",
+        category_orders={
+            "Assignment Name": assignment_types
+        },
+        hover_data=["count"]
+    )
+    missing_assignment_fig.update_yaxes(range=[0, 100])
+    
+    return missing_assignment_fig
 
 
 @callback(
@@ -176,42 +271,6 @@ def render_grades_vs_participation_figure(jsonified_data):
 
 
 @callback(
-    Output(ID_CSE_2221_PROJECT_GRADES_FIG, "figure"),
-    Input(ID_CSE_2221_GRADE_DATA, "data")
-)
-def render_project_calculations_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_assignment_fig(df, "Project", 10)
-
-
-@callback(
-    Output(ID_CSE_2221_EXAM_GRADES_FIG, "figure"),
-    Input(ID_CSE_2221_GRADE_DATA, "data")
-)
-def render_exam_calculations_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_assignment_fig(df, "Exam", 100)
-
-
-@callback(
-    Output(ID_CSE_2221_MISSING_PROJECTS_FIG, "figure"),
-    Input(ID_CSE_2221_GRADE_DATA, "data")
-)
-def render_missing_projects_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_missing_assignment_fig(df, "Project")
-
-
-@callback(
-    Output(ID_CSE_2221_MISSING_EXAMS_FIG, "figure"),
-    Input(ID_CSE_2221_GRADE_DATA, "data")
-)
-def render_missing_exams_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_missing_assignment_fig(df, "Exam")
-
-
-@callback(
     Output(ID_CSE_2221_PROJECT_TRENDS_FIG, "figure"),
     Input(ID_CSE_2221_GRADE_DATA, "data")
 )
@@ -261,8 +320,8 @@ def render_points_per_hour_figure(jsonified_grade_data, jsonified_assignment_sur
 # Dropdown callbacks
 
 @callback(
-    Output(ID_ASSIGNMENT_GROUP_FILTER, "options"),
-    Output(ID_ASSIGNMENT_GROUP_FILTER, "value"),
+    Output(ID_ASSESSMENT_GROUP_FILTER, "options"),
+    Output(ID_ASSESSMENT_GROUP_FILTER, "value"),
     Input(ID_EDUCATION_DATA, "data"),
     Input(ID_COURSE_FILTER, "value")
 )
@@ -306,7 +365,7 @@ layout = html.Div([
         dbc.Container(
             [
                 dcc.Dropdown(id=ID_COURSE_FILTER),
-                dcc.Dropdown(id=ID_ASSIGNMENT_GROUP_FILTER)
+                dcc.Dropdown(id=ID_ASSESSMENT_GROUP_FILTER)
             ]
         ),
         color="dark",
