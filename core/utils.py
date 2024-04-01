@@ -449,7 +449,7 @@ def create_grades_fig(education_df: pd.DataFrame, course_id: int) -> go.Figure:
     return grade_fig
 
 
-def create_assignment_fig(education_df: pd.DataFrame, course_number: int, assignment_group: str):
+def create_assignment_fig(education_df: pd.DataFrame, course_id: int, assignment_group: str):
     """
     A helper function which generates a slightly more specific bar chart of
     the grades by assignment group. Use this to see individual assignment grade
@@ -457,7 +457,7 @@ def create_assignment_fig(education_df: pd.DataFrame, course_number: int, assign
     """
     
     # Filter
-    education_df = education_df[education_df["Course Number"] == course_number]
+    education_df = education_df[education_df["Course ID"] == course_id]
     education_df = education_df[education_df["Assignment Group Name"] == assignment_group]
     education_df = education_df[education_df["Grade"] != "EX"]
     education_df = education_df[education_df["Total"] != 0]

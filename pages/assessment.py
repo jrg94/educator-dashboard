@@ -11,9 +11,9 @@ from core.utils import *
 
 dash.register_page(
     __name__,
-    path='/education',
-    name="Education",
-    title="The Education Dashboard: CSE 2221"
+    path='/assessment',
+    name="Assessment",
+    title="The Education Dashboard: Assessment"
 )
 
 # Graph Callbacks
@@ -35,15 +35,16 @@ def render_grade_overview_figure(education_data, course_filter):
 @callback(
     Output(ID_CSE_2221_HOMEWORK_GRADES_FIG, "figure"),
     Input(ID_EDUCATION_DATA, "data"),
-    Input(ID_ASSIGNMENT_GROUP_FILTER, "value")
+    Input(ID_ASSIGNMENT_GROUP_FILTER, "value"),
+    Input(ID_COURSE_FILTER, "value")
 )
-def render_assignment_calculations_figure(education_data, assignment_group):
+def render_assignment_calculations_figure(education_data, assignment_group_filter, course_filter):
     """
     The second plot you would see, which gives a breakdown of the averages and
     medians per assignment.
     """
     education_df = pd.read_json(StringIO(education_data))
-    return create_assignment_fig(education_df, 2221, assignment_group)
+    return create_assignment_fig(education_df, course_filter, assignment_group_filter)
 
 
 @callback(
@@ -268,14 +269,14 @@ layout = html.Div([
         dark=True,
         sticky="top"
     ),
-    html.H1("Education"),
+    html.H1("Assessment"),
     html.P(
         """
-        I started teaching in 2018, and I haven't looked back since. The goal
-        of this page is to give you an overview the course I've taught with
-        some pretty pictures. To browse a course, use the dropdown at the 
-        bottom of the screen. All of the following plots will regenerate for 
-        you. 
+        Since I began teaching in 2018, I've kept a lot of data about the
+        assessment of students. The goal of this page is to give you an overview 
+        of the way I've assessed students over the years. To browse a course, 
+        use the dropdown at the bottom of the screen. All of the following plots 
+        will regenerate for you. 
         """
     ),
     html.H2("Assessment Breakdown"),

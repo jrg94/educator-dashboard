@@ -10,8 +10,8 @@ from core.utils import *
 
 dash.register_page(
     __name__,
-    path='/evaluation',
-    name="Evaluation",
+    path='/feedback',
+    name="Feedback",
     title="The Education Dashboard: Evaluation"
 )
 
@@ -66,7 +66,7 @@ def render_course_content_figure(jsonified_data):
 
 
 layout = html.Div([
-    html.H1("Teaching Evaluation"),
+    html.H1("Feedback"),
     html.P(
         """
         As an educator, I spend a lot of time assessing my students. 
