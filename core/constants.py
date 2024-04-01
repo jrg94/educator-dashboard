@@ -63,15 +63,8 @@ ID_CSE_2221_RUBRIC_OVERVIEW_FIG = "rubric-overview"
 ID_CSE_2221_RUBRIC_BREAKDOWN_FIG = "rubric-breakdown"
 ID_CSE_2221_RUBRIC_SCORES_FIG = "rubric-scores"
 
-ID_CSE_2221_GRADE_OVERVIEW_FIG = "grade-overview"
 ID_CSE_2221_GRADES_ATTENDANCE_FIG = "grade-vs-attendance"
 ID_CSE_2221_GRADES_PARTICIPATION_FIG = "grade-vs-participation"
-
-ID_CSE_2231_GRADES_OVERVIEW_FIG = "cse2231-grade-overview"
-
-ID_CSE_2221_PROJECT_GRADES_FIG = "project-calculations"
-ID_CSE_2221_HOMEWORK_GRADES_FIG = "homework-calculations"
-ID_CSE_2221_EXAM_GRADES_FIG = "exams-calculations"
 
 ID_CSE_2231_PROJECT_GRADES_FIG = "cse2231-project-calculations"
 ID_CSE_2231_HOMEWORK_GRADES_FIG = "cse2231-homework-calculations"
@@ -99,6 +92,11 @@ ID_EVAL_COURSE_CONTENT_FIG = "course-content"
 ID_EVAL_SKILL_FIG = "skill-and-responsiveness"
 ID_EVAL_CONTRIBUTION_FIG = "contribution-to-learning"
 
+# New Figure IDs
+ID_GRADE_OVERVIEW_FIG = "grade-overview"
+ID_DETAILED_ASSESSMENT_GRADES_FIG = "detailed-assessment-grades"
+
+# Filter IDs
 ID_ASSESSMENT_GROUP_FILTER = "assignment-type-filter"
 ID_COURSE_FILTER ="course-filter"
 
