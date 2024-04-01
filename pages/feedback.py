@@ -12,7 +12,7 @@ dash.register_page(
     __name__,
     path='/feedback',
     name="Feedback",
-    title="The Education Dashboard: Evaluation"
+    title="The Educator Dashboard: Evaluation"
 )
 
 

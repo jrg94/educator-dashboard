@@ -1,9 +1,9 @@
 from io import StringIO
 
 import dash
+import dash_bootstrap_components as dbc
 import pandas as pd
 from dash import Input, Output, callback, dcc, html
-import dash_bootstrap_components as dbc
 
 from core.constants import *
 from core.data import *
@@ -13,7 +13,7 @@ dash.register_page(
     __name__,
     path='/assessment',
     name="Assessment",
-    title="The Education Dashboard: Assessment"
+    title="The Educator Dashboard: Assessment"
 )
 
 # Graph Callbacks
@@ -23,10 +23,14 @@ dash.register_page(
     Input(ID_EDUCATION_DATA, "data"),
     Input(ID_COURSE_FILTER, "value")
 )
-def render_grade_overview_figure(education_data, course_filter):
+def render_grade_overview_figure(education_data: str, course_filter: int) -> go.Figure:
     """
     The first plot you would see on the page. It gives an overview
     of the types of assessments that have been given in CSE 2221. 
+    
+    :param education_data: the jsonified education dataframe
+    :param course_filter: the course ID
+    :return: the grade overview figure object
     """
     education_df = pd.read_json(StringIO(education_data))
     return create_grades_fig(education_df, course_filter)
@@ -38,7 +42,7 @@ def render_grade_overview_figure(education_data, course_filter):
     Input(ID_ASSIGNMENT_GROUP_FILTER, "value"),
     Input(ID_COURSE_FILTER, "value")
 )
-def render_assignment_calculations_figure(education_data, assignment_group_filter, course_filter):
+def render_assignment_calculations_figure(education_data: str, assignment_group_filter: str, course_filter: int):
     """
     The second plot you would see, which gives a breakdown of the averages and
     medians per assignment.
@@ -297,10 +301,8 @@ layout = html.Div([
     dcc.Markdown(
         """
         Each category above can be broken down into plots of the individual
-        assessments over the course of the semester. For example, the default
-        plot below shows the final exam median and average in all my years of
-        teaching. Feel free to use the dropdown to explore each assessment
-        type. 
+        assessments over the course of the semester. Feel free to use the 
+        dropdown to explore each assessment type. 
         """
     ),
     dcc.Loading(

@@ -10,10 +10,12 @@ from core.utils import *
 
 dash.register_page(
     __name__,
-    path='/cse2231',
-    name="CSE2231",
-    title="The Education Dashboard: CSE 2231"
+    path='/triangulation',
+    name="Trianglulation",
+    title="The Educator Dashboard: Triangulation"
 )
+
+# TODO: this page will be where all the most interesting analyses happen
 
 @callback(
     Output(ID_CSE_2231_GRADES_OVERVIEW_FIG, "figure"),
