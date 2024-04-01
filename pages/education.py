@@ -20,15 +20,16 @@ dash.register_page(
 
 @callback(
     Output(ID_CSE_2221_GRADE_OVERVIEW_FIG, "figure"),
-    Input(ID_EDUCATION_DATA, "data")
+    Input(ID_EDUCATION_DATA, "data"),
+    Input(ID_COURSE_FILTER, "value")
 )
-def render_grade_overview_figure(education_data):
+def render_grade_overview_figure(education_data, course_filter):
     """
     The first plot you would see on the page. It gives an overview
     of the types of assessments that have been given in CSE 2221. 
     """
     education_df = pd.read_json(StringIO(education_data))
-    return create_grades_fig(education_df, 2221)
+    return create_grades_fig(education_df, course_filter)
 
 
 @callback(
@@ -220,7 +221,7 @@ def render_points_per_hour_figure(jsonified_grade_data, jsonified_assignment_sur
     Output(ID_ASSIGNMENT_GROUP_FILTER, "value"),
     Input(ID_EDUCATION_DATA, "data")
 )
-def update_dropdown_filter(education_data):
+def update_dropdown_assessment_filter(education_data):
     education_df = pd.read_json(StringIO(education_data))
     education_df = education_df[education_df["Course Number"] == 2221]
     assignment_groups = sorted(education_df["Assignment Group Name"].unique())
@@ -232,7 +233,12 @@ def update_dropdown_filter(education_data):
     Output(ID_COURSE_FILTER, "value"),
     Input(ID_EDUCATION_DATA, "data")
 )
-def update_dropdown_filter(education_data):
+def update_dropdown_course_filter(education_data):
+    """
+    A callback for populating the course dropdown. 
+    The labels in the dropdown are meant to be descriptive.
+    The values are Course IDs, which can be used for filtering. 
+    """
     education_df = pd.read_json(StringIO(education_data))
     course_ids = sorted(education_df["Course ID"].unique())
     options = []

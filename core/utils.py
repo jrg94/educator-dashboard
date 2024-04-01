@@ -405,7 +405,7 @@ def generate_grade_overview(grade_data):
     return pd.DataFrame(overview_dict)
 
 
-def create_grades_fig(education_df: pd.DataFrame, course_number: int) -> go.Figure:
+def create_grades_fig(education_df: pd.DataFrame, course_id: int) -> go.Figure:
     """
     A helper function which generates a grade overview figure
     by assignment type.
@@ -416,7 +416,7 @@ def create_grades_fig(education_df: pd.DataFrame, course_number: int) -> go.Figu
     """
     
     # Filter
-    education_df = education_df[education_df["Course Number"] == course_number]
+    education_df = education_df[education_df["Course ID"] == course_id]
     education_df = education_df[education_df["Grade"] != "EX"]
     education_df = education_df[education_df["Total"] != 0]
     
