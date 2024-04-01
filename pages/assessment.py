@@ -193,92 +193,6 @@ def render_missing_assessments_figure(education_data: str, assignment_group_filt
     
     return missing_assignment_fig
 
-
-@callback(
-    Output(ID_CSE_2221_PROJECT_TIME_FIG, "figure"),
-    Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
-)
-def render_project_time_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_time_fig(df, assignment="Project", course=FILTER_SOFTWARE_1)
-
-
-@callback(
-    Output(ID_CSE_2221_HOMEWORK_TIME_FIG, "figure"),
-    Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
-)
-def render_homework_time_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_time_fig(df, assignment="Homework", course=FILTER_SOFTWARE_1)
-
-
-@callback(
-    Output(ID_CSE_2221_HOMEWORK_EMOTIONS_FIG, "figure"),
-    Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
-)
-def render_emotions_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_emotions_fig(
-        df,
-        assignment="Homework",
-        course=FILTER_SOFTWARE_1
-    )
-
-
-@callback(
-    Output(ID_CSE_2221_RUBRIC_OVERVIEW_FIG, "figure"),
-    Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
-)
-def render_rubric_overview_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_rubric_overview_fig(df)
-
-
-@callback(
-    Output(ID_CSE_2221_RUBRIC_BREAKDOWN_FIG, "figure"),
-    Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
-)
-def render_rubric_breakdown_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_rubric_breakdown_fig(df)
-
-
-@callback(
-    Output(ID_CSE_2221_RUBRIC_SCORES_FIG, "figure"),
-    Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
-)
-def render_rubric_scores_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_rubric_scores_fig(df)
-
-
-@callback(
-    Output(ID_CSE_2221_GRADES_ATTENDANCE_FIG, "figure"),
-    Input(ID_CSE_2221_GRADE_DATA, "data")
-)
-def render_grades_vs_attendance_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_correlation_fig(df, "TH-Attendance", "Top Hat Attendance")
-
-
-@callback(
-    Output(ID_CSE_2221_GRADES_PARTICIPATION_FIG, "figure"),
-    Input(ID_CSE_2221_GRADE_DATA, "data")
-)
-def render_grades_vs_participation_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_correlation_fig(df, "Top Hat", "Top Hat Participation")
-
-
-@callback(
-    Output(ID_CSE_2221_PROJECT_TRENDS_FIG, "figure"),
-    Input(ID_CSE_2221_GRADE_DATA, "data")
-)
-def render_project_trends_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_project_trend_fig(df, "Project")
-
-
 @callback(
     Output(ID_CSE_2221_HOMEWORK_TRENDS_FIG, "figure"),
     Input(ID_CSE_2221_GRADE_DATA, "data")
@@ -287,36 +201,6 @@ def render_homework_trends_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_project_trend_fig(df, "Homework")
 
-
-@callback(
-    Output(ID_CSE_2221_EXAM_TRENDS_FIG, "figure"),
-    Input(ID_CSE_2221_GRADE_DATA, "data")
-)
-def render_exam_trends_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_project_trend_fig(df, "Exam")
-
-
-@callback(
-    Output(ID_CSE_2221_VALUE_FIG, "figure"),
-    Output(ID_CSE_2221_EFFORT_FIG, "figure"),
-    Input(ID_CSE_2221_GRADE_DATA, "data"),
-    Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
-)
-def render_points_per_hour_figure(jsonified_grade_data, jsonified_assignment_survey_data):
-    grade_data = pd.read_json(StringIO(jsonified_grade_data))
-    assignment_survey_data = pd.read_json(
-        StringIO(jsonified_assignment_survey_data)
-    )
-    return create_value_fig(
-        grade_data,
-        assignment_survey_data,
-        "Project",
-        10,
-        FILTER_SOFTWARE_1
-    )
-    
-    
 # Dropdown callbacks
 
 @callback(
@@ -358,8 +242,6 @@ def update_dropdown_course_filter(education_data):
     return options, course_ids[0]
 
 
-# TODO: mix in the assignment survey with the grades rather than having them
-# separate
 layout = html.Div([
     dbc.Navbar(
         dbc.Container(
