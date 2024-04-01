@@ -121,9 +121,14 @@ def create_missing_assignment_fig(education_df: pd.DataFrame, assignment_group: 
     education_df = education_df[education_df["Course ID"] == course_id]
     education_df = education_df[education_df["Assignment Group Name"] == assignment_group]
     education_df = education_df[education_df["Grade"] != "EX"]
+    education_df = education_df[education_df["Total"] != 0]
     
     # Type cast
     education_df["Grade"] = pd.to_numeric(education_df["Grade"])
+    
+    # Helpful values
+    course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
+    assignment_types = education_df.sort_values("Assignment ID")["Assignment Name"].unique()
     
     # Helper function
     def number_missing(series):
@@ -133,13 +138,19 @@ def create_missing_assignment_fig(education_df: pd.DataFrame, assignment_group: 
     to_plot = education_df.groupby("Assignment Name")["Grade"].agg(["count", number_missing])
     to_plot["Percent Missing"] = to_plot["number_missing"] / to_plot["count"] * 100
     
+    # Plot figure
     missing_assignment_fig = go.Figure(layout=dict(template='plotly'))    
     missing_assignment_fig = px.bar(
         to_plot, 
         y="Percent Missing", 
         text_auto=".2s", 
-        title=f"Percent of Missing {assignment_group}s"
+        title=f"Percent of Missing {assignment_group} in {course_code}",
+        category_orders={
+            "Assignment Name": assignment_types
+        },
+        hover_data=["count"]
     )
+    
     return missing_assignment_fig
 
 

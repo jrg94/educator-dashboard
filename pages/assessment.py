@@ -264,7 +264,8 @@ layout = html.Div([
     dbc.Navbar(
         dbc.Container(
             [
-                dcc.Dropdown(id=ID_COURSE_FILTER)
+                dcc.Dropdown(id=ID_COURSE_FILTER),
+                dcc.Dropdown(id=ID_ASSIGNMENT_GROUP_FILTER)
             ]
         ),
         color="dark",
@@ -281,7 +282,6 @@ layout = html.Div([
         will regenerate for you. 
         """
     ),
-    html.H2("Assessment Breakdown"),
     html.P(
         """
         To kick things off, here's a plot of the average and median grades
@@ -303,7 +303,6 @@ layout = html.Div([
         type. 
         """
     ),
-    dcc.Dropdown(id=ID_ASSIGNMENT_GROUP_FILTER),
     dcc.Loading(
         [dcc.Graph(id=ID_CSE_2221_HOMEWORK_GRADES_FIG)],
         type="graph"
@@ -398,10 +397,6 @@ layout = html.Div([
         semester progresses), that could potentially explain the low averages 
         for certain projects. 
         """
-    ),
-    dcc.Loading(
-        [dcc.Graph(id=ID_CSE_2221_MISSING_PROJECTS_FIG)],
-        type="graph"
     ),
     dcc.Markdown(
         """
@@ -529,10 +524,6 @@ layout = html.Div([
         circumstance. That said, the trend remains the same for exams as well 
         (i.e., fewer students attend the exams as the semester progresses).
         """
-    ),
-    dcc.Loading(
-        [dcc.Graph(id=ID_CSE_2221_MISSING_EXAMS_FIG)],
-        type="graph"
     ),
     dcc.Markdown(
         """
