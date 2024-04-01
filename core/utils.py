@@ -150,6 +150,7 @@ def create_missing_assignment_fig(education_df: pd.DataFrame, assignment_group: 
         },
         hover_data=["count"]
     )
+    missing_assignment_fig.update_yaxes(range=[0, 100])
     
     return missing_assignment_fig
 
