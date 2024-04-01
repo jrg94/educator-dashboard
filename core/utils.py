@@ -10,6 +10,138 @@ from nltk.corpus import stopwords
 
 from core.constants import *
 
+# Figures
+
+def create_grades_fig(education_df: pd.DataFrame, course_id: int) -> go.Figure:
+    """
+    A helper function which generates a grade overview figure
+    by assignment type.
+    
+    :param education_df: the dataframe containing all of the education data
+    :param course_number: the course ID (e.g., 1, 2, 3, etc.)
+    :return: the figure
+    """
+    
+    # Filter
+    education_df = education_df[education_df["Course ID"] == course_id]
+    education_df = education_df[education_df["Grade"] != "EX"]
+    education_df = education_df[education_df["Total"] != 0]
+    
+    # Type cast
+    education_df["Grade"] = pd.to_numeric(education_df["Grade"])
+    education_df["Total"] = pd.to_numeric(education_df["Total"])
+    
+    # Precompute columns 
+    education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
+        
+    # Perform analysis
+    to_plot = education_df.groupby("Assignment Group Name")["Percentage"].aggregate({"mean", "median", "count"})
+    
+    # Helpful values
+    course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
+    
+    # Plot figure
+    grade_fig = go.Figure(layout=dict(template='plotly'))
+    grade_fig = px.bar(
+        to_plot,
+        labels={
+            "index": "Assignment Type",
+            "value": "Percentage",
+            "variable": "Metric",
+            "mean": "Average",
+            "median": "Median",
+            "count": "Count"
+        },
+        barmode="group",
+        title=f"Overview of Course Grades by Type for {course_code}",
+        hover_data=["count"]
+    )
+    return grade_fig
+
+
+def create_assignment_fig(education_df: pd.DataFrame, course_id: int, assignment_group: str):
+    """
+    A helper function which generates a slightly more specific bar chart of
+    the grades by assignment group. Use this to see individual assignment grade
+    trends over time.
+    
+    :param education_df: the dataframe containing all of the education data
+    :param course_number: the course code (e.g., 2221, 2231, etc.)
+    :param assignment_group: the assignment group (e.g., Homeworks, Projects)   # TODO: make this an ID
+    :return: the figure
+    """
+    
+    # Filter
+    education_df = education_df[education_df["Course ID"] == course_id]
+    education_df = education_df[education_df["Assignment Group Name"] == assignment_group]
+    education_df = education_df[education_df["Grade"] != "EX"]
+    education_df = education_df[education_df["Total"] != 0]
+    
+    # Type cast
+    education_df["Grade"] = pd.to_numeric(education_df["Grade"])
+    education_df["Total"] = pd.to_numeric(education_df["Total"])
+    
+    # Precompute columns 
+    education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
+    
+    # Perform analysis
+    to_plot = education_df.groupby("Assignment Name")["Percentage"].aggregate({"mean", "median", "count"})
+    
+    # Helpful variables
+    course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
+    assignment_types = education_df.sort_values("Assignment ID")["Assignment Name"].unique()
+    
+    # Plot figure
+    assignment_calculations_fig = go.Figure(layout=dict(template='plotly'))    
+    assignment_calculations_fig = px.bar(
+        to_plot,
+        labels={
+            "index": "Project Name",
+            "value": "Percentage",
+            "variable": "Metric",
+            "mean": "Average",
+            "median": "Median",
+            "count": "Count"
+        },
+        barmode='group',
+        text_auto=".2s",
+        title=f"Average and Median Grades for {assignment_group} in {course_code}",
+        category_orders={
+            "Assignment Name": assignment_types
+        },
+        hover_data=["count"]
+    )
+    assignment_calculations_fig.update_yaxes(range=[0, 100])
+    
+    return assignment_calculations_fig
+
+
+def create_missing_assignment_fig(education_df: pd.DataFrame, assignment_group: str, course_id: int):
+    # Filter
+    education_df = education_df[education_df["Course ID"] == course_id]
+    education_df = education_df[education_df["Assignment Group Name"] == assignment_group]
+    education_df = education_df[education_df["Grade"] != "EX"]
+    
+    # Type cast
+    education_df["Grade"] = pd.to_numeric(education_df["Grade"])
+    
+    # Helper function
+    def number_missing(series):
+        return len(series[series == 0])
+    
+    # Perform analysis
+    to_plot = education_df.groupby("Assignment Name")["Grade"].agg(["count", number_missing])
+    to_plot["Percent Missing"] = to_plot["number_missing"] / to_plot["count"] * 100
+    
+    missing_assignment_fig = go.Figure(layout=dict(template='plotly'))    
+    missing_assignment_fig = px.bar(
+        to_plot, 
+        y="Percent Missing", 
+        text_auto=".2s", 
+        title=f"Percent of Missing {assignment_group}s"
+    )
+    return missing_assignment_fig
+
 
 def _semester_order(data: pd.DataFrame) -> list:
     """
@@ -403,114 +535,6 @@ def generate_grade_overview(grade_data):
     }
 
     return pd.DataFrame(overview_dict)
-
-
-def create_grades_fig(education_df: pd.DataFrame, course_id: int) -> go.Figure:
-    """
-    A helper function which generates a grade overview figure
-    by assignment type.
-    
-    :param education_df: the dataframe containing all of the education data
-    :param course_number: the course code (e.g., 2221, 2231, etc.)
-    :return: the figure
-    """
-    
-    # Filter
-    education_df = education_df[education_df["Course ID"] == course_id]
-    education_df = education_df[education_df["Grade"] != "EX"]
-    education_df = education_df[education_df["Total"] != 0]
-    
-    # Type cast
-    education_df["Grade"] = pd.to_numeric(education_df["Grade"])
-    education_df["Total"] = pd.to_numeric(education_df["Total"])
-    
-    # Precompute columns 
-    education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
-        
-    # Perform analysis
-    to_plot = education_df.groupby("Assignment Group Name")["Percentage"].aggregate({"mean", "median", "count"})
-    
-    # Plot figure
-    grade_fig = go.Figure(layout=dict(template='plotly'))
-    grade_fig = px.bar(
-        to_plot,
-        labels={
-            "index": "Assignment Type",
-            "value": "Percentage",
-            "variable": "Metric",
-            "mean": "Average",
-            "median": "Median",
-            "count": "Count"
-        },
-        barmode="group",
-        title=f"Overview of Course Grades by Type",
-        hover_data=["count"]
-    )
-    return grade_fig
-
-
-def create_assignment_fig(education_df: pd.DataFrame, course_id: int, assignment_group: str):
-    """
-    A helper function which generates a slightly more specific bar chart of
-    the grades by assignment group. Use this to see individual assignment grade
-    trends over time.
-    """
-    
-    # Filter
-    education_df = education_df[education_df["Course ID"] == course_id]
-    education_df = education_df[education_df["Assignment Group Name"] == assignment_group]
-    education_df = education_df[education_df["Grade"] != "EX"]
-    education_df = education_df[education_df["Total"] != 0]
-    
-    # Type cast
-    education_df["Grade"] = pd.to_numeric(education_df["Grade"])
-    education_df["Total"] = pd.to_numeric(education_df["Total"])
-    
-    # Precompute columns 
-    education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
-    
-    # Perform analysis
-    to_plot = education_df.groupby("Assignment Name")["Percentage"].aggregate({"mean", "median", "count"})
-    
-    # Plot figure
-    assignment_calculations_fig = go.Figure(layout=dict(template='plotly'))    
-    assignment_calculations_fig = px.bar(
-        to_plot,
-        labels={
-            "index": "Project Name",
-            "value": f"Percentage",
-            "variable": "Metric",
-            "mean": "Average",
-            "median": "Median",
-            "count": "Count"
-        },
-        barmode='group',
-        text_auto=".2s",
-        title=f"Average and Median {assignment_group} Grades".title(),
-        category_orders={
-            "Assignment Name": education_df.sort_values("Assignment ID")["Assignment Name"].unique()
-        },
-        hover_data=["count"]
-    )
-    assignment_calculations_fig.update_yaxes(range=[0, 100])
-    
-    return assignment_calculations_fig
-
-
-def create_missing_assignment_fig(grade_data, assignment):
-    missing_assignment_data = (grade_data == 0).sum() / len(grade_data) * 100
-    missing_assignment_data = missing_assignment_data.reset_index()
-    missing_assignment_data.rename(columns={'index': 'Assignment', 0: 'Percent Missing'}, inplace=True)
-    missing_assignment_data = missing_assignment_data.loc[missing_assignment_data["Assignment"].str.contains(assignment)]
-    missing_assignment_fig = go.Figure(layout=dict(template='plotly'))    
-    missing_assignment_fig = px.bar(
-        missing_assignment_data, 
-        x="Assignment", 
-        y="Percent Missing", 
-        text_auto=".2s", 
-        title=f"Percent of Missing {assignment}s"
-    )
-    return missing_assignment_fig
 
 
 def create_project_trend_fig(grade_data: pd.DataFrame, assignment: str):

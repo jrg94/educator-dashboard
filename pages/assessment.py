@@ -48,6 +48,17 @@ def render_assignment_calculations_figure(education_data, assignment_group_filte
 
 
 @callback(
+    Output(ID_CSE_2221_MISSING_HOMEWORKS_FIG, "figure"),
+    Input(ID_EDUCATION_DATA, "data"),
+    Input(ID_ASSIGNMENT_GROUP_FILTER, "value"),
+    Input(ID_COURSE_FILTER, "value")
+)
+def render_missing_homeworks_figure(jsonified_data, assignment_group_filter, course_filter):
+    df = pd.read_json(StringIO(jsonified_data))
+    return create_missing_assignment_fig(df, assignment_group_filter, course_filter)
+
+
+@callback(
     Output(ID_CSE_2221_PROJECT_TIME_FIG, "figure"),
     Input(ID_ASSIGNMENT_SURVEY_DATA, "data")
 )
@@ -148,15 +159,6 @@ def render_exam_calculations_figure(jsonified_data):
 def render_missing_projects_figure(jsonified_data):
     df = pd.read_json(StringIO(jsonified_data))
     return create_missing_assignment_fig(df, "Project")
-
-
-@callback(
-    Output(ID_CSE_2221_MISSING_HOMEWORKS_FIG, "figure"),
-    Input(ID_CSE_2221_GRADE_DATA, "data")
-)
-def render_missing_homeworks_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_missing_assignment_fig(df, "Homework")
 
 
 @callback(
