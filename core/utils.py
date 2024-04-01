@@ -12,53 +12,6 @@ from core.constants import *
 
 # Figures
 
-def create_grades_fig(education_df: pd.DataFrame, course_id: int) -> go.Figure:
-    """
-    A helper function which generates a grade overview figure
-    by assignment type.
-    
-    :param education_df: the dataframe containing all of the education data
-    :param course_number: the course ID (e.g., 1, 2, 3, etc.)
-    :return: the figure
-    """
-    
-    # Filter
-    education_df = education_df[education_df["Course ID"] == course_id]
-    education_df = education_df[education_df["Grade"] != "EX"]
-    education_df = education_df[education_df["Total"] != 0]
-    
-    # Type cast
-    education_df["Grade"] = pd.to_numeric(education_df["Grade"])
-    education_df["Total"] = pd.to_numeric(education_df["Total"])
-    
-    # Precompute columns 
-    education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
-        
-    # Perform analysis
-    to_plot = education_df.groupby("Assignment Group Name")["Percentage"].aggregate({"mean", "median", "count"})
-    
-    # Helpful values
-    course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
-    
-    # Plot figure
-    grade_fig = go.Figure(layout=dict(template='plotly'))
-    grade_fig = px.bar(
-        to_plot,
-        labels={
-            "index": "Assignment Type",
-            "value": "Percentage",
-            "variable": "Metric",
-            "mean": "Average",
-            "median": "Median",
-            "count": "Count"
-        },
-        barmode="group",
-        title=f"Overview of Course Grades by Type for {course_code}",
-        hover_data=["count"]
-    )
-    return grade_fig
-
-
 def create_assignment_fig(education_df: pd.DataFrame, course_id: int, assignment_group: str):
     """
     A helper function which generates a slightly more specific bar chart of
