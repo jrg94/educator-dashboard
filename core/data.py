@@ -39,7 +39,8 @@ def load_assignment_survey_data() -> dcc.Store:
 
 def load_sei_data() -> dcc.Store:
     """
-    Loads the SEI data from the remote CSV. The result is returned as a store object.
+    Loads the SEI data from the remote CSV. The result is returned as a store 
+    object.
 
     :return: the SEI data as a store
     """
@@ -49,7 +50,8 @@ def load_sei_data() -> dcc.Store:
 
 def load_sei_comments_data() -> dcc.Store:
     """
-    Loads the SEI comment data from the remote CSV. The result is returned as a store object.
+    Loads the SEI comment data from the remote CSV. The result is returned as a 
+    store object.
 
     :return: the SEI comment data as a store 
     """
@@ -59,7 +61,8 @@ def load_sei_comments_data() -> dcc.Store:
 
 def load_course_eval_data() -> dcc.Store:
     """
-    Loads the course evaluation data from the remote CSV. The result is returned as a store object.
+    Loads the course evaluation data from the remote CSV. The result is returned 
+    as a store object.
 
     :return: the SEI course evaluation data as a store
     """
@@ -76,7 +79,8 @@ def load_course_eval_data() -> dcc.Store:
 
 def load_education_data() -> dcc.Store:
     """
-    Loads the grade data from the remote CSV. The result is returned as a store object. 
+    Loads the grade data from the remote CSV. The result is returned as a store 
+    object. 
 
     :return: the grade data as a store
     """
