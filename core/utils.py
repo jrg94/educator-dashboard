@@ -12,7 +12,7 @@ from core.constants import *
 
 # Figures
 
-def _semester_order(data: pd.DataFrame) -> list:
+def _semester_order(data: pd.DataFrame) -> dict:
     """
     Returns a sorted list of semesters in the expected order 
     (e.g., [Autumn 2018, Spring 2019, Autumn 2019, Spring 2020, ...]).
@@ -22,11 +22,12 @@ def _semester_order(data: pd.DataFrame) -> list:
     """
     min_year = data["Year"].min()
     max_year = data["Year"].max()
-    semesters = []
+    semesters = {}
+    order = 1
     for year in range(min_year, max_year + 1):
         for season in SEASON_SORT_ORDER.keys():
-            semesters.append(f"{season} {year}")
-    print(semesters)
+            semesters[f"{season} {year}"] = order
+            order += 1
     return semesters
 
 

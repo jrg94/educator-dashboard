@@ -226,16 +226,18 @@ def render_assessment_trends_figure(education_data: str, assessment_group_filter
     # Precompute some columns
     education_df["Semester"] = education_df["Season"] + " " + education_df["Year"].astype(str)
     education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
+    
+    # Helpful values
+    semesters_in_order = _semester_order(education_df)
+    course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
 
     # Perform analysis
     to_plot = education_df.groupby(["Semester", "Assignment Name"]).agg({
-        "Percentage": "mean",
-        "Season": "first",
-        "Year": "first"
+        "Percentage": "mean"
     }).reset_index()
-    to_plot = to_plot.sort_values(by="Season", ascending=False).sort_values(by="Year", kind="stable")
-    print(to_plot)
+    to_plot = to_plot.sort_values(by="Semester", key=lambda col: col.map(lambda x: semesters_in_order[x]))
     
+    # Plot figure
     trend_fig = go.Figure(layout=dict(template='plotly'))    
     trend_fig = px.line(
         to_plot,
@@ -243,11 +245,13 @@ def render_assessment_trends_figure(education_data: str, assessment_group_filter
         y="Percentage",
         color="Assignment Name",
         markers=True,
-        title=f"Average {assessment_group_filter} Score by Semester",
+        title=f"Average Grades for {assessment_group_filter} in {course_code} by Semester",
         category_orders={
-            "Semester": _semester_order(education_df)
+            "Semester": list(semesters_in_order.keys())
         },
     )
+    trend_fig.update_yaxes(range=[0, 100])
+    
     return trend_fig
 
 # Dropdown callbacks
