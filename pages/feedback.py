@@ -20,9 +20,37 @@ dash.register_page(
     Output(ID_SEI_OVERVIEW_FIG, "figure"),
     Input(ID_SEI_DATA, "data")
 )
-def render_sei_stats_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_sei_fig(df)
+def render_sei_stats_figure(sei_ratings_history):
+    """
+    Creates an SEI data figure showing all of the SEI
+    data results over "time", where time is a categorical
+    semester string that is added to the SEI data. There
+    are four lines in this plot to compare against my
+    SEI data (i.e., the department, college, and university).
+    
+    :param sei_ratings_history: the raw SEI data as a dataframe
+    :return: the resulting SEI figure
+    """
+    sei_ratings_df = pd.read_json(StringIO(sei_ratings_history))
+    sei_ratings_df["Semester"] = sei_ratings_df["Season"] + " " + sei_ratings_df["Year"].astype(str)
+    sei_fig = go.Figure(layout=dict(template='plotly'))    
+    sei_fig = px.line(
+        sei_ratings_df, 
+        x="Semester", 
+        y="Mean", 
+        color="Group", 
+        facet_col="Question", 
+        facet_col_wrap=2, 
+        markers=True, 
+        title="Student Evaluation of Instruction Trends by Cohort",
+        category_orders={
+            "Semester": list(semester_order(sei_ratings_df).keys())
+        },
+        hover_data=["Course"],
+        height=600
+    )
+    sei_fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
+    return sei_fig
 
 
 @callback(

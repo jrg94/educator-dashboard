@@ -8,7 +8,6 @@ from dash import Input, Output, callback, dcc, html
 from core.constants import *
 from core.data import *
 from core.utils import *
-from core.utils import _semester_order
 
 dash.register_page(
     __name__,
@@ -228,7 +227,7 @@ def render_assessment_trends_figure(education_data: str, assessment_group_filter
     education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
     
     # Helpful values
-    semesters_in_order = _semester_order(education_df)
+    semesters_in_order = semester_order(education_df)
     course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
 
     # Perform analysis
@@ -292,7 +291,7 @@ def render_grade_distribution_figure(education_data: str, assessment_group_filte
     
     # Helpful values
     course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
-    semesters_in_order = [x for x in _semester_order(education_df).keys() if x in education_df["Semester"].unique()]
+    semesters_in_order = [x for x in semester_order(education_df).keys() if x in education_df["Semester"].unique()]
 
     # Plot figure
     distribution_fig = go.Figure(layout=dict(template='plotly'))    

@@ -12,7 +12,7 @@ from core.constants import *
 
 # Figures
 
-def _semester_order(data: pd.DataFrame) -> dict:
+def semester_order(data: pd.DataFrame) -> dict:
     """
     Returns a sorted list of semesters in the expected order 
     (e.g., [Autumn 2018, Spring 2019, Autumn 2019, Spring 2020, ...]).
@@ -29,7 +29,7 @@ def _semester_order(data: pd.DataFrame) -> dict:
         for season in SEASON_SORT_ORDER:
             semesters[f"{season} {year}"] = order
             order += 1
-    return semesters  # TODO: this is not right
+    return semesters
 
 
 def create_time_fig(assignment_survey_data: pd.DataFrame, assignment: str, course: str):
@@ -195,37 +195,6 @@ def create_rubric_scores_fig(assignment_survey_data: pd.DataFrame):
         color_continuous_scale=px.colors.sequential.Viridis
     )
     return rubric_scores_fig
-
-
-def create_sei_fig(sei_data: pd.DataFrame) -> plotly.graph_objs.Figure:
-    """
-    Creates an SEI data figure showing all of the SEI
-    data results over "time", where time is a categorical
-    semester string that is added to the SEI data. There
-    are four lines in this plot to compare against my
-    SEI data (i.e., the department, college, and university).
-    
-    :param sei_data: the raw SEI data as a dataframe
-    :return: the resulting SEI figure
-    """
-    sei_data["Semester"] = sei_data["Season"] + " " + sei_data["Year"].astype(str)
-    sei_fig = go.Figure(layout=dict(template='plotly'))    
-    sei_fig = px.line(
-        sei_data, 
-        x="Semester", 
-        y="Mean", 
-        color="Group", 
-        facet_col="Question", 
-        facet_col_wrap=2, 
-        markers=True, 
-        title="Student Evaluation of Instruction Trends by Cohort",
-        category_orders={
-            "Semester": _semester_order(sei_data)
-        },
-        hover_data=["Course"]
-    )
-    sei_fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
-    return sei_fig
 
 
 def create_sei_comment_fig(sei_comments: pd.DataFrame) -> plotly.graph_objs.Figure:

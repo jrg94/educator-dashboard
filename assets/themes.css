@@ -26,10 +26,6 @@ h1, h2, h3, h4, h5, h6 {
     padding-top: 1rem;
 }
 
-.max-window {
-    height: 85vh;
-}
-
 .nav-pills {
     --bs-nav-pills-border-radius: var(--bs-border-radius);
     --bs-nav-pills-link-active-color: #fff;
