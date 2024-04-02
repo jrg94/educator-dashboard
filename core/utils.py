@@ -197,44 +197,6 @@ def create_rubric_scores_fig(assignment_survey_data: pd.DataFrame):
     return rubric_scores_fig
 
 
-def create_sei_comment_fig(sei_comments: pd.DataFrame) -> plotly.graph_objs.Figure:
-    # Installs needed corpus data
-    try:
-        nltk.data.find('tokenizers/punkt')
-    except:
-        nltk.download('punkt')
-        
-    try:
-        nltk.data.find('corpora/stopwords')
-    except:
-        nltk.download('stopwords')
-    
-    # Tokenizes the comments and computes their counts
-    results = Counter()
-    sei_comments["Comment"].str.lower().apply(nltk.word_tokenize).apply(results.update)
-    word_counts = pd.DataFrame.from_dict(results, orient="index").reset_index()
-    word_counts = word_counts.rename(columns={"index": "Word", 0:"Count"}) 
-    
-    # Removes stop words and punctuation from the totals
-    stop = stopwords.words("english")
-    word_counts = word_counts[~word_counts["Word"].isin(stop)]
-    word_counts = word_counts[~word_counts["Word"].isin(list(string.punctuation))]
-    word_counts = word_counts[~word_counts["Word"].str.contains("'")]
-    
-    # Sorts and pulls the top 25 words
-    word_counts = word_counts.sort_values(by="Count", ascending=False)
-    word_counts = word_counts.head(25)
-    word_counts = word_counts.sort_values(by="Count")
-    sei_comment_fig = go.Figure(layout=dict(template='plotly'))    
-    sei_comment_fig = px.bar(
-        word_counts,
-        x="Count",
-        y="Word",
-        title="Top 25 Most Common Words in SEI Comments"
-    )
-    return sei_comment_fig
-
-
 def create_course_eval_fig(course_eval_data, question, axes_labels):
     colors = dict(zip(axes_labels, COLORS_SATISFACTION.values()))
     question_data = course_eval_data.melt(

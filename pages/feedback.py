@@ -62,9 +62,56 @@ def render_sei_ratings_figure(sei_ratings_history: str):
     Output(ID_SEI_COMMENTS_FIG, "figure"),
     Input(ID_SEI_COMMENTS_DATA, "data")
 )
-def render_sei_comments_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_sei_comment_fig(df)
+def render_sei_comments_figure(sei_comments_history: str):
+    """
+    Creates an SEI top words figure, which is generated from the comments
+    data.
+    
+    :param sei_comments_history: the SEI comments data
+    :return: the resulting SEI comments figure
+    """
+    # Convert the data back into a dataframe
+    sei_comments_df = pd.read_json(StringIO(sei_comments_history))
+    
+    # Installs needed corpus data
+    try:
+        nltk.data.find('tokenizers/punkt')
+    except:
+        nltk.download('punkt')
+        
+    try:
+        nltk.data.find('corpora/stopwords')
+    except:
+        nltk.download('stopwords')
+    
+    # Tokenizes the comments and computes their counts
+    results = Counter()
+    sei_comments_df["Comment"].str.lower().apply(nltk.word_tokenize).apply(results.update)
+    word_counts = pd.DataFrame.from_dict(results, orient="index").reset_index()
+    word_counts = word_counts.rename(columns={"index": "Word", 0:"Count"}) 
+    
+    # Removes stop words and punctuation from the totals
+    stop = stopwords.words("english")
+    word_counts = word_counts[~word_counts["Word"].isin(stop)]
+    word_counts = word_counts[~word_counts["Word"].isin(list(string.punctuation))]
+    word_counts = word_counts[~word_counts["Word"].str.contains("'")]
+    
+    # Sorts and pulls the top 25 words
+    word_counts = word_counts.sort_values(by="Count", ascending=False)
+    word_counts = word_counts.head(25)
+    word_counts = word_counts.sort_values(by="Count")
+    
+    # Plot figure
+    sei_comment_fig = go.Figure(layout=dict(template='plotly'))    
+    sei_comment_fig = px.bar(
+        word_counts,
+        x="Count",
+        y="Word",
+        title="Top 25 Most Common Words in SEI Comments",
+        height=600
+    )
+    
+    return sei_comment_fig
 
 
 @callback(
@@ -114,11 +161,7 @@ layout = html.Div([
         the instruction for the course. These data are anonymized and provided 
         as averages for each question. Here is the breakdown of my scores 
         against the scores for various cohorts including my department, my 
-        college, and my university. In general, I outperform all three cohorts, 
-        but I'm noticing a downward trend in course organization. For context,
-        I taught CSE 1223 in the Fall of 2018 and the Spring of 2019. I've been 
-        teaching CSE 2221 ever since, with a year gap for research during Autumn 
-        2020 and Spring 2021. 
+        college, and my university.
         """
     ),
     dcc.Loading(
