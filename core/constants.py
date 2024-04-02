@@ -76,7 +76,6 @@ ID_CSE_2231_MISSING_EXAMS_FIG = "cse2231-missing-exams"
 ID_CSE_2221_VALUE_FIG = "project-points-per-hour"
 ID_CSE_2221_EFFORT_FIG = "project-hours-per-point"
 
-ID_SEI_OVERVIEW_FIG = "sei-stats"
 ID_SEI_COMMENTS_FIG = "sei-comments"
 
 ID_EVAL_COURSE_CONTENT_FIG = "course-content"
@@ -89,6 +88,7 @@ ID_DETAILED_ASSESSMENT_GRADES_FIG = "detailed-assessment-grades"
 ID_ASSESSMENT_TRENDS_FIG = "assessment-trends"
 ID_MISSING_ASSESSMENT_FIG = "missing-homeworks"
 ID_GRADE_DISTRIBUTION_FIG = "grade-distribution"
+ID_SEI_RATINGS_FIG = "sei-ratings"
 
 # Filter IDs
 ID_ASSESSMENT_GROUP_FILTER = "assessment-group-filter"

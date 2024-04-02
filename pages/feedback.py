@@ -17,22 +17,26 @@ dash.register_page(
 
 
 @callback(
-    Output(ID_SEI_OVERVIEW_FIG, "figure"),
+    Output(ID_SEI_RATINGS_FIG, "figure"),
     Input(ID_SEI_DATA, "data")
 )
-def render_sei_stats_figure(sei_ratings_history):
+def render_sei_ratings_figure(sei_ratings_history: str):
     """
-    Creates an SEI data figure showing all of the SEI
-    data results over "time", where time is a categorical
-    semester string that is added to the SEI data. There
-    are four lines in this plot to compare against my
-    SEI data (i.e., the department, college, and university).
+    Creates an SEI data figure showing all of the SEI data results over "time", 
+    where time is a categorical semester string that is added to the SEI data. 
+    There are four lines in this plot to compare against my SEI data (i.e., the 
+    department, college, and university).
     
     :param sei_ratings_history: the raw SEI data as a dataframe
     :return: the resulting SEI figure
     """
+    # Convert the data back into a dataframe
     sei_ratings_df = pd.read_json(StringIO(sei_ratings_history))
+    
+    # Precompute columns 
     sei_ratings_df["Semester"] = sei_ratings_df["Season"] + " " + sei_ratings_df["Year"].astype(str)
+    
+    # Plot figure
     sei_fig = go.Figure(layout=dict(template='plotly'))    
     sei_fig = px.line(
         sei_ratings_df, 
@@ -50,6 +54,7 @@ def render_sei_stats_figure(sei_ratings_history):
         height=600
     )
     sei_fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
+    
     return sei_fig
 
 
@@ -117,7 +122,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id=ID_SEI_OVERVIEW_FIG, className=CSS_FULL_SCREEN_FIG)],
+        [dcc.Graph(id=ID_SEI_RATINGS_FIG, className=CSS_FULL_SCREEN_FIG)],
         type="graph"
     ),
     html.P(
