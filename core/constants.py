@@ -91,8 +91,9 @@ ID_MISSING_ASSESSMENT_FIG = "missing-homeworks"
 ID_GRADE_DISTRIBUTION_FIG = "grade-distribution"
 
 # Filter IDs
-ID_ASSESSMENT_GROUP_FILTER = "assignment-type-filter"
-ID_COURSE_FILTER ="course-filter"
+ID_ASSESSMENT_GROUP_FILTER = "assessment-group-filter"
+ID_COURSE_FILTER = "course-filter"
+ID_ASSESSMENT_FILTER = "assessment-filter"
 
 # CSS Classes
 CSS_FULL_SCREEN_FIG = "max-window"
