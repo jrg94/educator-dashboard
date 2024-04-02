@@ -20,15 +20,16 @@ def _semester_order(data: pd.DataFrame) -> dict:
     :param data: the DataFrame provided by the user with an assumed Semester column
     :return: a list of sorted semesters
     """
+    SEASON_SORT_ORDER = ["Spring", "Summer", "Autumn"]
     min_year = data["Year"].min()
     max_year = data["Year"].max()
     semesters = {}
     order = 1
     for year in range(min_year, max_year + 1):
-        for season in SEASON_SORT_ORDER.keys():
+        for season in SEASON_SORT_ORDER:
             semesters[f"{season} {year}"] = order
             order += 1
-    return semesters
+    return semesters  # TODO: this is not right
 
 
 def create_time_fig(assignment_survey_data: pd.DataFrame, assignment: str, course: str):

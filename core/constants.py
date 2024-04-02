@@ -126,10 +126,3 @@ COLORS_SATISFACTION = dict(zip(
     MAPPING_SATISFACTION.values(),
     px.colors.sequential.Viridis[::2]
 ))
-
-# Sorting keys
-SEASON_SORT_ORDER = {
-    "Autumn": 1,
-    "Spring": 2,
-    "Summer": 3,
-}
