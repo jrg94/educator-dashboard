@@ -8,6 +8,7 @@ from dash import Input, Output, callback, dcc, html
 from core.constants import *
 from core.data import *
 from core.utils import *
+from core.utils import _semester_order
 
 dash.register_page(
     __name__,
@@ -87,7 +88,7 @@ def render_assessment_calculations_figure(education_data: str, assessment_group_
     :param education_data: the jsonified education dataframe
     :param course_filter: the course ID
     :param assessment_group_filter: the assessment group  # TODO: make this an ID for consistency
-    :return: the grade overview figure object
+    :return: the assessment calculations figure object
     """
     # Convert the data back into a dataframe
     education_df = pd.read_json(StringIO(education_data))
@@ -143,7 +144,7 @@ def render_assessment_calculations_figure(education_data: str, assessment_group_
     Input(ID_ASSESSMENT_GROUP_FILTER, "value"),
     Input(ID_COURSE_FILTER, "value")
 )
-def render_missing_assessments_figure(education_data: str, assignment_group_filter: str, course_filter: int):
+def render_missing_assessments_figure(education_data: str, assessment_group_filter: str, course_filter: int):
     """
     Plots a breakdown of the averages and medians per assessment for a specific
     course and assessment group. 
@@ -151,14 +152,14 @@ def render_missing_assessments_figure(education_data: str, assignment_group_filt
     :param education_data: the jsonified education dataframe
     :param course_filter: the course ID
     :param assessment_group_filter: the assessment group  # TODO: make this an ID for consistency
-    :return: the grade overview figure object
+    :return: the missing assessments figure object
     """
     # Convert the data back into a dataframe
     education_df = pd.read_json(StringIO(education_data))
     
     # Filter
     education_df = education_df[education_df["Course ID"] == course_filter]
-    education_df = education_df[education_df["Assignment Group Name"] == assignment_group_filter]
+    education_df = education_df[education_df["Assignment Group Name"] == assessment_group_filter]
     education_df = education_df[education_df["Grade"] != "EX"]
     education_df = education_df[education_df["Total"] != 0]
     
@@ -183,7 +184,7 @@ def render_missing_assessments_figure(education_data: str, assignment_group_filt
         to_plot, 
         y="Percent Missing", 
         text_auto=".2s", 
-        title=f"Percent of Missing {assignment_group_filter} in {course_code}",
+        title=f"Percent of Missing {assessment_group_filter} in {course_code}",
         category_orders={
             "Assignment Name": assignment_types
         },
@@ -194,12 +195,60 @@ def render_missing_assessments_figure(education_data: str, assignment_group_filt
     return missing_assignment_fig
 
 @callback(
-    Output(ID_CSE_2221_HOMEWORK_TRENDS_FIG, "figure"),
-    Input(ID_CSE_2221_GRADE_DATA, "data")
+    Output(ID_ASSESSMENT_TRENDS_FIG, "figure"),
+    Input(ID_EDUCATION_DATA, "data"),
+    Input(ID_ASSESSMENT_GROUP_FILTER, "value"),
+    Input(ID_COURSE_FILTER, "value")
 )
-def render_homework_trends_figure(jsonified_data):
-    df = pd.read_json(StringIO(jsonified_data))
-    return create_project_trend_fig(df, "Homework")
+def render_assessment_trends_figure(education_data: str, assessment_group_filter: str, course_filter: int):
+    """
+    Plots the average grade for all assignments in an assignment group over time.
+    
+    :param education_data: the jsonified education dataframe
+    :param course_filter: the course ID
+    :param assessment_group_filter: the assessment group  # TODO: make this an ID for consistency
+    :return: the grade overview figure object
+    """
+    
+    # Convert the data back into a dataframe
+    education_df = pd.read_json(StringIO(education_data))
+        
+    # Filter
+    education_df = education_df[education_df["Course ID"] == course_filter]
+    education_df = education_df[education_df["Assignment Group Name"] == assessment_group_filter]
+    education_df = education_df[education_df["Grade"] != "EX"]
+    education_df = education_df[education_df["Total"] != 0]
+    
+    # Type cast
+    education_df["Grade"] = pd.to_numeric(education_df["Grade"])
+    education_df["Total"] = pd.to_numeric(education_df["Total"])
+    
+    # Precompute some columns
+    education_df["Semester"] = education_df["Season"] + " " + education_df["Year"].astype(str)
+    education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
+
+    # Perform analysis
+    to_plot = education_df.groupby(["Semester", "Assignment Name"]).agg({
+        "Percentage": "mean",
+        "Season": "first",
+        "Year": "first"
+    }).reset_index()
+    to_plot = to_plot.sort_values(by="Season", ascending=False).sort_values(by="Year", kind="stable")
+    print(to_plot)
+    
+    trend_fig = go.Figure(layout=dict(template='plotly'))    
+    trend_fig = px.line(
+        to_plot,
+        x="Semester",
+        y="Percentage",
+        color="Assignment Name",
+        markers=True,
+        title=f"Average {assessment_group_filter} Score by Semester",
+        category_orders={
+            "Semester": _semester_order(education_df)
+        },
+    )
+    return trend_fig
 
 # Dropdown callbacks
 
@@ -264,6 +313,7 @@ layout = html.Div([
         plots will regenerate for you. 
         """
     ),
+    html.H2("Course Overview"),
     html.P(
         """
         To kick things off, here's a plot of the average and median grades
@@ -276,11 +326,12 @@ layout = html.Div([
         [dcc.Graph(id=ID_GRADE_OVERVIEW_FIG)],
         type="graph"
     ),
+    html.H2("Assessment Group Breakdown"),
     dcc.Markdown(
         """
-        Each category above can be broken down into plots of the individual
+        Each assessment group can be broken down into its individual
         assessments over the course of the semester. Feel free to use the 
-        second dropdown to explore each assessment type deeper. 
+        second dropdown to explore each assessment group in depth. 
         """
     ),
     dcc.Loading(
@@ -308,8 +359,16 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id=ID_CSE_2221_HOMEWORK_TRENDS_FIG)],
+        [dcc.Graph(id=ID_ASSESSMENT_TRENDS_FIG)],
         type="graph"
+    ),
+    html.H2("Assessment Breakdown"),
+    html.P(
+        """
+        Naturally, each assessment can be broken down into its individual 
+        submissions. At this level, we can take a look at assessment
+        distributions, which provide more context to the averages and medians.
+        """
     ),
     html.P(
         """

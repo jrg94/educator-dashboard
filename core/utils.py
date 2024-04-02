@@ -17,19 +17,16 @@ def _semester_order(data: pd.DataFrame) -> list:
     Returns a sorted list of semesters in the expected order 
     (e.g., [Autumn 2018, Spring 2019, Autumn 2019, Spring 2020, ...]).
     
-    It works by generating a multindex from all combinations
-    of years and seasons. Then, we convert that multindex to
-    a list of pairs, sort these pairs first by season then by
-    year, and finally concatenate them together. 
-
     :param data: the DataFrame provided by the user with an assumed Semester column
     :return: a list of sorted semesters
     """
-    semesters = list(pd.MultiIndex.from_product(data.set_index(["Year", "Season"]).index.levels))
-    semesters.sort(key=lambda x: x[1], reverse=True)
-    semesters.sort(key=lambda x: x[0])
-    semesters = semesters[1:]
-    semesters = [f"{item[1]} {item[0]}" for item in semesters]
+    min_year = data["Year"].min()
+    max_year = data["Year"].max()
+    semesters = []
+    for year in range(min_year, max_year + 1):
+        for season in SEASON_SORT_ORDER.keys():
+            semesters.append(f"{season} {year}")
+    print(semesters)
     return semesters
 
 
@@ -404,35 +401,3 @@ def generate_grade_overview(grade_data):
     }
 
     return pd.DataFrame(overview_dict)
-
-
-def create_project_trend_fig(grade_data: pd.DataFrame, assignment: str):
-    """
-    Creates a semesterly line graph for each assignment of a
-    particular type (e.g., Exam, Project, Homework, etc.)
-    """
-    grade_data["Semester"] = grade_data["Season"] + " " + grade_data["Year"].astype(str)
-
-    trend_data = grade_data.groupby(["Year", "Season"]).mean(numeric_only=True)[[item for item in grade_data if assignment in item]]
-    trend_data = trend_data.reset_index().melt(
-        id_vars=["Year", "Season"],
-        var_name="Assignment", 
-        value_name="Average Score"
-    ).dropna()
-
-    trend_data = trend_data.sort_values(by="Season", ascending=False).sort_values(by="Year", kind="stable")
-    trend_data["Semester"] = trend_data["Season"] + " " + trend_data["Year"].astype(str)
-    
-    trend_fig = go.Figure(layout=dict(template='plotly'))    
-    trend_fig = px.line(
-        trend_data,
-        x="Semester",
-        y="Average Score",
-        color="Assignment",
-        markers=True,
-        title=f"Average {assignment} Score by Semester",
-        category_orders={
-            "Semester": _semester_order(grade_data)
-        },
-    )
-    return trend_fig

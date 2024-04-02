@@ -78,10 +78,6 @@ ID_CSE_2231_MISSING_HOMEWORKS_FIG = "cse2231-missing-homeworks"
 ID_CSE_2231_MISSING_PROJECTS_FIG = "cse2231-missing-projects"
 ID_CSE_2231_MISSING_EXAMS_FIG = "cse2231-missing-exams"
 
-ID_CSE_2221_PROJECT_TRENDS_FIG = "project-trends"
-ID_CSE_2221_HOMEWORK_TRENDS_FIG = "homework-trends"
-ID_CSE_2221_EXAM_TRENDS_FIG = "exam-trends"
-
 ID_CSE_2221_VALUE_FIG = "project-points-per-hour"
 ID_CSE_2221_EFFORT_FIG = "project-hours-per-point"
 
@@ -95,6 +91,7 @@ ID_EVAL_CONTRIBUTION_FIG = "contribution-to-learning"
 # New Figure IDs
 ID_GRADE_OVERVIEW_FIG = "grade-overview"
 ID_DETAILED_ASSESSMENT_GRADES_FIG = "detailed-assessment-grades"
+ID_ASSESSMENT_TRENDS_FIG = "assessment-trends"
 
 # Filter IDs
 ID_ASSESSMENT_GROUP_FILTER = "assignment-type-filter"
@@ -129,3 +126,10 @@ COLORS_SATISFACTION = dict(zip(
     MAPPING_SATISFACTION.values(),
     px.colors.sequential.Viridis[::2]
 ))
+
+# Sorting keys
+SEASON_SORT_ORDER = {
+    "Autumn": 1,
+    "Spring": 2,
+    "Summer": 3,
+}
