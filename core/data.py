@@ -91,30 +91,3 @@ def load_education_data() -> dcc.Store:
         .merge(teaching_history, on="Section ID") \
         .merge(course_lookup, on="Course ID")
     return dcc.Store(id=ID_EDUCATION_DATA, data=education_data.to_json())
-
-
-def load_cse2221_grade_data() -> dcc.Store:
-    """
-    Loads the grade data from the remote CSV. The result is returned as a store object. 
-
-    :return: the grade data as a store
-    """
-    grade_data = pd.read_csv(URL_CSE_2221_GRADE_DATA)
-    return dcc.Store(id=ID_CSE_2221_GRADE_DATA, data=grade_data.to_json())
-
-
-def load_cse2231_grade_data() -> dcc.Store:
-    """
-    Loads the grade data from the remote CSV. The result is returned as a store object. 
-
-    :return: the grade data as a store
-    """
-    grade_data = pd.read_csv(URL_CSE_2231_GRADE_DATA)
-
-    # Sets types of columns
-    grade_data["Midterm Exam #1"] = pd.to_numeric(
-        grade_data["Midterm Exam #1"],
-        errors="coerce"
-    )
-
-    return dcc.Store(id=ID_CSE_2231_GRADE_DATA, data=grade_data.to_json())

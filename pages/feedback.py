@@ -122,7 +122,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id=ID_SEI_RATINGS_FIG, className=CSS_FULL_SCREEN_FIG)],
+        [dcc.Graph(id=ID_SEI_RATINGS_FIG)],
         type="graph"
     ),
     html.P(
@@ -133,7 +133,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id=ID_SEI_COMMENTS_FIG, className=CSS_FULL_SCREEN_FIG)],
+        [dcc.Graph(id=ID_SEI_COMMENTS_FIG)],
         type="graph"
     ),
     html.H2("Course Evaluation Survey Data"),
@@ -174,7 +174,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id=ID_EVAL_SKILL_FIG, className=CSS_FULL_SCREEN_FIG)],
+        [dcc.Graph(id=ID_EVAL_SKILL_FIG)],
         type="graph"
     ),
     html.H3("Contribution to Learning"),

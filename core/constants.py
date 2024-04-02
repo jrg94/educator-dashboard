@@ -5,8 +5,6 @@ URL_ASSIGNMENT_SURVEY = "https://raw.githubusercontent.com/jrg94/personal-data/0
 URL_SEI_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/sei-data.csv"
 URL_SEI_COMMENTS_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/sei-comments.csv"
 URL_COURSE_EVAL_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/eval-data.csv"
-URL_CSE_2221_GRADE_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/cse-2221-grades.csv"
-URL_CSE_2231_GRADE_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/cse-2231-grades.csv"
 
 URL_ASSIGNMENT_GROUP_LOOKUP = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assignment-group-lookup.csv"
 URL_ASSIGNMENT_LOOKUP = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assignment-lookup.csv"
@@ -82,21 +80,20 @@ ID_EVAL_COURSE_CONTENT_FIG = "course-content"
 ID_EVAL_SKILL_FIG = "skill-and-responsiveness"
 ID_EVAL_CONTRIBUTION_FIG = "contribution-to-learning"
 
-# New Figure IDs
+# Assessment figure IDs
 ID_GRADE_OVERVIEW_FIG = "grade-overview"
 ID_DETAILED_ASSESSMENT_GRADES_FIG = "detailed-assessment-grades"
 ID_ASSESSMENT_TRENDS_FIG = "assessment-trends"
-ID_MISSING_ASSESSMENT_FIG = "missing-homeworks"
+ID_MISSING_ASSESSMENT_FIG = "missing-assessments"
 ID_GRADE_DISTRIBUTION_FIG = "grade-distribution"
+
+# Feedback figure IDs
 ID_SEI_RATINGS_FIG = "sei-ratings"
 
 # Filter IDs
-ID_ASSESSMENT_GROUP_FILTER = "assessment-group-filter"
 ID_COURSE_FILTER = "course-filter"
+ID_ASSESSMENT_GROUP_FILTER = "assessment-group-filter"
 ID_ASSESSMENT_FILTER = "assessment-filter"
-
-# CSS Classes
-CSS_FULL_SCREEN_FIG = "max-window"
 
 # Various mappings for charts
 MAPPING_SATISFACTION = {

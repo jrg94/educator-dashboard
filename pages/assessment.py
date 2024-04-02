@@ -461,6 +461,5 @@ layout = html.Div([
         over the years. 
         """
     ),
-    load_cse2221_grade_data(),
     load_education_data()
 ])
