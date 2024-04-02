@@ -202,7 +202,7 @@ def render_missing_assessments_figure(education_data: str, assessment_group_filt
 )
 def render_assessment_trends_figure(education_data: str, assessment_group_filter: str, course_filter: int):
     """
-    Plots the average grade for all assignments in an assignment group over time.
+    Plots the average grade for all assessments in an assessment group over time.
     
     :param education_data: the jsonified education dataframe
     :param course_filter: the course ID
