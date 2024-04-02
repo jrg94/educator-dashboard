@@ -47,7 +47,6 @@ ID_SEI_COMMENTS_DATA = "sei-comments-data"
 ID_COURSE_EVAL_DATA = "course-eval-data"
 ID_CSE_2221_GRADE_DATA = "cse2221-grade-data"
 ID_CSE_2231_GRADE_DATA = "cse2231-grade-data"
-
 ID_EDUCATION_DATA = "history"
 
 # Figure IDs
@@ -70,10 +69,6 @@ ID_CSE_2231_PROJECT_GRADES_FIG = "cse2231-project-calculations"
 ID_CSE_2231_HOMEWORK_GRADES_FIG = "cse2231-homework-calculations"
 ID_CSE_2231_EXAM_GRADES_FIG = "cse2231-exam-calculations"
 
-ID_CSE_2221_MISSING_PROJECTS_FIG = "missing-projects"
-ID_CSE_2221_MISSING_HOMEWORKS_FIG = "missing-homeworks"
-ID_CSE_2221_MISSING_EXAMS_FIG = "missing-exams"
-
 ID_CSE_2231_MISSING_HOMEWORKS_FIG = "cse2231-missing-homeworks"
 ID_CSE_2231_MISSING_PROJECTS_FIG = "cse2231-missing-projects"
 ID_CSE_2231_MISSING_EXAMS_FIG = "cse2231-missing-exams"
@@ -92,6 +87,8 @@ ID_EVAL_CONTRIBUTION_FIG = "contribution-to-learning"
 ID_GRADE_OVERVIEW_FIG = "grade-overview"
 ID_DETAILED_ASSESSMENT_GRADES_FIG = "detailed-assessment-grades"
 ID_ASSESSMENT_TRENDS_FIG = "assessment-trends"
+ID_MISSING_ASSESSMENT_FIG = "missing-homeworks"
+ID_GRADE_DISTRIBUTION_FIG = "grade-distribution"
 
 # Filter IDs
 ID_ASSESSMENT_GROUP_FILTER = "assignment-type-filter"

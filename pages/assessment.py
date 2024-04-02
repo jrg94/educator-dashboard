@@ -139,7 +139,7 @@ def render_assessment_calculations_figure(education_data: str, assessment_group_
 
 
 @callback(
-    Output(ID_CSE_2221_MISSING_HOMEWORKS_FIG, "figure"),
+    Output(ID_MISSING_ASSESSMENT_FIG, "figure"),
     Input(ID_EDUCATION_DATA, "data"),
     Input(ID_ASSESSMENT_GROUP_FILTER, "value"),
     Input(ID_COURSE_FILTER, "value")
@@ -353,7 +353,7 @@ layout = html.Div([
         """
     ),
     dcc.Loading(
-        [dcc.Graph(id=ID_CSE_2221_MISSING_HOMEWORKS_FIG)],
+        [dcc.Graph(id=ID_MISSING_ASSESSMENT_FIG)],
         type="graph"
     ),
     dcc.Markdown(
@@ -373,6 +373,10 @@ layout = html.Div([
         submissions. At this level, we can take a look at assessment
         distributions, which provide more context to the averages and medians.
         """
+    ),
+    dcc.Loading(
+        [dcc.Graph(id=ID_GRADE_DISTRIBUTION_FIG)],
+        type="graph"
     ),
     html.P(
         """
