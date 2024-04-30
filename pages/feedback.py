@@ -36,6 +36,13 @@ def render_sei_ratings_figure(sei_ratings_history: str):
     # Precompute columns 
     sei_ratings_df["Semester"] = sei_ratings_df["Season"] + " " + sei_ratings_df["Year"].astype(str)
     
+    # Helpful values
+    semesters_in_order = semester_order(sei_ratings_df)
+    
+    # Prioritize maximum semesterly scores
+    sei_ratings_df = sei_ratings_df.iloc[sei_ratings_df.groupby(["Semester", "Question ID", "Group"])["Mean"].agg(pd.Series.idxmax)]
+    sei_ratings_df = sei_ratings_df.sort_values(by="Semester", key=lambda col: col.map(lambda x: semesters_in_order[x]))
+        
     # Plot figure
     sei_fig = go.Figure(layout=dict(template='plotly'))    
     sei_fig = px.line(
@@ -48,9 +55,8 @@ def render_sei_ratings_figure(sei_ratings_history: str):
         markers=True, 
         title="Student Evaluation of Instruction Trends by Cohort",
         category_orders={
-            "Semester": list(semester_order(sei_ratings_df).keys())
+            "Semester": list(semesters_in_order.keys())
         },
-        hover_data=["Course"],
         height=600
     )
     sei_fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))

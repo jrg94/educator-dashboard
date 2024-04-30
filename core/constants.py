@@ -2,7 +2,6 @@ import plotly.express as px
 
 # Data URLS
 URL_ASSIGNMENT_SURVEY = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/assignment-survey-data.csv"
-URL_SEI_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/sei-data.csv"
 URL_SEI_COMMENTS_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/sei-comments.csv"
 URL_COURSE_EVAL_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/eval-data.csv"
 

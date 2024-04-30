@@ -12,7 +12,7 @@ layout = html.Div([
     html.P(
         '''
         Welcome to my educator dashboard! The purpose of this site is to 
-        provide some transparancy to my students about my teaching history.
+        provide some transparency to my students about my teaching history.
         It also exists to plot my trajectory as an educator by showing how
         my teaching has developed over time. To help you navigate, I've
         provided the following links with a short blurb describing their
@@ -49,7 +49,7 @@ layout = html.Div([
     ),
     html.P(
         """
-        Each semester I update this sight with new data and even new plots, so
+        Each semester I update this site with new data and even new plots, so
         check back regularly!
         """
     )
