@@ -63,7 +63,7 @@ def load_sei_comments_data() -> dcc.Store:
 
     :return: the SEI comment data as a store 
     """
-    sei_comment_data = pd.read_csv(URL_SEI_COMMENTS_DATA)
+    sei_comment_data = pd.read_csv(URL_SEI_COMMENTS_HISTORY)
     return dcc.Store(id=ID_SEI_COMMENTS_DATA, data=sei_comment_data.to_json())
 
 
