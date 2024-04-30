@@ -117,11 +117,8 @@ def render_assessment_calculations_figure(education_data: str, assessment_group_
     assignment_calculations_fig = px.bar(
         to_plot,
         labels={
-            "index": "Project Name",
             "value": "Percentage",
             "variable": "Metric",
-            "mean": "Average",
-            "median": "Median",
             "count": "Count"
         },
         barmode='group',
@@ -198,7 +195,7 @@ def render_missing_assessments_figure(education_data: str, assessment_group_filt
     Input(ID_EDUCATION_DATA, "data"),
     Input(ID_ASSESSMENT_GROUP_FILTER, "value"),
     Input(ID_COURSE_FILTER, "value")
-)
+) 
 def render_assessment_trends_figure(education_data: str, assessment_group_filter: str, course_filter: int):
     """
     Plots the average grade for all assessments in an assessment group over time.

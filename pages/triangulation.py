@@ -12,13 +12,13 @@ dash.register_page(
     title="The Educator Dashboard: Triangulation"
 )
 
-# TODO: this page will be where all the most interesting analyses happen
-
 layout = html.Div([
     html.H1("Triangulation"),
     html.P(
         """
         TBD
         """
-    )
+    ),
+    load_education_data(),
+    load_assignment_survey_data()
 ])

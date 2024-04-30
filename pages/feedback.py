@@ -186,8 +186,7 @@ layout = html.Div([
         course. These data are collected through a Google Form. Questions are 
         broken down into different areas which include feedback on course 
         content, my skill and responsiveness, and the course's contribution to 
-        learning. **Note**: future work is being done to ensure the following 
-        plots feature review counts as seen in the assignment survey data. 
+        learning.
         """
     ),
     html.H3('Course Content'),
