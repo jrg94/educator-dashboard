@@ -42,36 +42,8 @@ ID_CSE_2221_GRADE_DATA = "cse2221-grade-data"
 ID_CSE_2231_GRADE_DATA = "cse2231-grade-data"
 ID_EDUCATION_DATA = "history"
 
-# Figure IDs
-ID_ASSESSMENT_GROUP_TIME_FIG = "assessment-group-time-fig"
-
-ID_CSE_2221_HOMEWORK_EMOTIONS_FIG = "emotions"
-
-ID_CSE_2221_RUBRIC_OVERVIEW_FIG = "rubric-overview"
-ID_CSE_2221_RUBRIC_BREAKDOWN_FIG = "rubric-breakdown"
-ID_CSE_2221_RUBRIC_SCORES_FIG = "rubric-scores"
-
-ID_CSE_2221_GRADES_ATTENDANCE_FIG = "grade-vs-attendance"
-ID_CSE_2221_GRADES_PARTICIPATION_FIG = "grade-vs-participation"
-
-ID_CSE_2231_PROJECT_GRADES_FIG = "cse2231-project-calculations"
-ID_CSE_2231_HOMEWORK_GRADES_FIG = "cse2231-homework-calculations"
-ID_CSE_2231_EXAM_GRADES_FIG = "cse2231-exam-calculations"
-
-ID_CSE_2231_MISSING_HOMEWORKS_FIG = "cse2231-missing-homeworks"
-ID_CSE_2231_MISSING_PROJECTS_FIG = "cse2231-missing-projects"
-ID_CSE_2231_MISSING_EXAMS_FIG = "cse2231-missing-exams"
-
-ID_CSE_2221_VALUE_FIG = "project-points-per-hour"
-ID_CSE_2221_EFFORT_FIG = "project-hours-per-point"
-
-ID_SEI_COMMENTS_FIG = "sei-comments"
-
-ID_EVAL_COURSE_CONTENT_FIG = "course-content"
-ID_EVAL_SKILL_FIG = "skill-and-responsiveness"
-ID_EVAL_CONTRIBUTION_FIG = "contribution-to-learning"
-
 # Assessment figure IDs
+ID_ASSESSMENT_GROUP_TIME_FIG = "assessment-group-time-fig"
 ID_GRADE_OVERVIEW_FIG = "grade-overview"
 ID_DETAILED_ASSESSMENT_GRADES_FIG = "detailed-assessment-grades"
 ID_ASSESSMENT_TRENDS_FIG = "assessment-trends"
@@ -80,6 +52,10 @@ ID_GRADE_DISTRIBUTION_FIG = "grade-distribution"
 
 # Feedback figure IDs
 ID_SEI_RATINGS_FIG = "sei-ratings"
+ID_SEI_COMMENTS_FIG = "sei-comments"
+ID_EVAL_COURSE_CONTENT_FIG = "course-content"
+ID_EVAL_SKILL_FIG = "skill-and-responsiveness"
+ID_EVAL_CONTRIBUTION_FIG = "contribution-to-learning"
 
 # Filter IDs
 ID_COURSE_FILTER = "course-filter"
