@@ -1,8 +1,12 @@
+import string
+from collections import Counter
 from io import StringIO
 
 import dash
+import nltk
 import pandas as pd
 from dash import Input, Output, callback, dcc, html
+from nltk.corpus import stopwords
 
 from core.constants import *
 from core.data import *
@@ -237,8 +241,6 @@ layout = html.Div([
         amount of knowledge at the end of the course. 
         """
     ),
-    # TODO: I should add a plot showing the scores for all four questions with an additional
-    # plot showing the trajectory of learning over the semester.
     dcc.Loading(
         [dcc.Graph(id=ID_EVAL_CONTRIBUTION_FIG)],
         type="graph"

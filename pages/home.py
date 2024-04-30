@@ -35,12 +35,6 @@ layout = html.Div([
             ),
             html.Li(
                 [
-                    html.A("Triangulation", href=dash.get_relative_path("/triangulation")),
-                    ": shares more interesting plots by combining multiple sources of data"
-                ]
-            ),
-            html.Li(
-                [
                     html.A("Patch Notes", href=dash.get_relative_path("/patch-notes")),
                     ": shares teaching developments over time"
                 ]

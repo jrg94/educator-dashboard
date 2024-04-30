@@ -464,21 +464,6 @@ layout = html.Div([
         [dcc.Graph(id=ID_ASSESSMENT_TRENDS_FIG)],
         type="graph"
     ),
-    html.P(
-        """
-        While not explicitly grade related, I also request feedback from 
-        students related to their assessment. In general, I've asked a lot of 
-        interesting questions, such as how much time they spent on each 
-        assignment and how the assignment made them feel. To start, here's 
-        how much time students claimed they spent on each assignment. Note that
-        I don't have data for this for all of my classes, and students are not
-        required to fill out this survey. 
-        """  
-    ), # TODO
-    dcc.Loading(
-        [dcc.Graph(id=ID_ASSESSMENT_GROUP_TIME_FIG)],
-        type="graph"
-    ),
     html.H2("Assessment Breakdown"),
     html.P(
         """
@@ -498,6 +483,5 @@ layout = html.Div([
         over the years. 
         """
     ),
-    load_education_data(),
-    load_assignment_survey_data()
+    load_education_data()
 ])
