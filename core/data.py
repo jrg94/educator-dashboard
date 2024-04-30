@@ -11,7 +11,7 @@ def load_assignment_survey_data() -> dcc.Store:
 
     :return: the assignment survey data as a store
     """
-    assignment_survey_data = pd.read_csv(URL_ASSIGNMENT_SURVEY)
+    assignment_survey_data = pd.read_csv(URL_ASSIGNMENT_SURVEY_HISTORY)
 
     # Sets types of columns
     assignment_survey_data["Timestamp"] = pd.to_datetime(
@@ -74,7 +74,7 @@ def load_course_eval_data() -> dcc.Store:
 
     :return: the SEI course evaluation data as a store
     """
-    course_eval_data = pd.read_csv(URL_COURSE_EVAL_DATA)
+    course_eval_data = pd.read_csv(URL_EVALUATION_SURVEY_HISTORY)
 
     # Sets types of columns
     course_eval_data["Timestamp"] = pd.to_datetime(
