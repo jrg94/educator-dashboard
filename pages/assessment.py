@@ -252,6 +252,31 @@ def render_assessment_trends_figure(education_data: str, assessment_group_filter
 
 
 @callback(
+    Output(ID_ASSESSMENT_GROUP_TIME_FIG, "figure"),
+    Input(ID_ASSIGNMENT_SURVEY_DATA, "data"),
+    Input(ID_ASSESSMENT_GROUP_FILTER, "value"),
+    Input(ID_COURSE_FILTER, "value")
+) 
+def render_assessment_times_figure(assignment_survey_data: str, assessment_group_filter: str, course_filter: int):
+    """
+    Creates a figure of the average and median time spent on each assignment.
+    
+    :param assignment_survey_data: the dataframe of all the data from the assignment survey
+    :param assignment_group_filter: the assignment type (i.e., Homework or Project)
+    :param course_filter: the course for which to create the time figure (e.g., CSE 2221: Software 1)
+    """
+    
+    # Convert the data back into a dataframe
+    assignment_survey_df = pd.read_json(StringIO(assignment_survey_data))
+    
+    # Filter
+    assignment_survey_df = assignment_survey_df[assignment_survey_df["Course ID"] == course_filter]
+    assignment_survey_df = assignment_survey_df[assignment_survey_df["Assignment Group Name"] == assessment_group_filter]
+
+    # TODO: very stuck with this one
+
+
+@callback(
     Output(ID_GRADE_DISTRIBUTION_FIG, "figure"),
     Input(ID_EDUCATION_DATA, "data"),
     Input(ID_ASSESSMENT_GROUP_FILTER, "value"),
@@ -431,12 +456,27 @@ layout = html.Div([
     ),
     dcc.Markdown(
         """
-        Finally, I find it helpful to look at average and median grades over
+        In addition, I find it helpful to look at average and median grades over
         time. So, here's what that looks from semester to semester. 
         """
     ),
     dcc.Loading(
         [dcc.Graph(id=ID_ASSESSMENT_TRENDS_FIG)],
+        type="graph"
+    ),
+    html.P(
+        """
+        While not explicitly grade related, I also request feedback from 
+        students related to their assessment. In general, I've asked a lot of 
+        interesting questions, such as how much time they spent on each 
+        assignment and how the assignment made them feel. To start, here's 
+        how much time students claimed they spent on each assignment. Note that
+        I don't have data for this for all of my classes, and students are not
+        required to fill out this survey. 
+        """  
+    ), # TODO
+    dcc.Loading(
+        [dcc.Graph(id=ID_ASSESSMENT_GROUP_TIME_FIG)],
         type="graph"
     ),
     html.H2("Assessment Breakdown"),
@@ -458,5 +498,6 @@ layout = html.Div([
         over the years. 
         """
     ),
-    load_education_data()
+    load_education_data(),
+    load_assignment_survey_data()
 ])

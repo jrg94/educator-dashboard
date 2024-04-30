@@ -1,3 +1,4 @@
+from numpy import int64
 import pandas as pd
 from dash import dcc
 
@@ -11,8 +12,9 @@ def load_assignment_survey_data() -> dcc.Store:
 
     :return: the assignment survey data as a store
     """
+    # Load necessary data
     assignment_survey_data = pd.read_csv(URL_ASSIGNMENT_SURVEY_HISTORY)
-
+        
     # Sets types of columns
     assignment_survey_data["Timestamp"] = pd.to_datetime(
         assignment_survey_data["Timestamp"],
@@ -33,7 +35,7 @@ def load_assignment_survey_data() -> dcc.Store:
     assignment_survey_data[COLUMN_POST_EMOTIONS] = assignment_survey_data[COLUMN_POST_EMOTIONS] \
         .astype(str) \
         .apply(lambda x: x.split(";"))
-
+        
     return dcc.Store(id=ID_ASSIGNMENT_SURVEY_DATA, data=assignment_survey_data.to_json())
 
 

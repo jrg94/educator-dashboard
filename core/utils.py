@@ -49,10 +49,10 @@ def create_time_fig(assignment_survey_data: pd.DataFrame, assignment: str, cours
     col = COLUMN_PROJECT_REVIEW if assignment == "Project" else COLUMN_HOMEWORK_REVIEW
 
     # Compute project statistics
-    assignment_subset[COLUMN_AVERAGE_TIME] = assignment_subset.groupby(col)[COOUMN_TIME].transform(lambda x: x.mean())
-    assignment_subset[COLUMN_MEDIAN_TIME] = assignment_subset.groupby(col)[COOUMN_TIME].transform(lambda x: x.median())
-    assignment_subset[COLUMN_REVIEW_COUNT] = assignment_subset.groupby(col)[COOUMN_TIME].transform(lambda x: x.count())
-    assignment_subset[COLUMN_STANDARD_DEVIATION] = assignment_subset.groupby(col)[COOUMN_TIME].transform(lambda x: x.std())
+    assignment_subset[COLUMN_AVERAGE_TIME] = assignment_subset.groupby(col)[COLUMN_TIME].transform(lambda x: x.mean())
+    assignment_subset[COLUMN_MEDIAN_TIME] = assignment_subset.groupby(col)[COLUMN_TIME].transform(lambda x: x.median())
+    assignment_subset[COLUMN_REVIEW_COUNT] = assignment_subset.groupby(col)[COLUMN_TIME].transform(lambda x: x.count())
+    assignment_subset[COLUMN_STANDARD_DEVIATION] = assignment_subset.groupby(col)[COLUMN_TIME].transform(lambda x: x.std())
 
     # Clean up rows
     to_plot = assignment_subset \
@@ -245,10 +245,10 @@ def create_value_fig(grade_data: pd.DataFrame, assignment_survey_data: pd.DataFr
     col = COLUMN_PROJECT_REVIEW if assignment == "Project" else COLUMN_HOMEWORK_REVIEW
 
     # Compute project statistics
-    assignment_subset[COLUMN_AVERAGE_TIME] = assignment_subset.groupby(col)[COOUMN_TIME].transform(lambda x: x.mean())
-    assignment_subset[COLUMN_MEDIAN_TIME] = assignment_subset.groupby(col)[COOUMN_TIME].transform(lambda x: x.median())
-    assignment_subset[COLUMN_REVIEW_COUNT] = assignment_subset.groupby(col)[COOUMN_TIME].transform(lambda x: x.count())
-    assignment_subset[COLUMN_STANDARD_DEVIATION] = assignment_subset.groupby(col)[COOUMN_TIME].transform(lambda x: x.std())
+    assignment_subset[COLUMN_AVERAGE_TIME] = assignment_subset.groupby(col)[COLUMN_TIME].transform(lambda x: x.mean())
+    assignment_subset[COLUMN_MEDIAN_TIME] = assignment_subset.groupby(col)[COLUMN_TIME].transform(lambda x: x.median())
+    assignment_subset[COLUMN_REVIEW_COUNT] = assignment_subset.groupby(col)[COLUMN_TIME].transform(lambda x: x.count())
+    assignment_subset[COLUMN_STANDARD_DEVIATION] = assignment_subset.groupby(col)[COLUMN_TIME].transform(lambda x: x.std())
     
     # Setup time data
     assignment_subset = assignment_subset.drop_duplicates(subset=[col]).sort_values(by=col)

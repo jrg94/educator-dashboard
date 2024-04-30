@@ -20,7 +20,7 @@ COLUMN_CLASS_REVIEW = "Which of the following classes is this assignment for?"
 COLUMN_PRE_EMOTIONS = "Which of the following emotions did you experience **before** starting this project (select all that apply)?"
 COLUMN_DURING_EMOTIONS = "Which of the following emotions did you experience while completing this project (select all that apply)?"
 COLUMN_POST_EMOTIONS = "Which of the following emotions did you experience **after** completing this project (select all that apply)?"
-COOUMN_TIME = "How much time did you spend on this assignment in hours?"
+COLUMN_TIME = "How much time did you spend on this assignment in hours?"
 COLUMN_ASSIGNMENT_TYPE = "Are you reviewing a project or a homework assignment?"
 
 # Added column headings
@@ -43,11 +43,7 @@ ID_CSE_2231_GRADE_DATA = "cse2231-grade-data"
 ID_EDUCATION_DATA = "history"
 
 # Figure IDs
-ID_CSE_2221_PROJECT_TIME_FIG = "project-time"
-ID_CSE_2221_HOMEWORK_TIME_FIG = "homework-time"
-
-ID_CSE_2231_PROJECT_TIME_FIG = "cse2231-project-time"
-ID_CSE_2231_HOMEWORK_TIME_FIG = "cse2231-homework-time"
+ID_ASSESSMENT_GROUP_TIME_FIG = "assessment-group-time-fig"
 
 ID_CSE_2221_HOMEWORK_EMOTIONS_FIG = "emotions"
 
