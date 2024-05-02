@@ -166,7 +166,7 @@ def render_missing_assessments_figure(education_data: str, assessment_group_filt
     # Helpful values
     course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
     assignment_types = education_df.sort_values(COLUMN_ASSESSMENT_ID)[COLUMN_ASSESSMENT_NAME].unique()
-    assessment_name = education_df.iloc[0][COLUMN_ASSESSMENT_NAME]
+    assessment_group_name = education_df.iloc[0][COLUMN_ASSESSMENT_GROUP_NAME]
     
     # Helper function
     def number_missing(series):
@@ -182,7 +182,7 @@ def render_missing_assessments_figure(education_data: str, assessment_group_filt
         to_plot, 
         y="Percent Missing", 
         text_auto=".2s", 
-        title=f"Percent of Missing {assessment_name} in {course_code}",
+        title=f"Percent of Missing {assessment_group_name} in {course_code}",
         category_orders={
             COLUMN_ASSESSMENT_NAME: assignment_types
         },
@@ -198,13 +198,13 @@ def render_missing_assessments_figure(education_data: str, assessment_group_filt
     Input(ID_ASSESSMENT_GROUP_FILTER, "value"),
     Input(ID_COURSE_FILTER, "value")
 ) 
-def render_assessment_trends_figure(education_data: str, assessment_group_filter: str, course_filter: int):
+def render_assessment_trends_figure(education_data: str, assessment_group_filter: int, course_filter: int):
     """
     Plots the average grade for all assessments in an assessment group over time.
     
     :param education_data: the jsonified education dataframe
     :param course_filter: the course ID
-    :param assessment_group_filter: the assessment group  # TODO: make this an ID for consistency
+    :param assessment_group_filter: the assessment group ID
     :return: the grade overview figure object
     """
     
@@ -212,8 +212,8 @@ def render_assessment_trends_figure(education_data: str, assessment_group_filter
     education_df = pd.read_json(StringIO(education_data))
         
     # Filter
-    education_df = education_df[education_df["Course ID"] == course_filter]
-    education_df = education_df[education_df["Assignment Group Name"] == assessment_group_filter]
+    education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
+    education_df = education_df[education_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter]
     education_df = education_df[education_df["Grade"] != "EX"]
     education_df = education_df[education_df["Total"] != 0]
     
@@ -228,11 +228,10 @@ def render_assessment_trends_figure(education_data: str, assessment_group_filter
     # Helpful values
     semesters_in_order = semester_order(education_df)
     course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
+    assessment_group_name = education_df.iloc[0][COLUMN_ASSESSMENT_GROUP_NAME]
 
     # Perform analysis
-    to_plot = education_df.groupby(["Semester", "Assignment Name"]).agg({
-        "Percentage": "mean"
-    }).reset_index()
+    to_plot = education_df.groupby(["Semester", "Assessment Name"]).agg({"Percentage": "mean"}).reset_index()
     to_plot = to_plot.sort_values(by="Semester", key=lambda col: col.map(lambda x: semesters_in_order[x]))
     
     # Plot figure
@@ -241,13 +240,13 @@ def render_assessment_trends_figure(education_data: str, assessment_group_filter
         to_plot,
         x="Semester",
         y="Percentage",
-        color="Assignment Name",
+        color="Assessment Name",
         markers=True,
-        title=f"Average Grades for {assessment_group_filter} in {course_code} by Semester",
+        title=f"Average Grades for {assessment_group_name} in {course_code} by Semester",
         category_orders={
             "Semester": list(semesters_in_order.keys())
         },
-    )
+    ) 
     trend_fig.update_yaxes(range=[0, 100])
     
     return trend_fig
@@ -285,13 +284,13 @@ def render_assessment_times_figure(assignment_survey_data: str, assessment_group
     Input(ID_COURSE_FILTER, "value"),
     Input(ID_ASSESSMENT_FILTER, "value")
 )
-def render_grade_distribution_figure(education_data: str, assessment_group_filter: str, course_filter: int, assessment_filter: str):
+def render_grade_distribution_figure(education_data: str, assessment_group_filter: int, course_filter: int, assessment_filter: int):
     """
     Plots the average grade for all assessments in an assessment group over time.
     
     :param education_data: the jsonified education dataframe
     :param course_filter: the course ID
-    :param assessment_group_filter: the assessment group  # TODO: make this an ID for consistency
+    :param assessment_group_filter: the assessment group ID
     :return: the grade overview figure object
     """
     
@@ -299,9 +298,9 @@ def render_grade_distribution_figure(education_data: str, assessment_group_filte
     education_df = pd.read_json(StringIO(education_data))
         
     # Filter
-    education_df = education_df[education_df["Course ID"] == course_filter]
-    education_df = education_df[education_df["Assignment Group Name"] == assessment_group_filter]
-    education_df = education_df[education_df["Assignment Name"] == assessment_filter]
+    education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
+    education_df = education_df[education_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter]
+    education_df = education_df[education_df[COLUMN_ASSESSMENT_ID] == assessment_filter]
     education_df = education_df[education_df["Grade"] != "EX"]
     education_df = education_df[education_df["Total"] != 0]
     
