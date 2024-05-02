@@ -1,9 +1,9 @@
 import plotly.express as px
 
 # Data URLS
-URL_ASSIGNMENT_GROUP_LOOKUP = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assignment-group-lookup.csv"
-URL_ASSIGNMENT_LOOKUP = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assignment-lookup.csv"
-URL_ASSIGNMENT_SURVEY_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assignment-survey-history.csv"
+URL_ASSESSMENT_GROUP_LOOKUP = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessment-group-lookup.csv"
+URL_ASSESSMENT_LOOKUP = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessment-lookup.csv"
+URL_ASSESSMENT_SURVEY_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessment-survey-history.csv"
 URL_COURSE_LOOKUP = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/course-lookup.csv"
 URL_EVALUATION_SURVEY_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/evaluation-survey-history.csv"
 URL_GRADING_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/grading-history.csv"
@@ -13,15 +13,11 @@ URL_SEI_RATINGS_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data
 URL_TEACHING_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/teaching-history.csv"
 
 # Column headings
-COLUMN_RUBRIC = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
-COLUMN_PROJECT_REVIEW = "Which project are you reviewing (enter a # between 1 and 11)?"
-COLUMN_HOMEWORK_REVIEW = "Which homework assignment are you reviewing (enter a # between 1 and 37)?"
-COLUMN_CLASS_REVIEW = "Which of the following classes is this assignment for?"
-COLUMN_PRE_EMOTIONS = "Which of the following emotions did you experience **before** starting this project (select all that apply)?"
-COLUMN_DURING_EMOTIONS = "Which of the following emotions did you experience while completing this project (select all that apply)?"
-COLUMN_POST_EMOTIONS = "Which of the following emotions did you experience **after** completing this project (select all that apply)?"
-COLUMN_TIME = "How much time did you spend on this assignment in hours?"
-COLUMN_ASSIGNMENT_TYPE = "Are you reviewing a project or a homework assignment?"
+COLUMN_ASSESSMENT_ID = "Assessment ID"
+COLUMN_ASSESSMENT_GROUP_ID = "Assessment Group ID"
+COLUMN_SECTION_ID = "Section ID"
+COLUMN_COURSE_ID = "Course ID"
+COLUMN_QUESTION_ID = "Question ID"
 
 # Added column headings
 COLUMN_AVERAGE_TIME = "Average Time (hours)"
