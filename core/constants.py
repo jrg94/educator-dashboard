@@ -15,6 +15,7 @@ URL_TEACHING_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/ma
 # Column headings
 COLUMN_ASSESSMENT_ID = "Assessment ID"
 COLUMN_ASSESSMENT_GROUP_ID = "Assessment Group ID"
+COLUMN_ASSESSMENT_NAME = "Assessment Name"
 COLUMN_SECTION_ID = "Section ID"
 COLUMN_COURSE_ID = "Course ID"
 COLUMN_QUESTION_ID = "Question ID"

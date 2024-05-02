@@ -36,7 +36,7 @@ def render_grade_overview_figure(education_data: str, course_filter: int) -> go.
     education_df = pd.read_json(StringIO(education_data))
     
     # Filter
-    education_df = education_df[education_df["Course ID"] == course_filter]
+    education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
     education_df = education_df[education_df["Grade"] != "EX"]
     education_df = education_df[education_df["Total"] != 0]
     
@@ -48,7 +48,7 @@ def render_grade_overview_figure(education_data: str, course_filter: int) -> go.
     education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
         
     # Perform analysis
-    to_plot = education_df.groupby("Assignment Group Name")["Percentage"].aggregate({"mean", "median", "count"})
+    to_plot = education_df.groupby("Assessment Group Name")["Percentage"].aggregate({"mean", "median", "count"})
     
     # Helpful values
     course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
@@ -79,22 +79,22 @@ def render_grade_overview_figure(education_data: str, course_filter: int) -> go.
     Input(ID_ASSESSMENT_GROUP_FILTER, "value"),
     Input(ID_COURSE_FILTER, "value")
 )
-def render_assessment_calculations_figure(education_data: str, assessment_group_filter: str, course_filter: int):
+def render_assessment_calculations_figure(education_data: str, assessment_group_filter: int, course_filter: int):
     """
     Plots a breakdown of the averages and medians per assessment for a specific
     course and assessment group. 
     
     :param education_data: the jsonified education dataframe
     :param course_filter: the course ID
-    :param assessment_group_filter: the assessment group  # TODO: make this an ID for consistency
+    :param assessment_group_filter: the assessment group ID
     :return: the assessment calculations figure object
     """
     # Convert the data back into a dataframe
     education_df = pd.read_json(StringIO(education_data))
     
     # Filter
-    education_df = education_df[education_df["Course ID"] == course_filter]
-    education_df = education_df[education_df["Assignment Group Name"] == assessment_group_filter]
+    education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
+    education_df = education_df[education_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter]
     education_df = education_df[education_df["Grade"] != "EX"]
     education_df = education_df[education_df["Total"] != 0]
     
@@ -106,12 +106,12 @@ def render_assessment_calculations_figure(education_data: str, assessment_group_
     education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
     
     # Perform analysis
-    to_plot = education_df.groupby("Assignment Name")["Percentage"].aggregate({"mean", "median", "count"})
+    to_plot = education_df.groupby(COLUMN_ASSESSMENT_NAME)["Percentage"].aggregate({"mean", "median", "count"})
     
     # Helpful variables
     course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
-    assignment_types = education_df.sort_values("Assignment ID")["Assignment Name"].unique()
-    
+    assignment_types = education_df.sort_values(COLUMN_ASSESSMENT_ID)["Assessment Name"].unique()
+        
     # Plot figure
     assignment_calculations_fig = go.Figure(layout=dict(template='plotly'))    
     assignment_calculations_fig = px.bar(
@@ -125,7 +125,7 @@ def render_assessment_calculations_figure(education_data: str, assessment_group_
         text_auto=".2s",
         title=f"Average and Median Grades for {assessment_group_filter} in {course_code}",
         category_orders={
-            "Assignment Name": assignment_types
+            "Assessment Name": assignment_types
         },
         hover_data=["count"]
     )
@@ -338,17 +338,17 @@ def render_grade_distribution_figure(education_data: str, assessment_group_filte
     Output(ID_COURSE_FILTER, "value"),
     Input(ID_EDUCATION_DATA, "data")
 )
-def update_dropdown_course_filter(education_data):
+def update_dropdown_course_filter(education_data: str):
     """
     A callback for populating the course dropdown. 
     The labels in the dropdown are meant to be descriptive.
     The values are Course IDs, which can be used for filtering. 
     """
     education_df = pd.read_json(StringIO(education_data))
-    course_ids = sorted(education_df["Course ID"].unique())
+    course_ids = sorted(education_df[COLUMN_COURSE_ID].unique())
     options = []
     for course_id in course_ids:
-        course_data = education_df[education_df["Course ID"] == course_id].iloc[0]
+        course_data = education_df[education_df[COLUMN_COURSE_ID] == course_id].iloc[0]
         label = f"{course_data['Course Department']} {course_data['Course Number']}: {course_data['Course Name']}"
         value = course_id
         options.append({"label": label, "value": value})
@@ -361,15 +361,22 @@ def update_dropdown_course_filter(education_data):
     Input(ID_EDUCATION_DATA, "data"),
     Input(ID_COURSE_FILTER, "value")
 )
-def update_dropdown_assessment_group_filter(education_data, course_filter):
+def update_dropdown_assessment_group_filter(education_data: str, course_filter: int):
     """
     A callback for populating the assessment group dropdown.
     The labels and values are the same. 
     """
     education_df = pd.read_json(StringIO(education_data))
-    education_df = education_df[education_df["Course ID"] == course_filter]
-    assignment_groups = sorted(education_df["Assignment Group Name"].unique())
-    return assignment_groups, assignment_groups[0]
+    education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
+    assessment_group_ids = education_df[COLUMN_ASSESSMENT_GROUP_ID].unique()
+    options = []
+    for assessment_group_id in assessment_group_ids:
+        assessment_group_data = education_df[education_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_id].iloc[0]
+        label = f"{assessment_group_data['Assessment Group Name']}"
+        value = assessment_group_id
+        options.append({"label": label, "value": value})
+    options.sort(key=lambda x: x["label"])
+    return options, options[0]["value"]
 
 
 @callback(
@@ -379,17 +386,24 @@ def update_dropdown_assessment_group_filter(education_data, course_filter):
     Input(ID_COURSE_FILTER, "value"),
     Input(ID_ASSESSMENT_GROUP_FILTER, "value")
 )
-def update_dropdown_assessment_filter(education_data, course_filter, assessment_group):
+def update_dropdown_assessment_filter(education_data: str, course_filter: int, assessment_group_filter: int):
     """
     A callback for populating the assessment group dropdown.
     The labels and values are the same. 
     """
     education_df = pd.read_json(StringIO(education_data))
-    education_df = education_df[education_df["Course ID"] == course_filter]
-    education_df = education_df[education_df["Assignment Group Name"] == assessment_group]
+    education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
+    education_df = education_df[education_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter]
     education_df = education_df[education_df["Total"] != 0]
-    assignments = sorted(education_df["Assignment Name"].unique())
-    return assignments, assignments[0]
+    assessment_ids = education_df[COLUMN_ASSESSMENT_ID].unique()
+    options = []
+    for assessment_id in assessment_ids:
+        assessment_id_data = education_df[education_df[COLUMN_ASSESSMENT_ID] == assessment_id].iloc[0]
+        label = assessment_id_data[COLUMN_ASSESSMENT_NAME]
+        value = assessment_id
+        options.append({"label": label, "value": value})
+    options.sort(key=lambda x: x["value"])
+    return options, options[0]["value"] 
 
 
 layout = html.Div([
