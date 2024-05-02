@@ -400,8 +400,10 @@ def update_dropdown_assessment_filter(education_data: str, course_filter: int, a
     assessment_ids = education_df[COLUMN_ASSESSMENT_ID].unique()
     options = []
     for assessment_id in assessment_ids:
+        totals = education_df[education_df[COLUMN_ASSESSMENT_ID] == assessment_id]["Total"].unique()
+        points = f"{totals[0]} Points" if len(totals) == 1 else "Varies"
         assessment_id_data = education_df[education_df[COLUMN_ASSESSMENT_ID] == assessment_id].iloc[0]
-        label = f"{assessment_id_data[COLUMN_ASSESSMENT_NAME]} ({assessment_id_data['Total']} Points)"
+        label = f"{assessment_id_data[COLUMN_ASSESSMENT_NAME]} ({points})"
         value = assessment_id
         options.append({"label": label, "value": value})
     options.sort(key=lambda x: x["value"])
