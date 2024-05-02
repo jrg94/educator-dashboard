@@ -374,7 +374,7 @@ def update_dropdown_assessment_group_filter(education_data: str, course_filter: 
     options = []
     for assessment_group_id in assessment_group_ids:
         assessment_group_data = education_df[education_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_id].iloc[0]
-        label = f"{assessment_group_data['Assessment Group Name']}"
+        label = f"{assessment_group_data['Assessment Group Name']} ({assessment_group_data['Assessment Group Weight']}% Weight)"
         value = assessment_group_id
         options.append({"label": label, "value": value})
     options.sort(key=lambda x: x["label"])
@@ -401,7 +401,7 @@ def update_dropdown_assessment_filter(education_data: str, course_filter: int, a
     options = []
     for assessment_id in assessment_ids:
         assessment_id_data = education_df[education_df[COLUMN_ASSESSMENT_ID] == assessment_id].iloc[0]
-        label = assessment_id_data[COLUMN_ASSESSMENT_NAME]
+        label = f"{assessment_id_data[COLUMN_ASSESSMENT_NAME]} ({assessment_id_data['Total']} Points)"
         value = assessment_id
         options.append({"label": label, "value": value})
     options.sort(key=lambda x: x["value"])
