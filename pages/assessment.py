@@ -345,14 +345,14 @@ def update_dropdown_course_filter(education_data: str):
     The values are Course IDs, which can be used for filtering. 
     """
     education_df = pd.read_json(StringIO(education_data))
-    course_ids = sorted(education_df[COLUMN_COURSE_ID].unique())
+    course_ids = education_df[COLUMN_COURSE_ID].unique()
     options = []
     for course_id in course_ids:
         course_data = education_df[education_df[COLUMN_COURSE_ID] == course_id].iloc[0]
         label = f"{course_data['Course Department']} {course_data['Course Number']}: {course_data['Course Name']}"
         value = course_id
         options.append({"label": label, "value": value})
-    return options, course_ids[0]
+    return options, options[0]["value"]
 
 
 @callback(
@@ -403,7 +403,7 @@ def update_dropdown_assessment_filter(education_data: str, course_filter: int, a
         value = assessment_id
         options.append({"label": label, "value": value})
     options.sort(key=lambda x: x["value"])
-    return options, options[0]["value"] 
+    return options, options[0]["value"]
 
 
 layout = html.Div([
