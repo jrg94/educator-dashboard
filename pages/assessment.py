@@ -110,7 +110,8 @@ def render_assessment_calculations_figure(education_data: str, assessment_group_
     
     # Helpful variables
     course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
-    assignment_types = education_df.sort_values(COLUMN_ASSESSMENT_ID)["Assessment Name"].unique()
+    assignment_types = education_df.sort_values(COLUMN_ASSESSMENT_ID)[COLUMN_ASSESSMENT_NAME].unique()
+    assessment_group_name = education_df.iloc[0][COLUMN_ASSESSMENT_GROUP_NAME]
         
     # Plot figure
     assignment_calculations_fig = go.Figure(layout=dict(template='plotly'))    
@@ -123,7 +124,7 @@ def render_assessment_calculations_figure(education_data: str, assessment_group_
         },
         barmode='group',
         text_auto=".2s",
-        title=f"Average and Median Grades for {assessment_group_filter} in {course_code}",
+        title=f"Average and Median Grades for {assessment_group_name} in {course_code}",
         category_orders={
             "Assessment Name": assignment_types
         },
@@ -140,22 +141,22 @@ def render_assessment_calculations_figure(education_data: str, assessment_group_
     Input(ID_ASSESSMENT_GROUP_FILTER, "value"),
     Input(ID_COURSE_FILTER, "value")
 )
-def render_missing_assessments_figure(education_data: str, assessment_group_filter: str, course_filter: int):
+def render_missing_assessments_figure(education_data: str, assessment_group_filter: int, course_filter: int):
     """
     Plots a breakdown of the averages and medians per assessment for a specific
     course and assessment group. 
     
     :param education_data: the jsonified education dataframe
     :param course_filter: the course ID
-    :param assessment_group_filter: the assessment group  # TODO: make this an ID for consistency
+    :param assessment_group_filter: the assessment group ID
     :return: the missing assessments figure object
     """
     # Convert the data back into a dataframe
     education_df = pd.read_json(StringIO(education_data))
     
     # Filter
-    education_df = education_df[education_df["Course ID"] == course_filter]
-    education_df = education_df[education_df["Assignment Group Name"] == assessment_group_filter]
+    education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
+    education_df = education_df[education_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter]
     education_df = education_df[education_df["Grade"] != "EX"]
     education_df = education_df[education_df["Total"] != 0]
     
@@ -164,14 +165,15 @@ def render_missing_assessments_figure(education_data: str, assessment_group_filt
     
     # Helpful values
     course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
-    assignment_types = education_df.sort_values("Assignment ID")["Assignment Name"].unique()
+    assignment_types = education_df.sort_values(COLUMN_ASSESSMENT_ID)[COLUMN_ASSESSMENT_NAME].unique()
+    assessment_name = education_df.iloc[0][COLUMN_ASSESSMENT_NAME]
     
     # Helper function
     def number_missing(series):
         return len(series[series == 0])
     
     # Perform analysis
-    to_plot = education_df.groupby("Assignment Name")["Grade"].agg(["count", number_missing])
+    to_plot = education_df.groupby(COLUMN_ASSESSMENT_NAME)["Grade"].agg(["count", number_missing])
     to_plot["Percent Missing"] = to_plot["number_missing"] / to_plot["count"] * 100
     
     # Plot figure
@@ -180,9 +182,9 @@ def render_missing_assessments_figure(education_data: str, assessment_group_filt
         to_plot, 
         y="Percent Missing", 
         text_auto=".2s", 
-        title=f"Percent of Missing {assessment_group_filter} in {course_code}",
+        title=f"Percent of Missing {assessment_name} in {course_code}",
         category_orders={
-            "Assignment Name": assignment_types
+            COLUMN_ASSESSMENT_NAME: assignment_types
         },
         hover_data=["count"]
     )
