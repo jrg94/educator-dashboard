@@ -315,6 +315,7 @@ def render_grade_distribution_figure(education_data: str, assessment_group_filte
     # Helpful values
     course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
     semesters_in_order = [x for x in semester_order(education_df).keys() if x in education_df["Semester"].unique()]
+    assessment_name = education_df.iloc[0][COLUMN_ASSESSMENT_NAME]
 
     # Plot figure
     distribution_fig = go.Figure(layout=dict(template='plotly'))    
@@ -322,7 +323,7 @@ def render_grade_distribution_figure(education_data: str, assessment_group_filte
         education_df,
         x="Percentage",
         color="Semester",
-        title=f"Grade Distribution for {assessment_filter} in {course_code}",
+        title=f"Grade Distribution for {assessment_name} in {course_code}",
         marginal="box",
         height=600,
         category_orders={
