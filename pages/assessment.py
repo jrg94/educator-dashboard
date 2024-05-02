@@ -258,7 +258,7 @@ def render_assessment_trends_figure(education_data: str, assessment_group_filter
     Input(ID_ASSESSMENT_GROUP_FILTER, "value"),
     Input(ID_COURSE_FILTER, "value")
 ) 
-def render_assessment_times_figure(assignment_survey_data: str, assessment_group_filter: str, course_filter: int):
+def render_assessment_times_figure(assignment_survey_data: str, assessment_group_filter: int, course_filter: int):
     """
     Creates a figure of the average and median time spent on each assignment.
     
@@ -269,12 +269,29 @@ def render_assessment_times_figure(assignment_survey_data: str, assessment_group
     
     # Convert the data back into a dataframe
     assignment_survey_df = pd.read_json(StringIO(assignment_survey_data))
-    
+        
     # Filter
-    assignment_survey_df = assignment_survey_df[assignment_survey_df["Course ID"] == course_filter]
-    assignment_survey_df = assignment_survey_df[assignment_survey_df["Assignment Group Name"] == assessment_group_filter]
+    assignment_survey_df = assignment_survey_df[assignment_survey_df[COLUMN_COURSE_ID] == course_filter]
+    assignment_survey_df = assignment_survey_df[assignment_survey_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter]
+    assignment_survey_df = assignment_survey_df[assignment_survey_df["Time Taken"].notnull()]
+    print(assignment_survey_df)
+    
+    # Analysis
+    to_plot = assignment_survey_df.groupby(COLUMN_ASSESSMENT_NAME).agg({"Time Taken": "mean", "Assessment ID": "first"}).reset_index()
+    to_plot = to_plot.sort_values(by="Assessment ID")
 
-    # TODO: very stuck with this one
+    # Plot figure
+    time_fig = go.Figure(layout=dict(template='plotly'))    
+    time_fig = px.bar(
+        to_plot,
+        x=COLUMN_ASSESSMENT_NAME,
+        y="Time Taken",
+        labels={
+            "Time Taken": "Time Taken (hrs)"
+        }
+    )
+    
+    return time_fig
 
 
 @callback(
@@ -482,6 +499,19 @@ layout = html.Div([
         [dcc.Graph(id=ID_ASSESSMENT_TRENDS_FIG)],
         type="graph"
     ),
+    dcc.Markdown(
+        """
+        The last plot I'll sneak into this section actually has nothing to do
+        with grades but rather the students' self reported time taken on
+        each assignment. Depending on which filters you use, **this plot
+        may show up empty**. I only started collecting time data for software
+        1 and 2.  
+        """  
+    ),
+    dcc.Loading(
+        [dcc.Graph(id=ID_ASSESSMENT_GROUP_TIME_FIG)],
+        type="graph"
+    ),
     html.H2("Assessment Breakdown"),
     html.P(
         """
@@ -501,5 +531,6 @@ layout = html.Div([
         over the years. 
         """
     ),
-    load_education_data()
+    load_education_data(),
+    load_assignment_survey_data()
 ])

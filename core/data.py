@@ -14,14 +14,18 @@ def load_assignment_survey_data() -> dcc.Store:
     """
     # Load necessary data
     assignment_survey_data = pd.read_csv(URL_ASSESSMENT_SURVEY_HISTORY)
+    assignment_lookup = pd.read_csv(URL_ASSESSMENT_LOOKUP)
+    survey_df = assignment_survey_data \
+        .merge(assignment_lookup)
         
     # Sets types of columns
-    assignment_survey_data["Timestamp"] = pd.to_datetime(
-        assignment_survey_data["Timestamp"],
-        format="%Y/%m/%d %I:%M:%S %p %Z"
+    survey_df["DateTime"] = pd.to_datetime(
+        assignment_survey_data["DateTime"],
+        format="%Y/%m/%d %I:%M:%S %p %z",
+        utc=True
     )
         
-    return dcc.Store(id=ID_ASSIGNMENT_SURVEY_DATA, data=assignment_survey_data.to_json())
+    return dcc.Store(id=ID_ASSIGNMENT_SURVEY_DATA, data=survey_df.to_json())
 
 
 def load_sei_data() -> dcc.Store:
