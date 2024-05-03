@@ -274,21 +274,38 @@ def render_assessment_times_figure(assignment_survey_data: str, assessment_group
     assignment_survey_df = assignment_survey_df[assignment_survey_df[COLUMN_COURSE_ID] == course_filter]
     assignment_survey_df = assignment_survey_df[assignment_survey_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter]
     assignment_survey_df = assignment_survey_df[assignment_survey_df["Time Taken"].notnull()]
-    print(assignment_survey_df)
+    
+    # Exit early
+    time_fig = go.Figure(layout=dict(template='plotly'))    
+    if len(assignment_survey_df) == 0:
+        return time_fig
+    
+    # Helpful variables
+    assessment_group = assignment_survey_df[assignment_survey_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter].iloc[0][COLUMN_ASSESSMENT_GROUP_NAME]
     
     # Analysis
-    to_plot = assignment_survey_df.groupby(COLUMN_ASSESSMENT_NAME).agg({"Time Taken": "mean", "Assessment ID": "first"}).reset_index()
-    to_plot = to_plot.sort_values(by="Assessment ID")
+    to_plot = assignment_survey_df.groupby(COLUMN_ASSESSMENT_NAME).agg({"Time Taken": ["mean", "median", "std", "count"], "Assessment ID": "first"})
+    to_plot = to_plot.sort_values(by=(COLUMN_ASSESSMENT_ID, "first"))
+    to_plot.columns = to_plot.columns.map(' '.join)
+    to_plot = to_plot.reset_index()
+    print(to_plot)
 
     # Plot figure
-    time_fig = go.Figure(layout=dict(template='plotly'))    
     time_fig = px.bar(
         to_plot,
         x=COLUMN_ASSESSMENT_NAME,
-        y="Time Taken",
+        y="Time Taken mean",
+        error_y="Time Taken std",
+        title=f"Average Time to Complete {assessment_group}",
         labels={
-            "Time Taken": "Time Taken (hrs)"
-        }
+            "Time Taken mean": "Average Time Taken (hrs)",
+            "Time Taken median": "Median Time Taken (hrs)",
+            "Time Taken count": "Number of Reviews"
+        },
+        hover_data=[
+            "Time Taken median",
+            "Time Taken count"
+        ]
     )
     
     return time_fig

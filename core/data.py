@@ -15,8 +15,10 @@ def load_assignment_survey_data() -> dcc.Store:
     # Load necessary data
     assignment_survey_data = pd.read_csv(URL_ASSESSMENT_SURVEY_HISTORY)
     assignment_lookup = pd.read_csv(URL_ASSESSMENT_LOOKUP)
+    assignment_group_lookup = pd.read_csv(URL_ASSESSMENT_GROUP_LOOKUP)
     survey_df = assignment_survey_data \
-        .merge(assignment_lookup)
+        .merge(assignment_lookup, on=COLUMN_ASSESSMENT_ID) \
+        .merge(assignment_group_lookup, on=COLUMN_ASSESSMENT_GROUP_ID)
         
     # Sets types of columns
     survey_df["DateTime"] = pd.to_datetime(
