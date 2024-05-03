@@ -288,7 +288,6 @@ def render_assessment_times_figure(assignment_survey_data: str, assessment_group
     to_plot = to_plot.sort_values(by=(COLUMN_ASSESSMENT_ID, "first"))
     to_plot.columns = to_plot.columns.map(' '.join)
     to_plot = to_plot.reset_index()
-    print(to_plot)
 
     # Plot figure
     time_fig = px.bar(
