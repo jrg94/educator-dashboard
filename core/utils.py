@@ -56,6 +56,9 @@ def blank_plot() -> go.Figure:
 
 
 def create_course_eval_fig(course_eval_data, question, axes_labels):
+    """
+    TODO: remove this at some point when we redo the site again
+    """
     colors = dict(zip(axes_labels, COLORS_SATISFACTION.values()))
     question_data = course_eval_data.melt(
         id_vars=[item for item in course_eval_data.columns if question not in item],
