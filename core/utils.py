@@ -25,6 +25,36 @@ def semester_order(data: pd.DataFrame) -> dict:
     return semesters
 
 
+def blank_plot() -> go.Figure:
+    """
+    A helpful function for getting an empty plot when no data is available.
+    
+    :return: a plotly figure with default features
+    """
+    return go.Figure(
+        layout={
+            "xaxis": {
+                "visible": False
+            },
+            "yaxis": {
+                "visible": False
+            },
+            "annotations": [
+                {
+                    "text": "No matching data found",
+                    "xref": "paper",
+                    "yref": "paper",
+                    "showarrow": False,
+                    "font": {
+                            "size": 28
+                    }
+                }
+            ]
+
+        }
+    )
+
+
 def create_course_eval_fig(course_eval_data, question, axes_labels):
     colors = dict(zip(axes_labels, COLORS_SATISFACTION.values()))
     question_data = course_eval_data.melt(
@@ -45,6 +75,5 @@ def create_course_eval_fig(course_eval_data, question, axes_labels):
         title=f"{question} by Subquestion".title(),
         color_discrete_map=colors
     )
-    question_fig.for_each_annotation(lambda a: a.update(
-        text=a.text[a.text.find("[")+1:a.text.find("]")]))
+    question_fig.for_each_annotation(lambda a: a.update(text=a.text[a.text.find("[")+1:a.text.find("]")]))
     return question_fig

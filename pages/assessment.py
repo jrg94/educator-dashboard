@@ -276,9 +276,8 @@ def render_assessment_times_figure(assignment_survey_data: str, assessment_group
     assignment_survey_df = assignment_survey_df[assignment_survey_df["Time Taken"].notnull()]
     
     # Exit early
-    time_fig = go.Figure(layout=dict(template='plotly'))    
     if len(assignment_survey_df) == 0:
-        return time_fig
+        return blank_plot()
     
     # Helpful variables
     assessment_group = assignment_survey_df[assignment_survey_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter].iloc[0][COLUMN_ASSESSMENT_GROUP_NAME]
@@ -290,6 +289,7 @@ def render_assessment_times_figure(assignment_survey_data: str, assessment_group
     to_plot = to_plot.reset_index()
 
     # Plot figure
+    time_fig = go.Figure(layout=dict(template='plotly'))    
     time_fig = px.bar(
         to_plot,
         x=COLUMN_ASSESSMENT_NAME,
