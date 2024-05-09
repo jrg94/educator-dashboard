@@ -38,14 +38,16 @@ def load_sei_data() -> dcc.Store:
     :return: the SEI data as a store
     """
     sei_instructor_scores_df = pd.read_csv(URL_SEI_INSTRUCTOR_SCORES)
+    sei_reports_df = pd.read_csv(URL_SEI_REPORTS)
     course_sections_df = pd.read_csv(URL_COURSE_SECTIONS)
     courses_df = pd.read_csv(URL_COURSES)
     questions_df = pd.read_csv(URL_SEI_QUESTIONS)
     df = sei_instructor_scores_df \
+        .merge(sei_reports_df, on=COLUMN_REPORT_ID) \
         .merge(course_sections_df, on=COLUMN_SECTION_ID) \
         .merge(courses_df, on=COLUMN_COURSE_ID) \
         .merge(questions_df, on=COLUMN_QUESTION_ID)
-
+        
     return dcc.Store(id=ID_SEI_DATA, data=df.to_json())
 
 
