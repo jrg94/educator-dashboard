@@ -37,14 +37,16 @@ def render_sei_ratings_figure(sei_ratings_history: str):
     # Convert the data back into a dataframe
     sei_ratings_df = pd.read_json(StringIO(sei_ratings_history))
     
+    print(sei_ratings_df)
+    
     # Precompute columns 
-    sei_ratings_df["Semester"] = sei_ratings_df["Season"] + " " + sei_ratings_df["Year"].astype(str)
+    sei_ratings_df["Semester"] = sei_ratings_df[COLUMN_SEMESTER_SEASON] + " " + sei_ratings_df[COLUMN_SEMESTER_YEAR].astype(str)
     
     # Helpful values
     semesters_in_order = semester_order(sei_ratings_df)
     
     # Prioritize maximum semesterly scores
-    sei_ratings_df = sei_ratings_df.iloc[sei_ratings_df.groupby(["Semester", "Question ID", "Group"])["Mean"].agg(pd.Series.idxmax)]
+    sei_ratings_df = sei_ratings_df.iloc[sei_ratings_df.groupby(["Semester", COLUMN_QUESTION_ID, COLUMN_COHORT])["Mean"].agg(pd.Series.idxmax)]
     sei_ratings_df = sei_ratings_df.sort_values(by="Semester", key=lambda col: col.map(lambda x: semesters_in_order[x]))
         
     # Plot figure
