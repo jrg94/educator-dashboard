@@ -44,13 +44,20 @@ def load_sei_data() -> dcc.Store:
     questions_df = pd.read_csv(URL_SEI_QUESTIONS)
     semesters_df = pd.read_csv(URL_SEMESTERS)
     cohort_scores_df = pd.read_csv(URL_SEI_COHORT_SCORES)
-    df = sei_instructor_scores_df.merge(sei_reports_df, on=COLUMN_REPORT_ID)
-    print(pd.concat([df, cohort_scores_df], axis=0, ignore_index=True))
+    
+    # Build instructor data
+    df = sei_instructor_scores_df \
+        .merge(sei_reports_df, on=COLUMN_REPORT_ID) \
+        .merge(course_sections_df, on=COLUMN_SECTION_ID) \
+        .merge(courses_df, on=COLUMN_COURSE_ID)
+    
+    # Concatenate cohort data and add missing data from both
+    df = pd.concat([df, cohort_scores_df], axis=0, ignore_index=True) \
+        .merge(questions_df, on=COLUMN_QUESTION_ID) \
+        .merge(semesters_df, on=COLUMN_SEMESTER_ID)
         
-        #.merge(course_sections_df, on=COLUMN_SECTION_ID) \
-        #.merge(courses_df, on=COLUMN_COURSE_ID) \
-        #.merge(questions_df, on=COLUMN_QUESTION_ID) \
-        #.merge(semesters_df, on=COLUMN_SEMESTER_ID) \
+    # Set cohort for instructor
+    df[COLUMN_COHORT] = df[COLUMN_COHORT].fillna("Instructor")
         
     return dcc.Store(id=ID_SEI_DATA, data=df.to_json())
 
