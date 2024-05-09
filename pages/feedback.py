@@ -107,9 +107,10 @@ def render_sei_comments_figure(sei_comments_history: str):
     word_counts = word_counts[~word_counts["Word"].isin(list(string.punctuation))]
     word_counts = word_counts[~word_counts["Word"].str.contains("'")]
     
-    # Sorts and pulls the top 25 words
+    # Sorts and pulls the top words
+    top_count = 40
     word_counts = word_counts.sort_values(by="Count", ascending=False)
-    word_counts = word_counts.head(25)
+    word_counts = word_counts.head(top_count)
     word_counts = word_counts.sort_values(by="Count")
     
     # Plot figure
@@ -118,8 +119,8 @@ def render_sei_comments_figure(sei_comments_history: str):
         word_counts,
         x="Count",
         y="Word",
-        title="Top 25 Most Common Words in SEI Comments",
-        height=600
+        title=f"Top {top_count} Most Common Words in SEI Comments",
+        height=800
     )
     
     return sei_comment_fig
