@@ -29,11 +29,9 @@ COLUMN_REPORT_ID = "SEI Report ID"
 
 # Data IDs
 ID_ASSIGNMENT_SURVEY_DATA = "assignment-survey-data"
+ID_COURSE_EVAL_DATA = "course-eval-data"
 ID_SEI_DATA = "sei-data"
 ID_SEI_COMMENTS_DATA = "sei-comments-data"
-ID_COURSE_EVAL_DATA = "course-eval-data"
-ID_CSE_2221_GRADE_DATA = "cse2221-grade-data"
-ID_CSE_2231_GRADE_DATA = "cse2231-grade-data"
 ID_EDUCATION_DATA = "history"
 
 # Assessment figure IDs
