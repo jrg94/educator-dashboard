@@ -13,9 +13,9 @@ def load_assignment_survey_data() -> dcc.Store:
     :return: the assignment survey data as a store
     """
     # Load necessary data
-    assignment_survey_data = pd.read_csv(URL_ASSESSMENT_SURVEY_HISTORY)
-    assignment_lookup = pd.read_csv(URL_ASSESSMENT_LOOKUP)
-    assignment_group_lookup = pd.read_csv(URL_ASSESSMENT_GROUP_LOOKUP)
+    assignment_survey_data = pd.read_csv(URL_ASSESSMENT_REVIEWS)
+    assignment_lookup = pd.read_csv(URL_ASSESSMENTS)
+    assignment_group_lookup = pd.read_csv(URL_ASSESSMENT_GROUPS)
     survey_df = assignment_survey_data \
         .merge(assignment_lookup, on=COLUMN_ASSESSMENT_ID) \
         .merge(assignment_group_lookup, on=COLUMN_ASSESSMENT_GROUP_ID)
@@ -37,9 +37,9 @@ def load_sei_data() -> dcc.Store:
 
     :return: the SEI data as a store
     """
-    sei_data = pd.read_csv(URL_SEI_RATINGS_HISTORY)
+    sei_data = pd.read_csv(URL_SEI_INSTRUCTOR_SCORES)
     teaching_history = pd.read_csv(URL_TEACHING_HISTORY)
-    course_lookup = pd.read_csv(URL_COURSE_LOOKUP)
+    course_lookup = pd.read_csv(URL_COURSES)
     question_lookup = pd.read_csv(URL_SEI_QUESTIONS_LOOKUP)
     sei_ratings_history = sei_data \
         .merge(teaching_history, on=COLUMN_SECTION_ID) \
@@ -85,11 +85,11 @@ def load_education_data() -> dcc.Store:
 
     :return: the grade data as a store
     """
-    grading_history = pd.read_csv(URL_GRADING_HISTORY)
+    grading_history = pd.read_csv(URL_ASSESSMENT_GRADES)
     teaching_history = pd.read_csv(URL_TEACHING_HISTORY)
-    assignment_lookup = pd.read_csv(URL_ASSESSMENT_LOOKUP)
-    assignment_group_lookup = pd.read_csv(URL_ASSESSMENT_GROUP_LOOKUP)
-    course_lookup = pd.read_csv(URL_COURSE_LOOKUP)
+    assignment_lookup = pd.read_csv(URL_ASSESSMENTS)
+    assignment_group_lookup = pd.read_csv(URL_ASSESSMENT_GROUPS)
+    course_lookup = pd.read_csv(URL_COURSES)
     education_data = grading_history \
         .merge(assignment_lookup, on=COLUMN_ASSESSMENT_ID) \
         .merge(assignment_group_lookup, on=COLUMN_ASSESSMENT_GROUP_ID) \

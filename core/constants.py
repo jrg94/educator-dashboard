@@ -1,16 +1,16 @@
 import plotly.express as px
 
 # Data URLS
-URL_ASSESSMENT_GROUP_LOOKUP = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessment-group-lookup.csv"
-URL_ASSESSMENT_LOOKUP = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessment-lookup.csv"
-URL_ASSESSMENT_SURVEY_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessment-review-history.csv"
-URL_COURSE_LOOKUP = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/course-lookup.csv"
-URL_EVALUATION_SURVEY_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/evaluation-survey-history.csv"
-URL_GRADING_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/grading-history.csv"
+URL_ASSESSMENTS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/assessments.csv"
+URL_ASSESSMENT_GRADES = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/grades.csv"
+URL_ASSESSMENT_GROUPS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/groups.csv"
+URL_ASSESSMENT_REVIEWS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/reviews.csv"
+URL_COURSES = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/lookup-tables/courses.csv"
 URL_SEI_COMMENTS_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-comments-history.csv"
 URL_SEI_QUESTIONS_LOOKUP = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-questions-lookup.csv"
-URL_SEI_RATINGS_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-ratings-history.csv"
-URL_TEACHING_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/teaching-history.csv"
+URL_SEI_INSTRUCTOR_SCORES = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/instructor-scores.csv"
+URL_TEACHING_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/lookup-tables/sections.csv"
+URL_EVALUATION_SURVEY_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/evaluation-survey-history.csv"
 
 # Column headings
 COLUMN_ASSESSMENT_ID = "Assessment ID"
