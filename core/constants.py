@@ -7,35 +7,25 @@ URL_ASSESSMENT_GROUPS = "https://raw.githubusercontent.com/jrg94/personal-data/m
 URL_ASSESSMENT_REVIEWS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/reviews.csv"
 URL_COURSES = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/lookup-tables/courses.csv"
 URL_COURSE_SECTIONS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/lookup-tables/sections.csv"
+URL_EVALUATION_SURVEY_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/raw-data/evaluation-survey-history.csv"
 URL_SEI_COMMENTS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/comments.csv"
 URL_SEI_QUESTIONS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/questions.csv"
 URL_SEI_INSTRUCTOR_SCORES = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/instructor-scores.csv"
 URL_SEI_REPORTS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/reports.csv"
 URL_SEMESTERS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/lookup-tables/semesters.csv"
-URL_EVALUATION_SURVEY_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/raw-data/evaluation-survey-history.csv"
 
 # Column headings
 COLUMN_ASSESSMENT_ID = "Assessment ID"
 COLUMN_ASSESSMENT_GROUP_ID = "Assessment Group ID"
 COLUMN_ASSESSMENT_GROUP_NAME = "Assessment Group Name"
 COLUMN_ASSESSMENT_NAME = "Assessment Name"
+COLUMN_COURSE_ID = "Course ID"
 COLUMN_SECTION_ID = "Section ID"
 COLUMN_SEMESTER_ID = "Semester ID"
 COLUMN_SEMESTER_SEASON = "Semester Season"
 COLUMN_SEMESTER_YEAR = "Semester Year"
-COLUMN_COURSE_ID = "Course ID"
 COLUMN_QUESTION_ID = "SEI Question ID"
 COLUMN_REPORT_ID = "SEI Report ID"
-
-# Added column headings
-COLUMN_AVERAGE_TIME = "Average Time (hours)"
-COLUMN_MEDIAN_TIME = "Median Time (hours)"
-COLUMN_REVIEW_COUNT = "Number of Reviews"
-COLUMN_STANDARD_DEVIATION = "Standard Deviation (hours)"
-
-# Assignment survey filter values
-FILTER_SOFTWARE_1 = "CSE 2221: Software 1"
-FILTER_SOFTWARE_2 = "CSE 2231: Software 2"
 
 # Data IDs
 ID_ASSIGNMENT_SURVEY_DATA = "assignment-survey-data"
