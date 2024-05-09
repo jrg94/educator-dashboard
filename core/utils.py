@@ -14,8 +14,8 @@ def semester_order(data: pd.DataFrame) -> dict:
     :return: a list of sorted semesters
     """
     SEASON_SORT_ORDER = ["Spring", "Summer", "Autumn"]
-    min_year = data["Year"].min()
-    max_year = data["Year"].max()
+    min_year = data[COLUMN_SEMESTER_YEAR].min()
+    max_year = data[COLUMN_SEMESTER_YEAR].max()
     semesters = {}
     order = 1
     for year in range(min_year, max_year + 1):

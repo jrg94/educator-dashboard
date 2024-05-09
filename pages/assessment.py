@@ -222,7 +222,7 @@ def render_assessment_trends_figure(education_data: str, assessment_group_filter
     education_df["Total"] = pd.to_numeric(education_df["Total"])
     
     # Precompute some columns
-    education_df["Semester"] = education_df["Season"] + " " + education_df["Year"].astype(str)
+    education_df["Semester"] = education_df[COLUMN_SEMESTER_SEASON] + " " + education_df[COLUMN_SEMESTER_YEAR].astype(str)
     education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
     
     # Helpful values
@@ -343,7 +343,7 @@ def render_grade_distribution_figure(education_data: str, assessment_group_filte
     
     # Precompute some columns
     education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
-    education_df["Semester"] = education_df["Season"] + " " + education_df["Year"].astype(str)
+    education_df["Semester"] = education_df[COLUMN_SEMESTER_SEASON] + " " + education_df[COLUMN_SEMESTER_YEAR].astype(str)
     
     # Helpful values
     course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'

@@ -92,9 +92,11 @@ def load_education_data() -> dcc.Store:
     assessments_df = pd.read_csv(URL_ASSESSMENTS)
     assessment_groups_df = pd.read_csv(URL_ASSESSMENT_GROUPS)
     courses_df = pd.read_csv(URL_COURSES)
+    semesters_df = pd.read_csv(URL_SEMESTERS)
     df = grades_df \
         .merge(assessments_df, on=COLUMN_ASSESSMENT_ID) \
         .merge(assessment_groups_df, on=COLUMN_ASSESSMENT_GROUP_ID) \
         .merge(course_sections_df, on=COLUMN_SECTION_ID) \
-        .merge(courses_df, on=COLUMN_COURSE_ID)
+        .merge(courses_df, on=COLUMN_COURSE_ID) \
+        .merge(semesters_df, on=COLUMN_SEMESTER_ID)
     return dcc.Store(id=ID_EDUCATION_DATA, data=df.to_json())

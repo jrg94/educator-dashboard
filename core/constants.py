@@ -11,6 +11,7 @@ URL_SEI_COMMENTS = "https://raw.githubusercontent.com/jrg94/personal-data/main/e
 URL_SEI_QUESTIONS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/questions.csv"
 URL_SEI_INSTRUCTOR_SCORES = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/instructor-scores.csv"
 URL_SEI_REPORTS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/reports.csv"
+URL_SEMESTERS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/lookup-tables/semesters.csv"
 URL_EVALUATION_SURVEY_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/raw-data/evaluation-survey-history.csv"
 
 # Column headings
@@ -19,6 +20,9 @@ COLUMN_ASSESSMENT_GROUP_ID = "Assessment Group ID"
 COLUMN_ASSESSMENT_GROUP_NAME = "Assessment Group Name"
 COLUMN_ASSESSMENT_NAME = "Assessment Name"
 COLUMN_SECTION_ID = "Section ID"
+COLUMN_SEMESTER_ID = "Semester ID"
+COLUMN_SEMESTER_SEASON = "Semester Season"
+COLUMN_SEMESTER_YEAR = "Semester Year"
 COLUMN_COURSE_ID = "Course ID"
 COLUMN_QUESTION_ID = "SEI Question ID"
 COLUMN_REPORT_ID = "SEI Report ID"
