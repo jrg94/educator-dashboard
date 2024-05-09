@@ -13,21 +13,21 @@ def load_assignment_survey_data() -> dcc.Store:
     :return: the assignment survey data as a store
     """
     # Load necessary data
-    assignment_survey_data = pd.read_csv(URL_ASSESSMENT_REVIEWS)
-    assignment_lookup = pd.read_csv(URL_ASSESSMENTS)
-    assignment_group_lookup = pd.read_csv(URL_ASSESSMENT_GROUPS)
-    survey_df = assignment_survey_data \
-        .merge(assignment_lookup, on=COLUMN_ASSESSMENT_ID) \
-        .merge(assignment_group_lookup, on=COLUMN_ASSESSMENT_GROUP_ID)
+    assessment_reviews_df = pd.read_csv(URL_ASSESSMENT_REVIEWS)
+    assessments_df = pd.read_csv(URL_ASSESSMENTS)
+    assessment_groups_df = pd.read_csv(URL_ASSESSMENT_GROUPS)
+    df = assessment_reviews_df \
+        .merge(assessments_df, on=COLUMN_ASSESSMENT_ID) \
+        .merge(assessment_groups_df, on=COLUMN_ASSESSMENT_GROUP_ID)
         
     # Sets types of columns
-    survey_df["DateTime"] = pd.to_datetime(
-        assignment_survey_data["DateTime"],
+    df["DateTime"] = pd.to_datetime(
+        assessment_reviews_df["DateTime"],
         format="%Y/%m/%d %I:%M:%S %p %z",
         utc=True
     )
         
-    return dcc.Store(id=ID_ASSIGNMENT_SURVEY_DATA, data=survey_df.to_json())
+    return dcc.Store(id=ID_ASSIGNMENT_SURVEY_DATA, data=df.to_json())
 
 
 def load_sei_data() -> dcc.Store:
@@ -37,16 +37,16 @@ def load_sei_data() -> dcc.Store:
 
     :return: the SEI data as a store
     """
-    sei_data = pd.read_csv(URL_SEI_INSTRUCTOR_SCORES)
-    teaching_history = pd.read_csv(URL_TEACHING_HISTORY)
-    course_lookup = pd.read_csv(URL_COURSES)
-    question_lookup = pd.read_csv(URL_SEI_QUESTIONS_LOOKUP)
-    sei_ratings_history = sei_data \
-        .merge(teaching_history, on=COLUMN_SECTION_ID) \
-        .merge(course_lookup, on=COLUMN_COURSE_ID) \
-        .merge(question_lookup, on=COLUMN_QUESTION_ID)
+    sei_instructor_scores_df = pd.read_csv(URL_SEI_INSTRUCTOR_SCORES)
+    course_sections_df = pd.read_csv(URL_COURSE_SECTIONS)
+    courses_df = pd.read_csv(URL_COURSES)
+    questions_df = pd.read_csv(URL_SEI_QUESTIONS)
+    df = sei_instructor_scores_df \
+        .merge(course_sections_df, on=COLUMN_SECTION_ID) \
+        .merge(courses_df, on=COLUMN_COURSE_ID) \
+        .merge(questions_df, on=COLUMN_QUESTION_ID)
 
-    return dcc.Store(id=ID_SEI_DATA, data=sei_ratings_history.to_json())
+    return dcc.Store(id=ID_SEI_DATA, data=df.to_json())
 
 
 def load_sei_comments_data() -> dcc.Store:
@@ -56,8 +56,8 @@ def load_sei_comments_data() -> dcc.Store:
 
     :return: the SEI comment data as a store 
     """
-    sei_comment_data = pd.read_csv(URL_SEI_COMMENTS_HISTORY)
-    return dcc.Store(id=ID_SEI_COMMENTS_DATA, data=sei_comment_data.to_json())
+    sei_comments = pd.read_csv(URL_SEI_COMMENTS)
+    return dcc.Store(id=ID_SEI_COMMENTS_DATA, data=sei_comments.to_json())
 
 
 def load_course_eval_data() -> dcc.Store:
@@ -85,14 +85,14 @@ def load_education_data() -> dcc.Store:
 
     :return: the grade data as a store
     """
-    grading_history = pd.read_csv(URL_ASSESSMENT_GRADES)
-    teaching_history = pd.read_csv(URL_TEACHING_HISTORY)
-    assignment_lookup = pd.read_csv(URL_ASSESSMENTS)
-    assignment_group_lookup = pd.read_csv(URL_ASSESSMENT_GROUPS)
-    course_lookup = pd.read_csv(URL_COURSES)
-    education_data = grading_history \
-        .merge(assignment_lookup, on=COLUMN_ASSESSMENT_ID) \
-        .merge(assignment_group_lookup, on=COLUMN_ASSESSMENT_GROUP_ID) \
-        .merge(teaching_history, on=COLUMN_SECTION_ID) \
-        .merge(course_lookup, on=COLUMN_COURSE_ID)
-    return dcc.Store(id=ID_EDUCATION_DATA, data=education_data.to_json())
+    grades_df = pd.read_csv(URL_ASSESSMENT_GRADES)
+    course_sections_df = pd.read_csv(URL_COURSE_SECTIONS)
+    assessments_df = pd.read_csv(URL_ASSESSMENTS)
+    assessment_groups_df = pd.read_csv(URL_ASSESSMENT_GROUPS)
+    courses_df = pd.read_csv(URL_COURSES)
+    df = grades_df \
+        .merge(assessments_df, on=COLUMN_ASSESSMENT_ID) \
+        .merge(assessment_groups_df, on=COLUMN_ASSESSMENT_GROUP_ID) \
+        .merge(course_sections_df, on=COLUMN_SECTION_ID) \
+        .merge(courses_df, on=COLUMN_COURSE_ID)
+    return dcc.Store(id=ID_EDUCATION_DATA, data=df.to_json())

@@ -6,10 +6,10 @@ URL_ASSESSMENT_GRADES = "https://raw.githubusercontent.com/jrg94/personal-data/m
 URL_ASSESSMENT_GROUPS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/groups.csv"
 URL_ASSESSMENT_REVIEWS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/reviews.csv"
 URL_COURSES = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/lookup-tables/courses.csv"
-URL_SEI_COMMENTS_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-comments-history.csv"
-URL_SEI_QUESTIONS_LOOKUP = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/sei-questions-lookup.csv"
+URL_COURSE_SECTIONS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/lookup-tables/sections.csv"
+URL_SEI_COMMENTS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/comments.csv"
+URL_SEI_QUESTIONS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/questions.csv"
 URL_SEI_INSTRUCTOR_SCORES = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/instructor-scores.csv"
-URL_TEACHING_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/lookup-tables/sections.csv"
 URL_EVALUATION_SURVEY_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/evaluation-survey-history.csv"
 
 # Column headings
