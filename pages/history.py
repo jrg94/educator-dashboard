@@ -3,7 +3,7 @@ import dash
 from dash import Input, Output, callback, html
 import pandas as pd
 
-from core.constants import COLUMN_COURSE_ID, ID_HISTORY_DATA
+from core.constants import COLUMN_COURSE_DEPARTMENT, COLUMN_COURSE_ID, COLUMN_COURSE_NUMBER, COLUMN_SEMESTER_YEAR, ID_HISTORY_DATA
 from core.data import load_teaching_history
 
 dash.register_page(
@@ -25,11 +25,11 @@ def render_course_history_list(history_data):
     course_ids.sort()
     for course_id in course_ids:
         filtered_df = history_df[history_df[COLUMN_COURSE_ID] == course_id]
-        course_department = filtered_df.iloc[0]["Course Department"]
-        course_number = filtered_df.iloc[0]["Course Number"]
+        course_department = filtered_df.iloc[0][COLUMN_COURSE_DEPARTMENT]
+        course_number = filtered_df.iloc[0][COLUMN_COURSE_NUMBER]
         course_name = filtered_df.iloc[0]["Course Name"]
-        min_year = filtered_df["Semester Year"].min()
-        max_year = filtered_df["Semester Year"].max()
+        min_year = filtered_df[COLUMN_SEMESTER_YEAR].min()
+        max_year = filtered_df[COLUMN_SEMESTER_YEAR].max()
         title = filtered_df.iloc[0]["Educator Title"]
         list_item = html.Li(
             f"[{min_year} - {max_year}] {course_department} {course_number}—{course_name} as a {title}"
