@@ -3,7 +3,7 @@ import dash
 from dash import Input, Output, callback, html
 import pandas as pd
 
-from core.constants import ID_HISTORY_DATA
+from core.constants import COLUMN_COURSE_ID, ID_HISTORY_DATA
 from core.data import load_teaching_history
 
 dash.register_page(
@@ -19,13 +19,24 @@ dash.register_page(
 )
 def render_course_history_list(history_data):
     history_df = pd.read_json(StringIO(history_data))
-    history_df = history_df.groupby(["Course ID"]).first()
-    history_df = history_df.sort_values(by="Semester Year")
-    items = [
-        html.Li(f"{row['Course Department']} {row['Course Number']}—{row['Course Name']}") 
-        for _, row in history_df.iterrows()
-    ]
-    return items
+    
+    list_items = []
+    course_ids = history_df[COLUMN_COURSE_ID].unique()
+    course_ids.sort()
+    for course_id in course_ids:
+        filtered_df = history_df[history_df[COLUMN_COURSE_ID] == course_id]
+        course_department = filtered_df.iloc[0]["Course Department"]
+        course_number = filtered_df.iloc[0]["Course Number"]
+        course_name = filtered_df.iloc[0]["Course Name"]
+        min_year = filtered_df["Semester Year"].min()
+        max_year = filtered_df["Semester Year"].max()
+        title = filtered_df.iloc[0]["Educator Title"]
+        list_item = html.Li(
+            f"[{min_year} - {max_year}] {course_department} {course_number}—{course_name} as a {title}"
+        )
+        list_items.append(list_item)
+    
+    return list_items
 
 layout = html.Div([
     html.H1("History"),
