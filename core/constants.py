@@ -34,10 +34,10 @@ COLUMN_TOTAL = "Total"
 # Data IDs
 ID_ASSIGNMENT_SURVEY_DATA = "assignment-survey-data"
 ID_COURSE_EVAL_DATA = "course-eval-data"
+ID_EDUCATION_DATA = "education"
+ID_HISTORY_DATA = "history"
 ID_SEI_DATA = "sei-data"
 ID_SEI_COMMENTS_DATA = "sei-comments-data"
-ID_EDUCATION_DATA = "history"
-
 # Assessment figure IDs
 ID_ASSESSMENT_GROUP_TIME_FIG = "assessment-group-time-fig"
 ID_GRADE_OVERVIEW_FIG = "grade-overview"

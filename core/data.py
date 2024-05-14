@@ -5,6 +5,19 @@ from dash import dcc
 from core.constants import *
 
 
+def load_teaching_history() -> dcc.Store:
+    """
+    Loads only my teaching history.
+    """
+    course_sections_df = pd.read_csv(URL_COURSE_SECTIONS)
+    courses_df = pd.read_csv(URL_COURSES)
+    semesters_df = pd.read_csv(URL_SEMESTERS)
+    df = course_sections_df \
+        .merge(courses_df, on=COLUMN_COURSE_ID) \
+        .merge(semesters_df, on=COLUMN_SEMESTER_ID)
+    return dcc.Store(id=ID_HISTORY_DATA, data=df.to_json())
+
+
 def load_assignment_survey_data() -> dcc.Store:
     """
     Loads the assignment survey data from the remote CSV, cleans it, and computes
