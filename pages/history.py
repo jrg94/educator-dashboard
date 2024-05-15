@@ -133,7 +133,6 @@ layout = html.Div([
         [dcc.Graph(id=ID_STUDENT_COUNTS_FIG)],
         type="graph"
     ),
-    # TODO: plot number of students over time as a cumulative?
     html.P(
         """
         On the remainder of this page, I'll share some interesting visualizations
