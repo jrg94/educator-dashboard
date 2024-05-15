@@ -57,6 +57,7 @@ ID_EVAL_SKILL_FIG = "skill-and-responsiveness"
 ID_EVAL_CONTRIBUTION_FIG = "contribution-to-learning"
 
 # History figure IDs
+ID_ROOM_COUNTS_FIG = "room-counts"
 ID_TIME_COUNTS_FIG = "time-counts"
 
 # Filter IDs
