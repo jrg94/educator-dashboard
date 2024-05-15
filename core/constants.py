@@ -59,6 +59,7 @@ ID_EVAL_CONTRIBUTION_FIG = "contribution-to-learning"
 # History figure IDs
 ID_ROOM_COUNTS_FIG = "room-counts"
 ID_TIME_COUNTS_FIG = "time-counts"
+ID_STUDENT_COUNTS_FIG = "student-counts"
 
 # Filter IDs
 ID_COURSE_FILTER = "course-filter"

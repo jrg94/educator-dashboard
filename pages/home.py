@@ -35,7 +35,7 @@ layout = html.Div([
             ),
             html.Li(
                 [
-                    html.A("Patch Notes", href=dash.get_relative_path("/patch-notes")),
+                    html.A("History", href=dash.get_relative_path("/history")),
                     ": shares teaching developments over time"
                 ]
             ),

@@ -7,8 +7,8 @@ import plotly.express as px
 from dash import Input, Output, callback, dcc, html
 
 from core.constants import (COLUMN_COURSE_DEPARTMENT, COLUMN_COURSE_ID,
-                            COLUMN_COURSE_NUMBER, COLUMN_SEMESTER_YEAR,
-                            ID_HISTORY_DATA, ID_ROOM_COUNTS_FIG, ID_TIME_COUNTS_FIG)
+                            COLUMN_COURSE_NUMBER, COLUMN_SEMESTER_ID, COLUMN_SEMESTER_SEASON, COLUMN_SEMESTER_YEAR,
+                            ID_HISTORY_DATA, ID_ROOM_COUNTS_FIG, ID_STUDENT_COUNTS_FIG, ID_TIME_COUNTS_FIG)
 from core.data import load_teaching_history
 
 dash.register_page(
@@ -83,6 +83,28 @@ def render_time_counts_fig(history_data):
     return time_counts_fig
 
 
+@callback(
+    Output(ID_STUDENT_COUNTS_FIG, "figure"),
+    Input(ID_HISTORY_DATA, "data")
+)
+def render_time_counts_fig(history_data):
+    history_df = pd.read_json(StringIO(history_data))
+    history_df = history_df[history_df["Course Type"] == "Lecture"]
+    history_df["Semester"] = history_df[COLUMN_SEMESTER_SEASON] + " " + history_df[COLUMN_SEMESTER_YEAR].astype(str)
+    history_df = history_df.groupby("Semester").agg({"Enrollment Total": "sum", "Semester ID": "first"}).reset_index()
+    history_df = history_df.sort_values(by=COLUMN_SEMESTER_ID)
+    history_df["Cumulative Enrollment Total"] = history_df["Enrollment Total"].cumsum()
+    
+    time_counts_fig = go.Figure(layout=dict(template='plotly'))
+    time_counts_fig = px.bar(
+        history_df,
+        x="Semester",
+        y="Cumulative Enrollment Total"
+    ) 
+    
+    return time_counts_fig
+
+
 layout = html.Div([
     html.H1("History"),
     html.P(
@@ -106,6 +128,10 @@ layout = html.Div([
         just how many, I've plotted the cumulative number of students
         over time below.
         """
+    ),
+    dcc.Loading(
+        [dcc.Graph(id=ID_STUDENT_COUNTS_FIG)],
+        type="graph"
     ),
     # TODO: plot number of students over time as a cumulative?
     html.P(
