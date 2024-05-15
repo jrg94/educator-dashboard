@@ -5,6 +5,7 @@ from io import StringIO
 import dash
 import nltk
 import pandas as pd
+import plotly.graph_objects as go
 from dash import Input, Output, callback, dcc, html
 from nltk.corpus import stopwords
 
@@ -19,6 +20,35 @@ dash.register_page(
     title="The Educator Dashboard: Feedback"
 )
 
+# Helper functions
+
+def create_course_eval_fig(course_eval_data, question, axes_labels):
+    """
+    TODO: remove this at some point when we redo the site again
+    """
+    colors = dict(zip(axes_labels, COLORS_SATISFACTION.values()))
+    question_data = course_eval_data.melt(
+        id_vars=[item for item in course_eval_data.columns if question not in item],
+        var_name="Question",
+        value_name="Response"
+    )
+    question_data = question_data[question_data["Response"].notna()]
+    question_fig = go.Figure(layout=dict(template='plotly'))
+    question_fig = px.histogram(
+        question_data,
+        x="Response",
+        color="Response",
+        facet_col="Question",
+        facet_col_wrap=2,
+        category_orders=dict(Response=axes_labels),
+        text_auto=True,
+        title=f"{question} by Subquestion".title(),
+        color_discrete_map=colors
+    )
+    question_fig.for_each_annotation(lambda a: a.update(text=a.text[a.text.find("[")+1:a.text.find("]")]))
+    return question_fig
+
+# Graph callbacks
 
 @callback(
     Output(ID_SEI_RATINGS_FIG, "figure"),

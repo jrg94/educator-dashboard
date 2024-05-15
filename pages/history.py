@@ -1,9 +1,13 @@
 from io import StringIO
-import dash
-from dash import Input, Output, callback, html
-import pandas as pd
 
-from core.constants import COLUMN_COURSE_DEPARTMENT, COLUMN_COURSE_ID, COLUMN_COURSE_NUMBER, COLUMN_SEMESTER_YEAR, ID_HISTORY_DATA
+import dash
+import pandas as pd
+import plotly.graph_objects as go
+from dash import Input, Output, callback, dcc, html
+
+from core.constants import (COLUMN_COURSE_DEPARTMENT, COLUMN_COURSE_ID,
+                            COLUMN_COURSE_NUMBER, COLUMN_SEMESTER_YEAR,
+                            ID_HISTORY_DATA, ID_TIME_COUNTS_FIG)
 from core.data import load_teaching_history
 
 dash.register_page(
@@ -38,6 +42,20 @@ def render_course_history_list(history_data):
     
     return list_items
 
+
+@callback(
+    Output(ID_TIME_COUNTS_FIG, "figure"),
+    Input(ID_HISTORY_DATA, "data")
+)
+def render_time_counts_fig(history_data):
+    history_df = pd.read_json(StringIO(history_data))
+    
+    time_counts_fig = go.Figure(layout=dict(template='plotly'))    
+    
+    return time_counts_fig
+
+
+
 layout = html.Div([
     html.H1("History"),
     html.P(
@@ -55,5 +73,27 @@ layout = html.Div([
         """
     ),
     html.Ul(id="test"),
+    html.P(
+        """
+        On the remainder of this page, I'll share some interesting visualizations
+        of my teaching history.
+        """
+    ),
+    html.H2("Schedule Prediction"),
+    html.P(
+        """
+        Every semester I get a wave of students asking me when I'll be teaching
+        in the future. Because I have very little say in my schedule, I almost
+        never know what my future schedule is going to look like until a week
+        or two before each semester. However, I thought it would be interesting
+        to look at my most common teaching times and rooms to see if I can
+        better help students predict my future schedule. To start, here's a
+        distribution of course times.
+        """  
+    ),
+    dcc.Loading(
+        [dcc.Graph(id=ID_TIME_COUNTS_FIG)],
+        type="graph"
+    ),
     load_teaching_history()
 ])

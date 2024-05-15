@@ -40,6 +40,7 @@ ID_EDUCATION_DATA = "education"
 ID_HISTORY_DATA = "history"
 ID_SEI_DATA = "sei-data"
 ID_SEI_COMMENTS_DATA = "sei-comments-data"
+
 # Assessment figure IDs
 ID_ASSESSMENT_GROUP_TIME_FIG = "assessment-group-time-fig"
 ID_GRADE_OVERVIEW_FIG = "grade-overview"
@@ -54,6 +55,9 @@ ID_SEI_COMMENTS_FIG = "sei-comments"
 ID_EVAL_COURSE_CONTENT_FIG = "course-content"
 ID_EVAL_SKILL_FIG = "skill-and-responsiveness"
 ID_EVAL_CONTRIBUTION_FIG = "contribution-to-learning"
+
+# History figure IDs
+ID_TIME_COUNTS_FIG = "time-counts"
 
 # Filter IDs
 ID_COURSE_FILTER = "course-filter"

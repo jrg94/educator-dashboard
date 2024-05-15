@@ -3,11 +3,13 @@ from io import StringIO
 import dash
 import dash_bootstrap_components as dbc
 import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
 from dash import Input, Output, callback, dcc, html
 
 from core.constants import *
 from core.data import *
-from core.utils import *
+from core.utils import semester_order
 
 dash.register_page(
     __name__,
@@ -15,6 +17,37 @@ dash.register_page(
     name="Assessment",
     title="The Educator Dashboard: Assessment"
 )
+
+# Helper functions
+
+def blank_plot() -> go.Figure:
+    """
+    A helpful function for getting an empty plot when no data is available.
+    
+    :return: a plotly figure with default features
+    """
+    return go.Figure(
+        layout={
+            "xaxis": {
+                "visible": False
+            },
+            "yaxis": {
+                "visible": False
+            },
+            "annotations": [
+                {
+                    "text": "No matching data found",
+                    "xref": "paper",
+                    "yref": "paper",
+                    "showarrow": False,
+                    "font": {
+                            "size": 28
+                    }
+                }
+            ]
+
+        }
+    )
 
 # Graph Callbacks
 

@@ -1,6 +1,4 @@
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
 
 from core.constants import *
 
@@ -23,60 +21,3 @@ def semester_order(data: pd.DataFrame) -> dict:
             semesters[f"{season} {year}"] = order
             order += 1
     return semesters
-
-
-def blank_plot() -> go.Figure:
-    """
-    A helpful function for getting an empty plot when no data is available.
-    
-    :return: a plotly figure with default features
-    """
-    return go.Figure(
-        layout={
-            "xaxis": {
-                "visible": False
-            },
-            "yaxis": {
-                "visible": False
-            },
-            "annotations": [
-                {
-                    "text": "No matching data found",
-                    "xref": "paper",
-                    "yref": "paper",
-                    "showarrow": False,
-                    "font": {
-                            "size": 28
-                    }
-                }
-            ]
-
-        }
-    )
-
-
-def create_course_eval_fig(course_eval_data, question, axes_labels):
-    """
-    TODO: remove this at some point when we redo the site again
-    """
-    colors = dict(zip(axes_labels, COLORS_SATISFACTION.values()))
-    question_data = course_eval_data.melt(
-        id_vars=[item for item in course_eval_data.columns if question not in item],
-        var_name="Question",
-        value_name="Response"
-    )
-    question_data = question_data[question_data["Response"].notna()]
-    question_fig = go.Figure(layout=dict(template='plotly'))
-    question_fig = px.histogram(
-        question_data,
-        x="Response",
-        color="Response",
-        facet_col="Question",
-        facet_col_wrap=2,
-        category_orders=dict(Response=axes_labels),
-        text_auto=True,
-        title=f"{question} by Subquestion".title(),
-        color_discrete_map=colors
-    )
-    question_fig.for_each_annotation(lambda a: a.update(text=a.text[a.text.find("[")+1:a.text.find("]")]))
-    return question_fig
