@@ -344,6 +344,69 @@ def render_assessment_times_figure(assignment_survey_data: str, assessment_group
 
 
 @callback(
+    Output(ID_VALUE_FIG, "figure"),
+    Input(ID_EDUCATION_DATA, "data"),
+    Input(ID_ASSIGNMENT_SURVEY_DATA, "data"),
+    Input(ID_ASSESSMENT_GROUP_FILTER, "value"),
+    Input(ID_COURSE_FILTER, "value")
+) 
+def render_value_figure(education_data: str, assignment_survey_data: str, assessment_group_filter: int, course_filter: int):
+    """
+    Creates a figure of expected amount of points a student could get for an
+    hour of their time. 
+    
+    :param assignment_survey_data: the dataframe of all the data from the assignment survey
+    :param assignment_group_filter: the assignment type (i.e., Homework or Project)
+    :param course_filter: the course for which to create the time figure (e.g., CSE 2221: Software 1)
+    """
+    # Convert the data back into a dataframe
+    assignment_survey_df = pd.read_json(StringIO(assignment_survey_data))
+    education_df = pd.read_json(StringIO(education_data))
+        
+    # Filter
+    assignment_survey_df = assignment_survey_df[assignment_survey_df[COLUMN_COURSE_ID] == course_filter]
+    assignment_survey_df = assignment_survey_df[assignment_survey_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter]
+    assignment_survey_df = assignment_survey_df[assignment_survey_df["Time Taken"].notnull()]
+    education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
+    education_df = education_df[education_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter]
+    education_df = education_df[education_df["Grade"] != "EX"]
+    education_df = education_df[education_df["Total"] != 0]
+    
+    # Exit early
+    if len(assignment_survey_df) == 0:
+        return blank_plot()
+    
+    # Type cast
+    education_df["Grade"] = pd.to_numeric(education_df["Grade"])
+    education_df["Total"] = pd.to_numeric(education_df["Total"])
+    
+    # Precompute columns 
+    education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
+    
+    # Analysis
+    to_plot_survey = assignment_survey_df.groupby([COLUMN_ASSESSMENT_NAME, COLUMN_ASSESSMENT_ID]).agg({"Time Taken": ["mean", "median", "std", "count"]})
+    to_plot_survey.columns = to_plot_survey.columns.map(' '.join)
+    to_plot_survey = to_plot_survey.reset_index()
+    to_plot_scores = education_df.groupby([COLUMN_ASSESSMENT_NAME, COLUMN_ASSESSMENT_ID]).agg({"Percentage": ["mean", "median", "count"]})
+    to_plot_scores.columns = to_plot_scores.columns.map(' '.join)
+    to_plot_scores = to_plot_scores.reset_index()
+    to_plot = pd.merge(to_plot_scores, to_plot_survey, on=[COLUMN_ASSESSMENT_ID, COLUMN_ASSESSMENT_NAME])
+    to_plot["Median % Earned Per Hour of Work"] = to_plot["Percentage median"] / to_plot["Time Taken median"]
+    to_plot = to_plot.sort_values(COLUMN_ASSESSMENT_ID)
+    
+    # Plot figure
+    value_fig = go.Figure(layout=dict(template='plotly'))
+    value_fig = px.bar(
+        to_plot,
+        x=COLUMN_ASSESSMENT_NAME,
+        y="Median % Earned Per Hour of Work",
+        title="Expected Value Of Each Assessment"
+    )
+    
+    return value_fig
+
+
+@callback(
     Output(ID_GRADE_DISTRIBUTION_FIG, "figure"),
     Input(ID_EDUCATION_DATA, "data"),
     Input(ID_ASSESSMENT_GROUP_FILTER, "value"),
@@ -550,15 +613,28 @@ layout = html.Div([
     ),
     dcc.Markdown(
         """
-        The last plot I'll sneak into this section actually has nothing to do
-        with grades but rather the students' self reported time taken on
-        each assignment. Depending on which filters you use, **this plot
-        may show up empty**. I only started collecting time data for software
-        1 and 2.  
+        The last few plots I'd like to sneak into this section actually 
+        integrates student reviews of the assessments. To start, here's a plot
+        of the time students claim they spend on each assessment. Depending on 
+        which filters you use, **this plot may show up empty**. I only started 
+        collecting time data for software 1 and 2. Future work will be done
+        to include exam time, since I now track that as well. 
         """  
     ),
     dcc.Loading(
         [dcc.Graph(id=ID_ASSESSMENT_GROUP_TIME_FIG)],
+        type="graph"
+    ),
+    html.P(
+        """
+        Up next, I want to share a couple of more interesting plots I've crafted
+        that look to combine the estimated time data with the median scores.
+        The first of the two I call the value plot because it shows the amount
+        of points a student can expect to get for an hour of their time.
+        """  
+    ),
+     dcc.Loading(
+        [dcc.Graph(id=ID_VALUE_FIG)],
         type="graph"
     ),
     html.H2("Assessment Breakdown"),

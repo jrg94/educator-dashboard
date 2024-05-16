@@ -43,11 +43,12 @@ ID_SEI_COMMENTS_DATA = "sei-comments-data"
 
 # Assessment figure IDs
 ID_ASSESSMENT_GROUP_TIME_FIG = "assessment-group-time-fig"
-ID_GRADE_OVERVIEW_FIG = "grade-overview"
-ID_DETAILED_ASSESSMENT_GRADES_FIG = "detailed-assessment-grades"
 ID_ASSESSMENT_TRENDS_FIG = "assessment-trends"
-ID_MISSING_ASSESSMENT_FIG = "missing-assessments"
+ID_DETAILED_ASSESSMENT_GRADES_FIG = "detailed-assessment-grades"
+ID_GRADE_OVERVIEW_FIG = "grade-overview"
 ID_GRADE_DISTRIBUTION_FIG = "grade-distribution"
+ID_MISSING_ASSESSMENT_FIG = "missing-assessments"
+ID_VALUE_FIG = "value-to-time-ratio-fig"
 
 # Feedback figure IDs
 ID_SEI_RATINGS_FIG = "sei-ratings"
