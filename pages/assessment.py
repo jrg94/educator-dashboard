@@ -627,10 +627,11 @@ layout = html.Div([
     ),
     html.P(
         """
-        Up next, I want to share a couple of more interesting plots I've crafted
-        that look to combine the estimated time data with the median scores.
-        The first of the two I call the value plot because it shows the amount
-        of points a student can expect to get for an hour of their time.
+        Up next, I want to share a more interesting plot I've crafted
+        that looks to combine the estimated time data with the median scores.
+        I call it the value plot because it shows the amount of percentage 
+        points a student can expect to get for an hour of their time. Again, 
+        if there is no time related data, you will not see a plot.
         """  
     ),
      dcc.Loading(
