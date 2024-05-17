@@ -1,4 +1,3 @@
-from numpy import int64
 import pandas as pd
 from dash import dcc
 

@@ -2,13 +2,15 @@ from io import StringIO
 
 import dash
 import pandas as pd
-import plotly.graph_objects as go
 import plotly.express as px
+import plotly.graph_objects as go
 from dash import Input, Output, callback, dcc, html
 
 from core.constants import (COLUMN_COURSE_DEPARTMENT, COLUMN_COURSE_ID,
-                            COLUMN_COURSE_NUMBER, COLUMN_SEMESTER_ID, COLUMN_SEMESTER_SEASON, COLUMN_SEMESTER_YEAR,
-                            ID_HISTORY_DATA, ID_ROOM_COUNTS_FIG, ID_STUDENT_COUNTS_FIG, ID_TIME_COUNTS_FIG)
+                            COLUMN_COURSE_NUMBER, COLUMN_SEMESTER_ID,
+                            COLUMN_SEMESTER_SEASON, COLUMN_SEMESTER_YEAR,
+                            ID_HISTORY_DATA, ID_ROOM_COUNTS_FIG,
+                            ID_STUDENT_COUNTS_FIG, ID_TIME_COUNTS_FIG)
 from core.data import load_teaching_history
 
 dash.register_page(
@@ -164,15 +166,10 @@ layout = html.Div([
         [dcc.Graph(id=ID_ROOM_COUNTS_FIG)],
         type="graph"
     ),
-    html.H2("Hall of Fame"),
-    html.P(
-        """
-        Because I've taught so many students, I just wanted to share some
-        information about some of the students who have gone on to do great
-        things. I'd also like to share some ways I help students get there. 
-        """  
-    ),
-    # TODO: include graph around letters of recommendation
+    # TODO: I had plans for a hall of fame section here, which listed students
+    # who have gone to do wonderful things. I also considered graphing my 
+    # letters of recommendation and even my communications with previous 
+    # students, but that seemed weird. The hall of fame still seems cool though.
     html.H2("Course Changes"),
     html.P(
         """
