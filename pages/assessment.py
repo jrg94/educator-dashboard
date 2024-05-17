@@ -81,7 +81,7 @@ def render_grade_overview_figure(
     education_df[COLUMN_TOTAL] = pd.to_numeric(education_df[COLUMN_TOTAL])
     
     # Precompute columns 
-    education_df[COLUMN_PERCENTAGE] = education_df[COLUMN_GRADE] / education_df[COLUMN_TOTAL] * 100
+    education_df[COLUMN_PERCENTAGE] = education_df[COLUMN_GRADE] / education_df[COLUMN_TOTAL]
         
     # Perform analysis
     to_plot = education_df.groupby(COLUMN_ASSESSMENT_GROUP_NAME)[COLUMN_PERCENTAGE].aggregate({"mean", "median", "count"})
@@ -102,9 +102,11 @@ def render_grade_overview_figure(
             "count": "Count"
         },
         barmode="group",
+        text_auto=".0%",
         title=f"Overview of Course Grades by Type for {course_code}",
         hover_data=["count"]
     )
+    grade_fig.update_layout(yaxis_tickformat=".0%")
     
     return grade_fig
 
