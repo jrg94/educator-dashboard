@@ -25,12 +25,12 @@ dash.register_page(
 def render_course_history_list(history_data: str) -> list[html.Li]:
     """
     Creates a list of all the courses I've taught with key information.
-    
+
     :param history_data: the jsonified teaching history
     :return: a list of list item objects
     """
     history_df = pd.read_json(StringIO(history_data))
-    
+
     list_items = []
     course_ids = history_df[COLUMN_COURSE_ID].unique()
     course_ids.sort()
@@ -46,7 +46,7 @@ def render_course_history_list(history_data: str) -> list[html.Li]:
             f"[{min_year} - {max_year}] {course_department} {course_number}—{course_name} as a {title}"
         )
         list_items.append(list_item)
-    
+
     return list_items
 
 
@@ -57,20 +57,20 @@ def render_course_history_list(history_data: str) -> list[html.Li]:
 def render_time_counts_fig(history_data: str) -> go.Figure:
     """
     Creates a figure of the most common section times in my teaching history.
-    
+
     :param history_data: the jsonified teaching history
     :return: a bar graph
     """
     history_df = pd.read_json(StringIO(history_data))
     history_df = history_df[history_df[COLUMN_COURSE_TYPE] == "Lecture"]
     history_df = history_df.sort_values(by=COLUMN_SECTION_START_TIME)
-    
+
     time_counts_fig = go.Figure(layout=dict(template='plotly'))
     time_counts_fig = px.histogram(
         history_df,
         x=COLUMN_SECTION_START_TIME
-    ) 
-    
+    )
+
     return time_counts_fig
 
 
@@ -81,7 +81,7 @@ def render_time_counts_fig(history_data: str) -> go.Figure:
 def render_room_counts_fig(history_data: str) -> go.Figure:
     """
     Creates a figure of the most common classrooms in my teaching history.
-    
+
     :param history_data: the jsonified teaching history
     :return: a bar graph
     """
@@ -89,13 +89,13 @@ def render_room_counts_fig(history_data: str) -> go.Figure:
     history_df = history_df[history_df[COLUMN_COURSE_TYPE] == "Lecture"]
     history_df[COLUMN_CLASSROOM] = history_df[COLUMN_SECTION_BUILDING] + " " + history_df[COLUMN_SECTION_ROOM_NUMBER]
     history_df = history_df.sort_values(by=COLUMN_CLASSROOM)
-    
+
     time_counts_fig = go.Figure(layout=dict(template='plotly'))
     time_counts_fig = px.histogram(
         history_df,
         x=COLUMN_CLASSROOM
-    ) 
-    
+    )
+
     return time_counts_fig
 
 
@@ -106,24 +106,27 @@ def render_room_counts_fig(history_data: str) -> go.Figure:
 def render_cumulative_enrollment_fig(history_data: str) -> go.Figure:
     """
     Creates a figure of the number of students I've acummulated over time.
-    
+
     :param history_data: the jsonified teaching history
     :return: a bar graph
     """
     history_df = pd.read_json(StringIO(history_data))
     history_df = history_df[history_df[COLUMN_COURSE_TYPE] == "Lecture"]
     history_df[COLUMN_SEMESTER] = history_df[COLUMN_SEMESTER_SEASON] + " " + history_df[COLUMN_SEMESTER_YEAR].astype(str)
-    history_df = history_df.groupby(COLUMN_SEMESTER).agg({COLUMN_ENROLLMENT_TOTAL: "sum", COLUMN_SEMESTER_ID: "first"}).reset_index()
+    history_df = history_df.groupby(COLUMN_SEMESTER).agg({
+        COLUMN_ENROLLMENT_TOTAL: "sum", 
+        COLUMN_SEMESTER_ID: "first"
+    }).reset_index()
     history_df = history_df.sort_values(by=COLUMN_SEMESTER_ID)
     history_df[COLUMN_CUMULATIVE_ENROLLMENT_TOTAL] = history_df[COLUMN_ENROLLMENT_TOTAL].cumsum()
-    
+
     time_counts_fig = go.Figure(layout=dict(template='plotly'))
     time_counts_fig = px.bar(
         history_df,
         x=COLUMN_SEMESTER,
         y=COLUMN_CUMULATIVE_ENROLLMENT_TOTAL
-    ) 
-    
+    )
+
     return time_counts_fig
 
 
@@ -171,7 +174,7 @@ layout = html.Div([
         to look at my most common teaching times and rooms to see if I can
         better help students predict my future schedule. To start, here's a
         distribution of course times.
-        """  
+        """
     ),
     dcc.Loading(
         [dcc.Graph(id=ID_TIME_COUNTS_FIG)],
@@ -180,7 +183,7 @@ layout = html.Div([
     html.P(
         """
         Similarly, here's the distribution of classrooms that I've lectured in.
-        """  
+        """
     ),
     dcc.Loading(
         [dcc.Graph(id=ID_ROOM_COUNTS_FIG)],
