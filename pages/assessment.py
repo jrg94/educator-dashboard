@@ -84,7 +84,18 @@ def render_grade_overview_figure(
     education_df[COLUMN_PERCENTAGE] = education_df[COLUMN_GRADE] / education_df[COLUMN_TOTAL]
         
     # Perform analysis
-    to_plot = education_df.groupby(COLUMN_ASSESSMENT_GROUP_NAME)[COLUMN_PERCENTAGE].aggregate({"mean", "median", "count"})
+    to_plot: pd.DataFrame = education_df.groupby(COLUMN_ASSESSMENT_GROUP_NAME)[COLUMN_PERCENTAGE].aggregate({
+        "mean", 
+        "median", 
+        "count"
+    })
+    to_plot = to_plot.rename(
+        columns={
+            "mean": COLUMN_AVERAGE, 
+            "median": COLUMN_MEDIAN,
+            "count": COLUMN_COUNT
+        }
+    )
     
     # Helpful values
     course_code = f'{education_df.iloc[0][COLUMN_COURSE_DEPARTMENT]} {str(education_df.iloc[0][COLUMN_COURSE_NUMBER])}'
@@ -94,17 +105,16 @@ def render_grade_overview_figure(
     grade_fig = px.bar(
         to_plot,
         labels={
-            "index": "Assignment Type",
-            "value": "Percentage",
+            "value": COLUMN_PERCENTAGE,
             "variable": "Metric",
-            "mean": "Average",
-            "median": "Median",
-            "count": "Count"
         },
         barmode="group",
         text_auto=".0%",
         title=f"Overview of Course Grades by Type for {course_code}",
-        hover_data=["count"]
+        hover_data=[COLUMN_COUNT],
+        category_orders={
+            "variable": METRIC_ORDER
+        }
     )
     grade_fig.update_layout(
         yaxis_range=[0, 1.05],
@@ -226,21 +236,24 @@ def render_missing_assessments_figure(
     
     # Perform analysis
     to_plot = education_df.groupby(COLUMN_ASSESSMENT_NAME)[COLUMN_GRADE].agg(["count", number_missing])
-    to_plot[COLUMN_PERCENT_MISSING] = to_plot["number_missing"] / to_plot["count"] * 100
+    to_plot[COLUMN_PERCENT_MISSING] = to_plot["number_missing"] / to_plot["count"]
     
     # Plot figure
     missing_assignment_fig = go.Figure(layout=dict(template='plotly'))    
     missing_assignment_fig = px.bar(
         to_plot, 
         y=COLUMN_PERCENT_MISSING, 
-        text_auto=".2s", 
+        text_auto=".2%", 
         title=f"Percent of Missing {assessment_group_name} in {course_code}",
         category_orders={
             COLUMN_ASSESSMENT_NAME: assignment_types
         },
         hover_data=["count"]
     )
-    missing_assignment_fig.update_yaxes(range=[0, 100])
+    missing_assignment_fig.update_layout(
+        yaxis_range=[0, 1.05],
+        yaxis_tickformat=".0%"
+    )    
     
     return missing_assignment_fig
 
@@ -278,16 +291,21 @@ def render_assessment_trends_figure(
     
     # Precompute some columns
     education_df[COLUMN_SEMESTER] = education_df[COLUMN_SEMESTER_SEASON] + " " + education_df[COLUMN_SEMESTER_YEAR].astype(str)
-    education_df[COLUMN_PERCENTAGE] = education_df[COLUMN_GRADE] / education_df[COLUMN_TOTAL] * 100
+    education_df[COLUMN_PERCENTAGE] = education_df[COLUMN_GRADE] / education_df[COLUMN_TOTAL]
     
     # Helpful values
-    semesters_in_order = semester_order(education_df)
     course_code = f'{education_df.iloc[0][COLUMN_COURSE_DEPARTMENT]} {str(education_df.iloc[0][COLUMN_COURSE_NUMBER])}'
     assessment_group_name = education_df.iloc[0][COLUMN_ASSESSMENT_GROUP_NAME]
 
     # Perform analysis
-    to_plot = education_df.groupby([COLUMN_SEMESTER, COLUMN_ASSESSMENT_NAME]).agg({COLUMN_PERCENTAGE: "mean"}).reset_index()
-    to_plot = to_plot.sort_values(by=COLUMN_SEMESTER, key=lambda col: col.map(lambda x: semesters_in_order[x]))
+    to_plot = education_df.groupby([
+        COLUMN_SEMESTER_ID, 
+        COLUMN_SEMESTER, 
+        COLUMN_ASSESSMENT_NAME
+    ]).agg({
+        COLUMN_PERCENTAGE: "mean"
+    }).reset_index()
+    to_plot = to_plot.sort_values(by=COLUMN_SEMESTER_ID)
     
     # Plot figure
     trend_fig = go.Figure(layout=dict(template='plotly'))    
@@ -299,10 +317,14 @@ def render_assessment_trends_figure(
         markers=True,
         title=f"Average Grades for {assessment_group_name} in {course_code} by Semester",
         category_orders={
-            COLUMN_SEMESTER: list(semesters_in_order.keys())
+            COLUMN_SEMESTER: SEMESTER_ORDER,
+            COLUMN_ASSESSMENT_NAME: ASSESSMENT_ORDER
         },
     ) 
-    trend_fig.update_yaxes(range=[0, 100])
+    trend_fig.update_layout(
+        yaxis_range=[0, 1.05],
+        yaxis_tickformat=".0%"
+    )
     
     return trend_fig
 
@@ -364,6 +386,7 @@ def render_assessment_times_figure(
             "Time Taken count"
         ]
     )
+
     
     return time_fig
 

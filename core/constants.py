@@ -66,9 +66,11 @@ COLUMN_TIME_TAKEN = "Time Taken"
 COLUMN_TOTAL = "Total"
 
 # Analysis headings
+COLUMN_AVERAGE = "Average"
 COLUMN_COUNT = "Count"
 COLUMN_CUMULATIVE_ENROLLMENT_TOTAL = "Cumulative Enrollment Total"
 COLUMN_CLASSROOM = "Classroom"
+COLUMN_MEDIAN = "Median"
 COLUMN_PERCENTAGE = "Percentage"
 COLUMN_PERCENT_MISSING = "Percent Missing"
 COLUMN_SEMESTER = "Semester"
@@ -110,13 +112,14 @@ ID_ASSESSMENT_GROUP_FILTER = "assessment-group-filter"
 ID_ASSESSMENT_FILTER = "assessment-filter"
 
 # Category orders constants
-SEMESTERS = pd.read_csv(URL_SEMESTERS)[
+ASSESSMENT_ORDER = pd.read_csv(URL_ASSESSMENTS)[COLUMN_ASSESSMENT_NAME]
+COHORT_ORDER = ["Instructor", "Department", "College", "University"]
+METRIC_ORDER = [COLUMN_AVERAGE, COLUMN_MEDIAN]
+SEMESTER_ORDER = pd.read_csv(URL_SEMESTERS)[
     [COLUMN_SEMESTER_SEASON, COLUMN_SEMESTER_YEAR]
 ].astype(str).apply(" ".join, axis=1)
+QUESTION_ORDER = pd.read_csv(URL_SEI_QUESTIONS)[COLUMN_QUESTION]
 
-QUESTIONS = pd.read_csv(URL_SEI_QUESTIONS)[COLUMN_QUESTION]
-
-COHORTS = ["Instructor", "Department", "College", "University"]
 
 # TODO: remove these and rely on the data tables
 # Various mappings for charts

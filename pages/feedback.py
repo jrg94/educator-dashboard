@@ -88,9 +88,9 @@ def render_sei_ratings_figure(
         markers=True, 
         title="Student Evaluation of Instruction Trends by Cohort",
         category_orders={
-            COLUMN_SEMESTER: SEMESTERS, 
-            COLUMN_COHORT: COHORTS,
-            COLUMN_QUESTION: QUESTIONS
+            COLUMN_SEMESTER: SEMESTER_ORDER, 
+            COLUMN_COHORT: COHORT_ORDER,
+            COLUMN_QUESTION: QUESTION_ORDER
         },
         height=800
     )
