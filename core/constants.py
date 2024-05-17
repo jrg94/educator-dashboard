@@ -15,6 +15,13 @@ URL_SEI_INSTRUCTOR_SCORES = "https://raw.githubusercontent.com/jrg94/personal-da
 URL_SEI_REPORTS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/reports.csv"
 URL_SEMESTERS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/lookup-tables/semesters.csv"
 
+# Page constants
+HOME_PATH = "/"
+HOME_TITLE = "The Educator Dashboard"
+ASSESSMENT_PATH = "/assessment"
+FEEDBACK_PATH = "/feedback"
+HISTORY_PATH = "/history"
+
 # Column headings
 COLUMN_ASSESSMENT_ID = "Assessment ID"
 COLUMN_ASSESSMENT_GROUP_ID = "Assessment Group ID"
@@ -24,6 +31,7 @@ COLUMN_COHORT = "Cohort"
 COLUMN_COURSE_DEPARTMENT = "Course Department"
 COLUMN_COURSE_ID = "Course ID"
 COLUMN_COURSE_NUMBER = "Course Number"
+COLUMN_DATE_TIME = "DateTime"
 COLUMN_GRADE = "Grade"
 COLUMN_SECTION_ID = "Section ID"
 COLUMN_SEMESTER_ID = "Semester ID"
@@ -31,6 +39,7 @@ COLUMN_SEMESTER_SEASON = "Semester Season"
 COLUMN_SEMESTER_YEAR = "Semester Year"
 COLUMN_QUESTION_ID = "SEI Question ID"
 COLUMN_REPORT_ID = "SEI Report ID"
+COLUMN_TIMESTAMP = "Timestamp"
 COLUMN_TOTAL = "Total"
 
 # Data IDs

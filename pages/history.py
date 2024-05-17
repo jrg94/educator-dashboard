@@ -6,12 +6,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 from dash import Input, Output, callback, dcc, html
 
-from core.constants import (COLUMN_COURSE_DEPARTMENT, COLUMN_COURSE_ID,
-                            COLUMN_COURSE_NUMBER, COLUMN_SEMESTER_ID,
-                            COLUMN_SEMESTER_SEASON, COLUMN_SEMESTER_YEAR,
-                            ID_HISTORY_DATA, ID_ROOM_COUNTS_FIG,
-                            ID_STUDENT_COUNTS_FIG, ID_TIME_COUNTS_FIG)
-from core.data import load_teaching_history
+from core.constants import *
+from core.data import *
 
 dash.register_page(
     __name__,

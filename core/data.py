@@ -8,7 +8,7 @@ def load_teaching_history() -> dcc.Store:
     """
     Loads my teaching history from a series of remote CSVs. The result is
     returned as a store object.
-    
+
     :return: the teaching history data as a store
     """
     # Load necessary data

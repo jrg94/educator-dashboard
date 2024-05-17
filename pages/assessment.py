@@ -9,13 +9,13 @@ from dash import Input, Output, callback, dcc, html
 
 from core.constants import *
 from core.data import *
-from core.utils import semester_order
+from core.utils import *
 
 dash.register_page(
     __name__,
-    path='/assessment',
-    name="Assessment",
-    title="The Educator Dashboard: Assessment"
+    path=ASSESSMENT_PATH,
+    name=ASSESSMENT_NAME,
+    title=ASSESSMENT_TITLE
 )
 
 # Helper functions
