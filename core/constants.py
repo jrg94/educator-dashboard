@@ -45,10 +45,12 @@ COLUMN_COURSE_NUMBER = "Course Number"
 COLUMN_COURSE_TYPE = "Course Type"
 COLUMN_DATE_TIME = "DateTime"
 COLUMN_EDUCATOR_TITLE = "Educator Title"
+COLUMN_ENROLLMENT_TOTAL = "Enrollment Total"
 COLUMN_GRADE = "Grade"
 COLUMN_SECTION_BUILDING = "Section Building"
 COLUMN_SECTION_ID = "Section ID"
 COLUMN_SECTION_ROOM_NUMBER = "Section Room Number"
+COLUMN_SECTION_START_TIME = "Section Start Time"
 COLUMN_SEMESTER_ID = "Semester ID"
 COLUMN_SEMESTER_SEASON = "Semester Season"
 COLUMN_SEMESTER_YEAR = "Semester Year"
@@ -58,6 +60,9 @@ COLUMN_TIMESTAMP = "Timestamp"
 COLUMN_TOTAL = "Total"
 
 # Analysis headings
+COLUMN_CUMULATIVE_ENROLLMENT_TOTAL = "Cumulative Enrollment Total"
+COLUMN_CLASSROOM = "Classroom"
+COLUMN_SEMESTER = "Semester"
 
 # Data IDs
 ID_ASSIGNMENT_SURVEY_DATA = "assignment-survey-data"

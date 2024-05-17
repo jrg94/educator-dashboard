@@ -54,15 +54,21 @@ def render_course_history_list(history_data: str) -> list[html.Li]:
     Output(ID_TIME_COUNTS_FIG, "figure"),
     Input(ID_HISTORY_DATA, "data")
 )
-def render_time_counts_fig(history_data):
+def render_time_counts_fig(history_data: str) -> go.Figure:
+    """
+    Creates a figure of the most common section times in my teaching history.
+    
+    :param history_data: the jsonified teaching history
+    :return: a bar graph
+    """
     history_df = pd.read_json(StringIO(history_data))
     history_df = history_df[history_df[COLUMN_COURSE_TYPE] == "Lecture"]
-    history_df = history_df.sort_values(by="Section Start Time")
+    history_df = history_df.sort_values(by=COLUMN_SECTION_START_TIME)
     
     time_counts_fig = go.Figure(layout=dict(template='plotly'))
     time_counts_fig = px.histogram(
         history_df,
-        x="Section Start Time"
+        x=COLUMN_SECTION_START_TIME
     ) 
     
     return time_counts_fig
@@ -72,16 +78,22 @@ def render_time_counts_fig(history_data):
     Output(ID_ROOM_COUNTS_FIG, "figure"),
     Input(ID_HISTORY_DATA, "data")
 )
-def render_time_counts_fig(history_data):
+def render_room_counts_fig(history_data: str) -> go.Figure:
+    """
+    Creates a figure of the most common classrooms in my teaching history.
+    
+    :param history_data: the jsonified teaching history
+    :return: a bar graph
+    """
     history_df = pd.read_json(StringIO(history_data))
     history_df = history_df[history_df[COLUMN_COURSE_TYPE] == "Lecture"]
-    history_df["Classroom"] = history_df[COLUMN_SECTION_BUILDING] + " " + history_df[COLUMN_SECTION_ROOM_NUMBER]
-    history_df = history_df.sort_values(by="Classroom")
+    history_df[COLUMN_CLASSROOM] = history_df[COLUMN_SECTION_BUILDING] + " " + history_df[COLUMN_SECTION_ROOM_NUMBER]
+    history_df = history_df.sort_values(by=COLUMN_CLASSROOM)
     
     time_counts_fig = go.Figure(layout=dict(template='plotly'))
     time_counts_fig = px.histogram(
         history_df,
-        x="Classroom"
+        x=COLUMN_CLASSROOM
     ) 
     
     return time_counts_fig
@@ -91,19 +103,25 @@ def render_time_counts_fig(history_data):
     Output(ID_STUDENT_COUNTS_FIG, "figure"),
     Input(ID_HISTORY_DATA, "data")
 )
-def render_time_counts_fig(history_data):
+def render_cumulative_enrollment_fig(history_data: str) -> go.Figure:
+    """
+    Creates a figure of the number of students I've acummulated over time.
+    
+    :param history_data: the jsonified teaching history
+    :return: a bar graph
+    """
     history_df = pd.read_json(StringIO(history_data))
     history_df = history_df[history_df[COLUMN_COURSE_TYPE] == "Lecture"]
-    history_df["Semester"] = history_df[COLUMN_SEMESTER_SEASON] + " " + history_df[COLUMN_SEMESTER_YEAR].astype(str)
-    history_df = history_df.groupby("Semester").agg({"Enrollment Total": "sum", COLUMN_SEMESTER_ID: "first"}).reset_index()
+    history_df[COLUMN_SEMESTER] = history_df[COLUMN_SEMESTER_SEASON] + " " + history_df[COLUMN_SEMESTER_YEAR].astype(str)
+    history_df = history_df.groupby(COLUMN_SEMESTER).agg({COLUMN_ENROLLMENT_TOTAL: "sum", COLUMN_SEMESTER_ID: "first"}).reset_index()
     history_df = history_df.sort_values(by=COLUMN_SEMESTER_ID)
-    history_df["Cumulative Enrollment Total"] = history_df["Enrollment Total"].cumsum()
+    history_df[COLUMN_CUMULATIVE_ENROLLMENT_TOTAL] = history_df[COLUMN_ENROLLMENT_TOTAL].cumsum()
     
     time_counts_fig = go.Figure(layout=dict(template='plotly'))
     time_counts_fig = px.bar(
         history_df,
-        x="Semester",
-        y="Cumulative Enrollment Total"
+        x=COLUMN_SEMESTER,
+        y=COLUMN_CUMULATIVE_ENROLLMENT_TOTAL
     ) 
     
     return time_counts_fig
@@ -168,10 +186,6 @@ layout = html.Div([
         [dcc.Graph(id=ID_ROOM_COUNTS_FIG)],
         type="graph"
     ),
-    # TODO: I had plans for a hall of fame section here, which listed students
-    # who have gone to do wonderful things. I also considered graphing my 
-    # letters of recommendation and even my communications with previous 
-    # students, but that seemed weird. The hall of fame still seems cool though.
     html.H2("Course Changes"),
     html.P(
         """
