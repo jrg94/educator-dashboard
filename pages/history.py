@@ -56,7 +56,7 @@ def render_course_history_list(history_data: str) -> list[html.Li]:
 )
 def render_time_counts_fig(history_data):
     history_df = pd.read_json(StringIO(history_data))
-    history_df = history_df[history_df["Course Type"] == "Lecture"]
+    history_df = history_df[history_df[COLUMN_COURSE_TYPE] == "Lecture"]
     history_df = history_df.sort_values(by="Section Start Time")
     
     time_counts_fig = go.Figure(layout=dict(template='plotly'))
@@ -74,8 +74,8 @@ def render_time_counts_fig(history_data):
 )
 def render_time_counts_fig(history_data):
     history_df = pd.read_json(StringIO(history_data))
-    history_df = history_df[history_df["Course Type"] == "Lecture"]
-    history_df["Classroom"] = history_df["Section Building"] + " " + history_df["Section Room Number"]
+    history_df = history_df[history_df[COLUMN_COURSE_TYPE] == "Lecture"]
+    history_df["Classroom"] = history_df[COLUMN_SECTION_BUILDING] + " " + history_df[COLUMN_SECTION_ROOM_NUMBER]
     history_df = history_df.sort_values(by="Classroom")
     
     time_counts_fig = go.Figure(layout=dict(template='plotly'))
@@ -93,7 +93,7 @@ def render_time_counts_fig(history_data):
 )
 def render_time_counts_fig(history_data):
     history_df = pd.read_json(StringIO(history_data))
-    history_df = history_df[history_df["Course Type"] == "Lecture"]
+    history_df = history_df[history_df[COLUMN_COURSE_TYPE] == "Lecture"]
     history_df["Semester"] = history_df[COLUMN_SEMESTER_SEASON] + " " + history_df[COLUMN_SEMESTER_YEAR].astype(str)
     history_df = history_df.groupby("Semester").agg({"Enrollment Total": "sum", COLUMN_SEMESTER_ID: "first"}).reset_index()
     history_df = history_df.sort_values(by=COLUMN_SEMESTER_ID)
