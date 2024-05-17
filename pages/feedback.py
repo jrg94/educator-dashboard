@@ -54,7 +54,9 @@ def create_course_eval_fig(course_eval_data, question, axes_labels):
     Output(ID_SEI_RATINGS_FIG, "figure"),
     Input(ID_SEI_DATA, "data")
 )
-def render_sei_ratings_figure(sei_ratings_history: str) -> go.Figure:
+def render_sei_ratings_figure(
+    sei_ratings_history: str
+) -> go.Figure:
     """
     Creates an SEI data figure showing all of the SEI data results over "time", 
     where time is a categorical semester string that is added to the SEI data. 
@@ -70,12 +72,9 @@ def render_sei_ratings_figure(sei_ratings_history: str) -> go.Figure:
     # Precompute columns 
     sei_ratings_df[COLUMN_SEMESTER] = sei_ratings_df[COLUMN_SEMESTER_SEASON] + " " + sei_ratings_df[COLUMN_SEMESTER_YEAR].astype(str)
     
-    # Helpful values
-    semesters_in_order = semester_order(sei_ratings_df)
-    
     # Prioritize maximum semesterly scores
     sei_ratings_df = sei_ratings_df.iloc[sei_ratings_df.groupby([COLUMN_SEMESTER, COLUMN_QUESTION_ID, COLUMN_COHORT])[COLUMN_MEAN].agg(pd.Series.idxmax)]
-    sei_ratings_df = sei_ratings_df.sort_values(by=COLUMN_SEMESTER, key=lambda col: col.map(lambda x: semesters_in_order[x]))
+    sei_ratings_df = sei_ratings_df.sort_values(by=COLUMN_SEMESTER_ID)
         
     # Plot figure
     sei_fig = go.Figure(layout=dict(template='plotly'))    
@@ -89,8 +88,9 @@ def render_sei_ratings_figure(sei_ratings_history: str) -> go.Figure:
         markers=True, 
         title="Student Evaluation of Instruction Trends by Cohort",
         category_orders={
-            COLUMN_SEMESTER: list(semesters_in_order.keys()),
-            COLUMN_COHORT: ["Instructor", "Department", "College", "University"]
+            COLUMN_SEMESTER: SEMESTERS, 
+            COLUMN_COHORT: COHORTS,
+            COLUMN_QUESTION: QUESTIONS
         },
         height=800
     )

@@ -1,3 +1,4 @@
+import pandas as pd
 import plotly.express as px
 
 # Data URLS
@@ -107,6 +108,15 @@ ID_COURSE_HISTORY_LIST = "course-list"
 ID_COURSE_FILTER = "course-filter"
 ID_ASSESSMENT_GROUP_FILTER = "assessment-group-filter"
 ID_ASSESSMENT_FILTER = "assessment-filter"
+
+# Category orders constants
+SEMESTERS = pd.read_csv(URL_SEMESTERS)[
+    [COLUMN_SEMESTER_SEASON, COLUMN_SEMESTER_YEAR]
+].astype(str).apply(" ".join, axis=1)
+
+QUESTIONS = pd.read_csv(URL_SEI_QUESTIONS)[COLUMN_QUESTION]
+
+COHORTS = ["Instructor", "Department", "College", "University"]
 
 # TODO: remove these and rely on the data tables
 # Various mappings for charts
