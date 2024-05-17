@@ -15,9 +15,9 @@ from core.utils import *
 
 dash.register_page(
     __name__,
-    path='/feedback',
-    name="Feedback",
-    title="The Educator Dashboard: Feedback"
+    path=FEEDBACK_PATH,
+    name=FEEDBACK_NAME,
+    title=FEEDBACK_TITLE
 )
 
 # Helper functions

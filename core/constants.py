@@ -17,10 +17,20 @@ URL_SEMESTERS = "https://raw.githubusercontent.com/jrg94/personal-data/main/educ
 
 # Page constants
 HOME_PATH = "/"
+HOME_NAME = "Home"
 HOME_TITLE = "The Educator Dashboard"
+
 ASSESSMENT_PATH = "/assessment"
+ASSESSMENT_NAME = "Assessment"
+ASSESSMENT_TITLE = f"{HOME_TITLE}: {ASSESSMENT_NAME}"
+
 FEEDBACK_PATH = "/feedback"
+FEEDBACK_NAME = "Feedback"
+FEEDBACK_TITLE = f"{HOME_TITLE}: {FEEDBACK_NAME}"
+
 HISTORY_PATH = "/history"
+HISTORY_NAME = "History"
+HISTORY_TITLE = f"{HOME_TITLE}: {HISTORY_NAME}"
 
 # Column headings
 COLUMN_ASSESSMENT_ID = "Assessment ID"
@@ -76,6 +86,7 @@ ID_COURSE_FILTER = "course-filter"
 ID_ASSESSMENT_GROUP_FILTER = "assessment-group-filter"
 ID_ASSESSMENT_FILTER = "assessment-filter"
 
+# TODO: remove these and rely on the data tables
 # Various mappings for charts
 MAPPING_SATISFACTION = {
     1: 'Very Dissatisfied',

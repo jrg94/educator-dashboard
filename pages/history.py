@@ -11,9 +11,9 @@ from core.data import *
 
 dash.register_page(
     __name__,
-    path='/history',
-    name="History",
-    title="The Educator Dashboard: History"
+    path=HISTORY_PATH,
+    name=HISTORY_NAME,
+    title=HISTORY_TITLE
 )
 
 # Graph callbacks
