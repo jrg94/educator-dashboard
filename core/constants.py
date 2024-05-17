@@ -54,6 +54,8 @@ COLUMN_REPORT_ID = "SEI Report ID"
 COLUMN_TIMESTAMP = "Timestamp"
 COLUMN_TOTAL = "Total"
 
+# Analysis headings
+
 # Data IDs
 ID_ASSIGNMENT_SURVEY_DATA = "assignment-survey-data"
 ID_COURSE_EVAL_DATA = "course-eval-data"

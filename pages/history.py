@@ -22,7 +22,13 @@ dash.register_page(
     Output(ID_COURSE_HISTORY_LIST, "children"),
     Input(ID_HISTORY_DATA, "data")
 )
-def render_course_history_list(history_data):
+def render_course_history_list(history_data: str) -> list[html.Li]:
+    """
+    Creates a list of all the courses I've taught with key information.
+    
+    :param history_data: the jsonified teaching history
+    :return: a list of list item objects
+    """
     history_df = pd.read_json(StringIO(history_data))
     
     list_items = []
@@ -89,7 +95,7 @@ def render_time_counts_fig(history_data):
     history_df = pd.read_json(StringIO(history_data))
     history_df = history_df[history_df["Course Type"] == "Lecture"]
     history_df["Semester"] = history_df[COLUMN_SEMESTER_SEASON] + " " + history_df[COLUMN_SEMESTER_YEAR].astype(str)
-    history_df = history_df.groupby("Semester").agg({"Enrollment Total": "sum", "Semester ID": "first"}).reset_index()
+    history_df = history_df.groupby("Semester").agg({"Enrollment Total": "sum", COLUMN_SEMESTER_ID: "first"}).reset_index()
     history_df = history_df.sort_values(by=COLUMN_SEMESTER_ID)
     history_df["Cumulative Enrollment Total"] = history_df["Enrollment Total"].cumsum()
     

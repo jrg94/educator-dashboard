@@ -128,15 +128,15 @@ def render_assessment_calculations_figure(education_data: str, assessment_group_
     # Filter
     education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
     education_df = education_df[education_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter]
-    education_df = education_df[education_df["Grade"] != "EX"]
-    education_df = education_df[education_df["Total"] != 0]
+    education_df = education_df[education_df[COLUMN_GRADE] != "EX"]
+    education_df = education_df[education_df[COLUMN_TOTAL] != 0]
     
     # Type cast
-    education_df["Grade"] = pd.to_numeric(education_df["Grade"])
-    education_df["Total"] = pd.to_numeric(education_df["Total"])
+    education_df[COLUMN_GRADE] = pd.to_numeric(education_df[COLUMN_GRADE])
+    education_df[COLUMN_TOTAL] = pd.to_numeric(education_df[COLUMN_TOTAL])
     
     # Precompute columns 
-    education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
+    education_df["Percentage"] = education_df[COLUMN_GRADE] / education_df[COLUMN_TOTAL] * 100
     
     # Perform analysis
     to_plot = education_df.groupby(COLUMN_ASSESSMENT_NAME)["Percentage"].aggregate({"mean", "median", "count"})
