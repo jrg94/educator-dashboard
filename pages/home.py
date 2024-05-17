@@ -4,7 +4,7 @@ from dash import html
 from core.constants import *
 
 dash.register_page(
-    __name__, 
+    __name__,
     path=HOME_PATH,
     name=HOME_NAME,
     title=HOME_TITLE
@@ -26,19 +26,28 @@ layout = html.Div([
         [
             html.Li(
                 [
-                    html.A("Assessment", href=dash.get_relative_path(ASSESSMENT_PATH)),
+                    html.A(
+                        "Assessment",
+                        href=dash.get_relative_path(ASSESSMENT_PATH)
+                    ),
                     ": shares a variety of plots around student grades"
                 ]
             ),
             html.Li(
                 [
-                    html.A("Feedback", href=dash.get_relative_path(FEEDBACK_PATH)),
+                    html.A(
+                        "Feedback",
+                        href=dash.get_relative_path(FEEDBACK_PATH)
+                    ),
                     ": shares a variety of plots around student feedback"
                 ]
             ),
             html.Li(
                 [
-                    html.A("History", href=dash.get_relative_path(HISTORY_PATH)),
+                    html.A(
+                        "History",
+                        href=dash.get_relative_path(HISTORY_PATH)
+                    ),
                     ": shares teaching developments over time"
                 ]
             ),
