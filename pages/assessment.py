@@ -106,7 +106,10 @@ def render_grade_overview_figure(
         title=f"Overview of Course Grades by Type for {course_code}",
         hover_data=["count"]
     )
-    grade_fig.update_layout(yaxis_tickformat=".0%")
+    grade_fig.update_layout(
+        yaxis_range=[0, 1.05],
+        yaxis_tickformat=".0%"
+    )
     
     return grade_fig
 
@@ -145,7 +148,7 @@ def render_assessment_calculations_figure(
     education_df[COLUMN_TOTAL] = pd.to_numeric(education_df[COLUMN_TOTAL])
     
     # Precompute columns 
-    education_df[COLUMN_PERCENTAGE] = education_df[COLUMN_GRADE] / education_df[COLUMN_TOTAL] * 100
+    education_df[COLUMN_PERCENTAGE] = education_df[COLUMN_GRADE] / education_df[COLUMN_TOTAL]
     
     # Perform analysis
     to_plot = education_df.groupby(COLUMN_ASSESSMENT_NAME)[COLUMN_PERCENTAGE].aggregate({"mean", "median", "count"})
@@ -165,14 +168,17 @@ def render_assessment_calculations_figure(
             "count": "Count"
         },
         barmode='group',
-        text_auto=".2s",
+        text_auto=".0%",
         title=f"Average and Median Grades for {assessment_group_name} in {course_code}",
         category_orders={
             COLUMN_ASSESSMENT_NAME: assignment_types
         },
         hover_data=["count"]
     )
-    assignment_calculations_fig.update_yaxes(range=[0, 100])
+    assignment_calculations_fig.update_layout(
+        yaxis_range=[0, 1.05],
+        yaxis_tickformat=".0%"
+    )
     
     return assignment_calculations_fig
 
