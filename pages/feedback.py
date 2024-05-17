@@ -127,28 +127,28 @@ def render_sei_comments_figure(sei_comments_history: str):
     
     # Tokenizes the comments and computes their counts
     results = Counter()
-    sei_comments_df["Comment"].str.lower().apply(nltk.word_tokenize).apply(results.update)
+    sei_comments_df[COLUMN_COMMENT].str.lower().apply(nltk.word_tokenize).apply(results.update)
     word_counts = pd.DataFrame.from_dict(results, orient="index").reset_index()
-    word_counts = word_counts.rename(columns={"index": "Word", 0:"Count"}) 
+    word_counts = word_counts.rename(columns={"index": COLUMN_WORD, 0: COLUMN_COUNT}) 
     
     # Removes stop words and punctuation from the totals
     stop = stopwords.words("english")
-    word_counts = word_counts[~word_counts["Word"].isin(stop)]
-    word_counts = word_counts[~word_counts["Word"].isin(list(string.punctuation))]
-    word_counts = word_counts[~word_counts["Word"].str.contains("'")]
+    word_counts = word_counts[~word_counts[COLUMN_WORD].isin(stop)]
+    word_counts = word_counts[~word_counts[COLUMN_WORD].isin(list(string.punctuation))]
+    word_counts = word_counts[~word_counts[COLUMN_WORD].str.contains("'")]
     
     # Sorts and pulls the top words
     top_count = 40
-    word_counts = word_counts.sort_values(by="Count", ascending=False)
+    word_counts = word_counts.sort_values(by=COLUMN_COUNT, ascending=False)
     word_counts = word_counts.head(top_count)
-    word_counts = word_counts.sort_values(by="Count")
+    word_counts = word_counts.sort_values(by=COLUMN_COUNT)
     
     # Plot figure
     sei_comment_fig = go.Figure(layout=dict(template='plotly'))    
     sei_comment_fig = px.bar(
         word_counts,
-        x="Count",
-        y="Word",
+        x=COLUMN_COUNT,
+        y=COLUMN_WORD,
         title=f"Top {top_count} Most Common Words in SEI Comments",
         height=800
     )
