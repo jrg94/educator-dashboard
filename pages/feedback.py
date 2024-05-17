@@ -54,7 +54,7 @@ def create_course_eval_fig(course_eval_data, question, axes_labels):
     Output(ID_SEI_RATINGS_FIG, "figure"),
     Input(ID_SEI_DATA, "data")
 )
-def render_sei_ratings_figure(sei_ratings_history: str):
+def render_sei_ratings_figure(sei_ratings_history: str) -> go.Figure:
     """
     Creates an SEI data figure showing all of the SEI data results over "time", 
     where time is a categorical semester string that is added to the SEI data. 
@@ -68,29 +68,29 @@ def render_sei_ratings_figure(sei_ratings_history: str):
     sei_ratings_df = pd.read_json(StringIO(sei_ratings_history))
         
     # Precompute columns 
-    sei_ratings_df["Semester"] = sei_ratings_df[COLUMN_SEMESTER_SEASON] + " " + sei_ratings_df[COLUMN_SEMESTER_YEAR].astype(str)
+    sei_ratings_df[COLUMN_SEMESTER] = sei_ratings_df[COLUMN_SEMESTER_SEASON] + " " + sei_ratings_df[COLUMN_SEMESTER_YEAR].astype(str)
     
     # Helpful values
     semesters_in_order = semester_order(sei_ratings_df)
     
     # Prioritize maximum semesterly scores
-    sei_ratings_df = sei_ratings_df.iloc[sei_ratings_df.groupby(["Semester", COLUMN_QUESTION_ID, COLUMN_COHORT])["Mean"].agg(pd.Series.idxmax)]
-    sei_ratings_df = sei_ratings_df.sort_values(by="Semester", key=lambda col: col.map(lambda x: semesters_in_order[x]))
+    sei_ratings_df = sei_ratings_df.iloc[sei_ratings_df.groupby([COLUMN_SEMESTER, COLUMN_QUESTION_ID, COLUMN_COHORT])[COLUMN_MEAN].agg(pd.Series.idxmax)]
+    sei_ratings_df = sei_ratings_df.sort_values(by=COLUMN_SEMESTER, key=lambda col: col.map(lambda x: semesters_in_order[x]))
         
     # Plot figure
     sei_fig = go.Figure(layout=dict(template='plotly'))    
     sei_fig = px.line(
         sei_ratings_df, 
-        x="Semester", 
-        y="Mean", 
-        color="Cohort", 
-        facet_col="SEI Question", 
+        x=COLUMN_SEMESTER, 
+        y=COLUMN_MEAN, 
+        color=COLUMN_COHORT, 
+        facet_col=COLUMN_QUESTION, 
         facet_col_wrap=2, 
         markers=True, 
         title="Student Evaluation of Instruction Trends by Cohort",
         category_orders={
-            "Semester": list(semesters_in_order.keys()),
-            "Cohort": ["Instructor", "Department", "College", "University"]
+            COLUMN_SEMESTER: list(semesters_in_order.keys()),
+            COLUMN_COHORT: ["Instructor", "Department", "College", "University"]
         },
         height=800
     )
