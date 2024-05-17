@@ -13,9 +13,9 @@ from core.utils import *
 
 dash.register_page(
     __name__,
-    path=ASSESSMENT_PATH,
-    name=ASSESSMENT_NAME,
-    title=ASSESSMENT_TITLE
+    path=ASSESSMENT_PAGE_PATH,
+    name=ASSESSMENT_PAGE_NAME,
+    title=ASSESSMENT_PAGE_TITLE
 )
 
 # Helper functions
@@ -166,7 +166,7 @@ def render_assessment_calculations_figure(
         text_auto=".2s",
         title=f"Average and Median Grades for {assessment_group_name} in {course_code}",
         category_orders={
-            ASSESSMENT_NAME: assignment_types
+            COLUMN_ASSESSMENT_NAME: assignment_types
         },
         hover_data=["count"]
     )
@@ -278,7 +278,7 @@ def render_assessment_trends_figure(
     assessment_group_name = education_df.iloc[0][COLUMN_ASSESSMENT_GROUP_NAME]
 
     # Perform analysis
-    to_plot = education_df.groupby([COLUMN_SEMESTER, ASSESSMENT_NAME]).agg({COLUMN_PERCENTAGE: "mean"}).reset_index()
+    to_plot = education_df.groupby([COLUMN_SEMESTER, COLUMN_ASSESSMENT_NAME]).agg({COLUMN_PERCENTAGE: "mean"}).reset_index()
     to_plot = to_plot.sort_values(by=COLUMN_SEMESTER, key=lambda col: col.map(lambda x: semesters_in_order[x]))
     
     # Plot figure
@@ -287,7 +287,7 @@ def render_assessment_trends_figure(
         to_plot,
         x=COLUMN_SEMESTER,
         y=COLUMN_PERCENTAGE,
-        color=ASSESSMENT_NAME,
+        color=COLUMN_ASSESSMENT_NAME,
         markers=True,
         title=f"Average Grades for {assessment_group_name} in {course_code} by Semester",
         category_orders={

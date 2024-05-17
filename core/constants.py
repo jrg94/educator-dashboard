@@ -17,21 +17,21 @@ URL_SEI_REPORTS = "https://raw.githubusercontent.com/jrg94/personal-data/main/ed
 URL_SEMESTERS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/lookup-tables/semesters.csv"
 
 # Page constants
-HOME_PATH = "/"
-HOME_NAME = "Home"
-HOME_TITLE = "The Educator Dashboard"
+HOME_PAGE_PATH = "/"
+HOME_PAGE_NAME = "Home"
+HOME_PAGE_TITLE = "The Educator Dashboard"
 
-ASSESSMENT_PATH = "/assessment"
-ASSESSMENT_NAME = "Assessment"
-ASSESSMENT_TITLE = f"{HOME_TITLE}: {ASSESSMENT_NAME}"
+ASSESSMENT_PAGE_PATH = "/assessment"
+ASSESSMENT_PAGE_NAME = "Assessment"
+ASSESSMENT_PAGE_TITLE = f"{HOME_PAGE_TITLE}: {ASSESSMENT_PAGE_NAME}"
 
-FEEDBACK_PATH = "/feedback"
-FEEDBACK_NAME = "Feedback"
-FEEDBACK_TITLE = f"{HOME_TITLE}: {FEEDBACK_NAME}"
+FEEDBACK_PAGE_PATH = "/feedback"
+FEEDBACK_PAGE_NAME = "Feedback"
+FEEDBACK_PAGE_TITLE = f"{HOME_PAGE_TITLE}: {FEEDBACK_PAGE_NAME}"
 
-HISTORY_PATH = "/history"
-HISTORY_NAME = "History"
-HISTORY_TITLE = f"{HOME_TITLE}: {HISTORY_NAME}"
+HISTORY_PAGE_PATH = "/history"
+HISTORY_PAGE_NAME = "History"
+HISTORY_PAGE_TITLE = f"{HOME_PAGE_TITLE}: {HISTORY_PAGE_NAME}"
 
 # Column headings
 COLUMN_ASSESSMENT_ID = "Assessment ID"

@@ -15,9 +15,9 @@ from core.utils import *
 
 dash.register_page(
     __name__,
-    path=FEEDBACK_PATH,
-    name=FEEDBACK_NAME,
-    title=FEEDBACK_TITLE
+    path=FEEDBACK_PAGE_PATH,
+    name=FEEDBACK_PAGE_NAME,
+    title=FEEDBACK_PAGE_TITLE
 )
 
 # Helper functions

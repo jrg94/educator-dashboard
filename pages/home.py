@@ -5,9 +5,9 @@ from core.constants import *
 
 dash.register_page(
     __name__,
-    path=HOME_PATH,
-    name=HOME_NAME,
-    title=HOME_TITLE
+    path=HOME_PAGE_PATH,
+    name=HOME_PAGE_NAME,
+    title=HOME_PAGE_TITLE
 )
 
 layout = html.Div([
@@ -28,7 +28,7 @@ layout = html.Div([
                 [
                     html.A(
                         "Assessment",
-                        href=dash.get_relative_path(ASSESSMENT_PATH)
+                        href=dash.get_relative_path(ASSESSMENT_PAGE_PATH)
                     ),
                     ": shares a variety of plots around student grades"
                 ]
@@ -37,7 +37,7 @@ layout = html.Div([
                 [
                     html.A(
                         "Feedback",
-                        href=dash.get_relative_path(FEEDBACK_PATH)
+                        href=dash.get_relative_path(FEEDBACK_PAGE_PATH)
                     ),
                     ": shares a variety of plots around student feedback"
                 ]
@@ -46,7 +46,7 @@ layout = html.Div([
                 [
                     html.A(
                         "History",
-                        href=dash.get_relative_path(HISTORY_PATH)
+                        href=dash.get_relative_path(HISTORY_PAGE_PATH)
                     ),
                     ": shares teaching developments over time"
                 ]

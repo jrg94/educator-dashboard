@@ -11,9 +11,9 @@ from core.data import *
 
 dash.register_page(
     __name__,
-    path=HISTORY_PATH,
-    name=HISTORY_NAME,
-    title=HISTORY_TITLE
+    path=HISTORY_PAGE_PATH,
+    name=HISTORY_PAGE_NAME,
+    title=HISTORY_PAGE_TITLE
 )
 
 # Graph callbacks
