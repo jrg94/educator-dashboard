@@ -19,7 +19,7 @@ dash.register_page(
 # Graph callbacks
 
 @callback(
-    Output("test", "children"),
+    Output(ID_COURSE_HISTORY_LIST, "children"),
     Input(ID_HISTORY_DATA, "data")
 )
 def render_course_history_list(history_data):
@@ -32,10 +32,10 @@ def render_course_history_list(history_data):
         filtered_df = history_df[history_df[COLUMN_COURSE_ID] == course_id]
         course_department = filtered_df.iloc[0][COLUMN_COURSE_DEPARTMENT]
         course_number = filtered_df.iloc[0][COLUMN_COURSE_NUMBER]
-        course_name = filtered_df.iloc[0]["Course Name"]
+        course_name = filtered_df.iloc[0][COLUMN_COURSE_NAME]
         min_year = filtered_df[COLUMN_SEMESTER_YEAR].min()
         max_year = filtered_df[COLUMN_SEMESTER_YEAR].max()
-        title = filtered_df.iloc[0]["Educator Title"]
+        title = filtered_df.iloc[0][COLUMN_EDUCATOR_TITLE]
         list_item = html.Li(
             f"[{min_year} - {max_year}] {course_department} {course_number}—{course_name} as a {title}"
         )
@@ -119,7 +119,7 @@ layout = html.Div([
         following list details all of the courses I've taught.
         """
     ),
-    html.Ul(id="test"),
+    html.Ul(id=ID_COURSE_HISTORY_LIST),
     html.P(
         """
         At this point in my career, I've taught many students. To get a feel for
