@@ -6,7 +6,10 @@ from core.constants import *
 
 def load_teaching_history() -> dcc.Store:
     """
-    Loads only my teaching history.
+    Loads my teaching history from a series of remote CSVs. The result is
+    returned as a store object.
+    
+    :return: the teaching history data as a store
     """
     # Load necessary data
     course_sections_df = pd.read_csv(URL_COURSE_SECTIONS)
@@ -23,8 +26,9 @@ def load_teaching_history() -> dcc.Store:
 
 def load_assignment_survey_data() -> dcc.Store:
     """
-    Loads the assignment survey data from the remote CSV, cleans it, and 
-    computes some important metrics. The result is returned as a store object.
+    Loads the assignment survey data from a series of remote CSVs, cleans them, 
+    and computes some important metrics. The result is returned as a store 
+    object.
 
     :return: the assignment survey data as a store
     """
@@ -50,8 +54,8 @@ def load_assignment_survey_data() -> dcc.Store:
 
 def load_sei_data() -> dcc.Store:
     """
-    Loads the SEI data from the remote CSV. The result is returned as a store 
-    object.
+    Loads the SEI data from a series of remote CSVs. The result is returned as 
+    a store object.
 
     :return: the SEI data as a store
     """
@@ -115,8 +119,8 @@ def load_course_eval_data() -> dcc.Store:
 
 def load_education_data() -> dcc.Store:
     """
-    Loads the grade data from the remote CSV. The result is returned as a store 
-    object. 
+    Loads the grade data from a series of remote CSVs. The result is returned 
+    as a store object. 
 
     :return: the grade data as a store
     """
