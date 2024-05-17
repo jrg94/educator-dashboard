@@ -56,7 +56,10 @@ def blank_plot() -> go.Figure:
     Input(ID_EDUCATION_DATA, "data"),
     Input(ID_COURSE_FILTER, "value")
 )
-def render_grade_overview_figure(education_data: str, course_filter: int) -> go.Figure:
+def render_grade_overview_figure(
+    education_data: str, 
+    course_filter: int
+) -> go.Figure:
     """
     Plots an overview of the types of assessments that have been given in
     the current course. 
@@ -78,13 +81,13 @@ def render_grade_overview_figure(education_data: str, course_filter: int) -> go.
     education_df[COLUMN_TOTAL] = pd.to_numeric(education_df[COLUMN_TOTAL])
     
     # Precompute columns 
-    education_df["Percentage"] = education_df[COLUMN_GRADE] / education_df[COLUMN_TOTAL] * 100
+    education_df[COLUMN_PERCENTAGE] = education_df[COLUMN_GRADE] / education_df[COLUMN_TOTAL] * 100
         
     # Perform analysis
-    to_plot = education_df.groupby("Assessment Group Name")["Percentage"].aggregate({"mean", "median", "count"})
+    to_plot = education_df.groupby(COLUMN_ASSESSMENT_GROUP_NAME)[COLUMN_PERCENTAGE].aggregate({"mean", "median", "count"})
     
     # Helpful values
-    course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
+    course_code = f'{education_df.iloc[0][COLUMN_COURSE_DEPARTMENT]} {str(education_df.iloc[0][COLUMN_COURSE_NUMBER])}'
     
     # Plot figure
     grade_fig = go.Figure(layout=dict(template='plotly'))
@@ -112,7 +115,11 @@ def render_grade_overview_figure(education_data: str, course_filter: int) -> go.
     Input(ID_ASSESSMENT_GROUP_FILTER, "value"),
     Input(ID_COURSE_FILTER, "value")
 )
-def render_assessment_calculations_figure(education_data: str, assessment_group_filter: int, course_filter: int):
+def render_assessment_calculations_figure(
+    education_data: str, 
+    assessment_group_filter: int, 
+    course_filter: int
+) -> go.Figure:
     """
     Plots a breakdown of the averages and medians per assessment for a specific
     course and assessment group. 
@@ -136,13 +143,13 @@ def render_assessment_calculations_figure(education_data: str, assessment_group_
     education_df[COLUMN_TOTAL] = pd.to_numeric(education_df[COLUMN_TOTAL])
     
     # Precompute columns 
-    education_df["Percentage"] = education_df[COLUMN_GRADE] / education_df[COLUMN_TOTAL] * 100
+    education_df[COLUMN_PERCENTAGE] = education_df[COLUMN_GRADE] / education_df[COLUMN_TOTAL] * 100
     
     # Perform analysis
-    to_plot = education_df.groupby(COLUMN_ASSESSMENT_NAME)["Percentage"].aggregate({"mean", "median", "count"})
+    to_plot = education_df.groupby(COLUMN_ASSESSMENT_NAME)[COLUMN_PERCENTAGE].aggregate({"mean", "median", "count"})
     
     # Helpful variables
-    course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
+    course_code = f'{education_df.iloc[0][COLUMN_COURSE_DEPARTMENT]} {str(education_df.iloc[0][COLUMN_COURSE_NUMBER])}'
     assignment_types = education_df.sort_values(COLUMN_ASSESSMENT_ID)[COLUMN_ASSESSMENT_NAME].unique()
     assessment_group_name = education_df.iloc[0][COLUMN_ASSESSMENT_GROUP_NAME]
         
@@ -159,7 +166,7 @@ def render_assessment_calculations_figure(education_data: str, assessment_group_
         text_auto=".2s",
         title=f"Average and Median Grades for {assessment_group_name} in {course_code}",
         category_orders={
-            "Assessment Name": assignment_types
+            ASSESSMENT_NAME: assignment_types
         },
         hover_data=["count"]
     )
@@ -174,7 +181,11 @@ def render_assessment_calculations_figure(education_data: str, assessment_group_
     Input(ID_ASSESSMENT_GROUP_FILTER, "value"),
     Input(ID_COURSE_FILTER, "value")
 )
-def render_missing_assessments_figure(education_data: str, assessment_group_filter: int, course_filter: int):
+def render_missing_assessments_figure(
+    education_data: str, 
+    assessment_group_filter: int, 
+    course_filter: int
+) -> go.Figure:
     """
     Plots a breakdown of the averages and medians per assessment for a specific
     course and assessment group. 
@@ -190,14 +201,14 @@ def render_missing_assessments_figure(education_data: str, assessment_group_filt
     # Filter
     education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
     education_df = education_df[education_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter]
-    education_df = education_df[education_df["Grade"] != "EX"]
-    education_df = education_df[education_df["Total"] != 0]
+    education_df = education_df[education_df[COLUMN_GRADE] != "EX"]
+    education_df = education_df[education_df[COLUMN_TOTAL] != 0]
     
     # Type cast
-    education_df["Grade"] = pd.to_numeric(education_df["Grade"])
+    education_df[COLUMN_GRADE] = pd.to_numeric(education_df[COLUMN_GRADE])
     
     # Helpful values
-    course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
+    course_code = f'{education_df.iloc[0][COLUMN_COURSE_DEPARTMENT]} {str(education_df.iloc[0][COLUMN_COURSE_NUMBER])}'
     assignment_types = education_df.sort_values(COLUMN_ASSESSMENT_ID)[COLUMN_ASSESSMENT_NAME].unique()
     assessment_group_name = education_df.iloc[0][COLUMN_ASSESSMENT_GROUP_NAME]
     
@@ -206,14 +217,14 @@ def render_missing_assessments_figure(education_data: str, assessment_group_filt
         return len(series[series == 0])
     
     # Perform analysis
-    to_plot = education_df.groupby(COLUMN_ASSESSMENT_NAME)["Grade"].agg(["count", number_missing])
-    to_plot["Percent Missing"] = to_plot["number_missing"] / to_plot["count"] * 100
+    to_plot = education_df.groupby(COLUMN_ASSESSMENT_NAME)[COLUMN_GRADE].agg(["count", number_missing])
+    to_plot[COLUMN_PERCENT_MISSING] = to_plot["number_missing"] / to_plot["count"] * 100
     
     # Plot figure
     missing_assignment_fig = go.Figure(layout=dict(template='plotly'))    
     missing_assignment_fig = px.bar(
         to_plot, 
-        y="Percent Missing", 
+        y=COLUMN_PERCENT_MISSING, 
         text_auto=".2s", 
         title=f"Percent of Missing {assessment_group_name} in {course_code}",
         category_orders={
@@ -231,7 +242,11 @@ def render_missing_assessments_figure(education_data: str, assessment_group_filt
     Input(ID_ASSESSMENT_GROUP_FILTER, "value"),
     Input(ID_COURSE_FILTER, "value")
 ) 
-def render_assessment_trends_figure(education_data: str, assessment_group_filter: int, course_filter: int):
+def render_assessment_trends_figure(
+    education_data: str, 
+    assessment_group_filter: int, 
+    course_filter: int
+) -> go.Figure:
     """
     Plots the average grade for all assessments in an assessment group over time.
     
@@ -240,44 +255,43 @@ def render_assessment_trends_figure(education_data: str, assessment_group_filter
     :param assessment_group_filter: the assessment group ID
     :return: the grade overview figure object
     """
-    
     # Convert the data back into a dataframe
     education_df = pd.read_json(StringIO(education_data))
         
     # Filter
     education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
     education_df = education_df[education_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter]
-    education_df = education_df[education_df["Grade"] != "EX"]
-    education_df = education_df[education_df["Total"] != 0]
+    education_df = education_df[education_df[COLUMN_GRADE] != "EX"]
+    education_df = education_df[education_df[COLUMN_TOTAL] != 0]
     
     # Type cast
-    education_df["Grade"] = pd.to_numeric(education_df["Grade"])
-    education_df["Total"] = pd.to_numeric(education_df["Total"])
+    education_df[COLUMN_GRADE] = pd.to_numeric(education_df[COLUMN_GRADE])
+    education_df[COLUMN_TOTAL] = pd.to_numeric(education_df[COLUMN_TOTAL])
     
     # Precompute some columns
-    education_df["Semester"] = education_df[COLUMN_SEMESTER_SEASON] + " " + education_df[COLUMN_SEMESTER_YEAR].astype(str)
-    education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
+    education_df[COLUMN_SEMESTER] = education_df[COLUMN_SEMESTER_SEASON] + " " + education_df[COLUMN_SEMESTER_YEAR].astype(str)
+    education_df[COLUMN_PERCENTAGE] = education_df[COLUMN_GRADE] / education_df[COLUMN_TOTAL] * 100
     
     # Helpful values
     semesters_in_order = semester_order(education_df)
-    course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
+    course_code = f'{education_df.iloc[0][COLUMN_COURSE_DEPARTMENT]} {str(education_df.iloc[0][COLUMN_COURSE_NUMBER])}'
     assessment_group_name = education_df.iloc[0][COLUMN_ASSESSMENT_GROUP_NAME]
 
     # Perform analysis
-    to_plot = education_df.groupby(["Semester", "Assessment Name"]).agg({"Percentage": "mean"}).reset_index()
-    to_plot = to_plot.sort_values(by="Semester", key=lambda col: col.map(lambda x: semesters_in_order[x]))
+    to_plot = education_df.groupby([COLUMN_SEMESTER, ASSESSMENT_NAME]).agg({COLUMN_PERCENTAGE: "mean"}).reset_index()
+    to_plot = to_plot.sort_values(by=COLUMN_SEMESTER, key=lambda col: col.map(lambda x: semesters_in_order[x]))
     
     # Plot figure
     trend_fig = go.Figure(layout=dict(template='plotly'))    
     trend_fig = px.line(
         to_plot,
-        x="Semester",
-        y="Percentage",
-        color="Assessment Name",
+        x=COLUMN_SEMESTER,
+        y=COLUMN_PERCENTAGE,
+        color=ASSESSMENT_NAME,
         markers=True,
         title=f"Average Grades for {assessment_group_name} in {course_code} by Semester",
         category_orders={
-            "Semester": list(semesters_in_order.keys())
+            COLUMN_SEMESTER: list(semesters_in_order.keys())
         },
     ) 
     trend_fig.update_yaxes(range=[0, 100])
@@ -291,7 +305,11 @@ def render_assessment_trends_figure(education_data: str, assessment_group_filter
     Input(ID_ASSESSMENT_GROUP_FILTER, "value"),
     Input(ID_COURSE_FILTER, "value")
 ) 
-def render_assessment_times_figure(assignment_survey_data: str, assessment_group_filter: int, course_filter: int):
+def render_assessment_times_figure(
+    assignment_survey_data: str, 
+    assessment_group_filter: int, 
+    course_filter: int
+) -> go.Figure:
     """
     Creates a figure of the average and median time spent on each assignment.
     
@@ -299,14 +317,13 @@ def render_assessment_times_figure(assignment_survey_data: str, assessment_group
     :param assignment_group_filter: the assignment type (i.e., Homework or Project)
     :param course_filter: the course for which to create the time figure (e.g., CSE 2221: Software 1)
     """
-    
     # Convert the data back into a dataframe
     assignment_survey_df = pd.read_json(StringIO(assignment_survey_data))
         
     # Filter
     assignment_survey_df = assignment_survey_df[assignment_survey_df[COLUMN_COURSE_ID] == course_filter]
     assignment_survey_df = assignment_survey_df[assignment_survey_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter]
-    assignment_survey_df = assignment_survey_df[assignment_survey_df["Time Taken"].notnull()]
+    assignment_survey_df = assignment_survey_df[assignment_survey_df[COLUMN_TIME_TAKEN].notnull()]
     
     # Exit early
     if len(assignment_survey_df) == 0:
@@ -316,7 +333,7 @@ def render_assessment_times_figure(assignment_survey_data: str, assessment_group
     assessment_group = assignment_survey_df[assignment_survey_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter].iloc[0][COLUMN_ASSESSMENT_GROUP_NAME]
     
     # Analysis
-    to_plot = assignment_survey_df.groupby(COLUMN_ASSESSMENT_NAME).agg({"Time Taken": ["mean", "median", "std", "count"], "Assessment ID": "first"})
+    to_plot = assignment_survey_df.groupby(COLUMN_ASSESSMENT_NAME).agg({COLUMN_TIME_TAKEN: ["mean", "median", "std", "count"], COLUMN_ASSESSMENT_ID: "first"})
     to_plot = to_plot.sort_values(by=(COLUMN_ASSESSMENT_ID, "first"))
     to_plot.columns = to_plot.columns.map(' '.join)
     to_plot = to_plot.reset_index()
@@ -350,7 +367,12 @@ def render_assessment_times_figure(assignment_survey_data: str, assessment_group
     Input(ID_ASSESSMENT_GROUP_FILTER, "value"),
     Input(ID_COURSE_FILTER, "value")
 ) 
-def render_value_figure(education_data: str, assignment_survey_data: str, assessment_group_filter: int, course_filter: int):
+def render_value_figure(
+    education_data: str, 
+    assignment_survey_data: str, 
+    assessment_group_filter: int, 
+    course_filter: int
+) -> go.Figure:
     """
     Creates a figure of expected amount of points a student could get for an
     hour of their time. 
@@ -366,28 +388,38 @@ def render_value_figure(education_data: str, assignment_survey_data: str, assess
     # Filter
     assignment_survey_df = assignment_survey_df[assignment_survey_df[COLUMN_COURSE_ID] == course_filter]
     assignment_survey_df = assignment_survey_df[assignment_survey_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter]
-    assignment_survey_df = assignment_survey_df[assignment_survey_df["Time Taken"].notnull()]
+    assignment_survey_df = assignment_survey_df[assignment_survey_df[COLUMN_TIME_TAKEN].notnull()]
     education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
     education_df = education_df[education_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter]
-    education_df = education_df[education_df["Grade"] != "EX"]
-    education_df = education_df[education_df["Total"] != 0]
+    education_df = education_df[education_df[COLUMN_GRADE] != "EX"]
+    education_df = education_df[education_df[COLUMN_TOTAL] != 0]
     
     # Exit early
     if len(assignment_survey_df) == 0:
         return blank_plot()
     
     # Type cast
-    education_df["Grade"] = pd.to_numeric(education_df["Grade"])
-    education_df["Total"] = pd.to_numeric(education_df["Total"])
+    education_df[COLUMN_GRADE] = pd.to_numeric(education_df[COLUMN_GRADE])
+    education_df[COLUMN_TOTAL] = pd.to_numeric(education_df[COLUMN_TOTAL])
     
     # Precompute columns 
-    education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
+    education_df[COLUMN_PERCENTAGE] = education_df[COLUMN_GRADE] / education_df[COLUMN_TOTAL] * 100
     
     # Analysis
-    to_plot_survey = assignment_survey_df.groupby([COLUMN_ASSESSMENT_NAME, COLUMN_ASSESSMENT_ID]).agg({"Time Taken": ["mean", "median", "std", "count"]})
+    to_plot_survey = assignment_survey_df.groupby([
+        COLUMN_ASSESSMENT_NAME, 
+        COLUMN_ASSESSMENT_ID
+    ]).agg({
+        COLUMN_TIME_TAKEN: ["mean", "median", "std", "count"]
+    })
     to_plot_survey.columns = to_plot_survey.columns.map(' '.join)
     to_plot_survey = to_plot_survey.reset_index()
-    to_plot_scores = education_df.groupby([COLUMN_ASSESSMENT_NAME, COLUMN_ASSESSMENT_ID]).agg({"Percentage": ["mean", "median", "count"]})
+    to_plot_scores = education_df.groupby([
+        COLUMN_ASSESSMENT_NAME, 
+        COLUMN_ASSESSMENT_ID
+    ]).agg({
+        COLUMN_PERCENTAGE: ["mean", "median", "count"]
+    })
     to_plot_scores.columns = to_plot_scores.columns.map(' '.join)
     to_plot_scores = to_plot_scores.reset_index()
     to_plot = pd.merge(to_plot_scores, to_plot_survey, on=[COLUMN_ASSESSMENT_ID, COLUMN_ASSESSMENT_NAME])
@@ -413,7 +445,12 @@ def render_value_figure(education_data: str, assignment_survey_data: str, assess
     Input(ID_COURSE_FILTER, "value"),
     Input(ID_ASSESSMENT_FILTER, "value")
 )
-def render_grade_distribution_figure(education_data: str, assessment_group_filter: int, course_filter: int, assessment_filter: int):
+def render_grade_distribution_figure(
+    education_data: str, 
+    assessment_group_filter: int, 
+    course_filter: int, 
+    assessment_filter: int
+) -> go.Figure:
     """
     Plots the average grade for all assessments in an assessment group over time.
     
@@ -422,7 +459,6 @@ def render_grade_distribution_figure(education_data: str, assessment_group_filte
     :param assessment_group_filter: the assessment group ID
     :return: the grade overview figure object
     """
-    
     # Convert the data back into a dataframe
     education_df = pd.read_json(StringIO(education_data))
         
@@ -430,33 +466,33 @@ def render_grade_distribution_figure(education_data: str, assessment_group_filte
     education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
     education_df = education_df[education_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter]
     education_df = education_df[education_df[COLUMN_ASSESSMENT_ID] == assessment_filter]
-    education_df = education_df[education_df["Grade"] != "EX"]
-    education_df = education_df[education_df["Total"] != 0]
+    education_df = education_df[education_df[COLUMN_GRADE] != "EX"]
+    education_df = education_df[education_df[COLUMN_TOTAL] != 0]
     
     # Type cast
-    education_df["Grade"] = pd.to_numeric(education_df["Grade"])
-    education_df["Total"] = pd.to_numeric(education_df["Total"])
+    education_df[COLUMN_GRADE] = pd.to_numeric(education_df[COLUMN_GRADE])
+    education_df[COLUMN_TOTAL] = pd.to_numeric(education_df[COLUMN_TOTAL])
     
     # Precompute some columns
-    education_df["Percentage"] = education_df["Grade"] / education_df["Total"] * 100
-    education_df["Semester"] = education_df[COLUMN_SEMESTER_SEASON] + " " + education_df[COLUMN_SEMESTER_YEAR].astype(str)
+    education_df[COLUMN_PERCENTAGE] = education_df[COLUMN_GRADE] / education_df[COLUMN_TOTAL] * 100
+    education_df[COLUMN_SEMESTER] = education_df[COLUMN_SEMESTER_SEASON] + " " + education_df[COLUMN_SEMESTER_YEAR].astype(str)
     
     # Helpful values
-    course_code = f'{education_df.iloc[0]["Course Department"]} {str(education_df.iloc[0]["Course Number"])}'
-    semesters_in_order = [x for x in semester_order(education_df).keys() if x in education_df["Semester"].unique()]
+    course_code = f'{education_df.iloc[0][COLUMN_COURSE_DEPARTMENT]} {str(education_df.iloc[0][COLUMN_COURSE_NUMBER])}'
+    semesters_in_order = [x for x in semester_order(education_df).keys() if x in education_df[COLUMN_SEMESTER].unique()]
     assessment_name = education_df.iloc[0][COLUMN_ASSESSMENT_NAME]
 
     # Plot figure
     distribution_fig = go.Figure(layout=dict(template='plotly'))    
     distribution_fig = px.histogram(
         education_df,
-        x="Percentage",
-        color="Semester",
+        x=COLUMN_PERCENTAGE,
+        color=COLUMN_SEMESTER,
         title=f"Grade Distribution for {assessment_name} in {course_code}",
         marginal="box",
         height=600,
         category_orders={
-            "Semester": semesters_in_order
+            COLUMN_SEMESTER: semesters_in_order
         }
     )
     
@@ -469,18 +505,23 @@ def render_grade_distribution_figure(education_data: str, assessment_group_filte
     Output(ID_COURSE_FILTER, "value"),
     Input(ID_EDUCATION_DATA, "data")
 )
-def update_dropdown_course_filter(education_data: str):
+def update_dropdown_course_filter(
+    education_data: str
+) -> tuple[list[dict], int]:
     """
     A callback for populating the course dropdown. 
     The labels in the dropdown are meant to be descriptive.
     The values are Course IDs, which can be used for filtering. 
+    
+    :param education_data: the education data
+    :return: the options and start value for a dropdown
     """
     education_df = pd.read_json(StringIO(education_data))
     course_ids = education_df[COLUMN_COURSE_ID].unique()
     options = []
     for course_id in course_ids:
         course_data = education_df[education_df[COLUMN_COURSE_ID] == course_id].iloc[0]
-        label = f"{course_data['Course Department']} {course_data['Course Number']}: {course_data['Course Name']}"
+        label = f"{course_data[COLUMN_COURSE_DEPARTMENT]} {course_data[COLUMN_COURSE_NUMBER]}: {course_data[COLUMN_COURSE_NAME]}"
         value = course_id
         options.append({"label": label, "value": value})
     return options, options[0]["value"]
@@ -492,10 +533,17 @@ def update_dropdown_course_filter(education_data: str):
     Input(ID_EDUCATION_DATA, "data"),
     Input(ID_COURSE_FILTER, "value")
 )
-def update_dropdown_assessment_group_filter(education_data: str, course_filter: int):
+def update_dropdown_assessment_group_filter(
+    education_data: str, 
+    course_filter: int
+) -> tuple[list[dict], int]:
     """
     A callback for populating the assessment group dropdown.
     The labels and values are the same. 
+    
+    :param education_data: the education data
+    :param course_filter: the current course
+    :return: the options and start value for a dropdown
     """
     education_df = pd.read_json(StringIO(education_data))
     education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
@@ -503,7 +551,7 @@ def update_dropdown_assessment_group_filter(education_data: str, course_filter: 
     options = []
     for assessment_group_id in assessment_group_ids:
         assessment_group_data = education_df[education_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_id].iloc[0]
-        label = f"{assessment_group_data['Assessment Group Name']} ({assessment_group_data['Assessment Group Weight']}% Weight)"
+        label = f"{assessment_group_data[COLUMN_ASSESSMENT_GROUP_NAME]} ({assessment_group_data[COLUMN_ASSESSMENT_GROUP_WEIGHT]}% Weight)"
         value = assessment_group_id
         options.append({"label": label, "value": value})
     options.sort(key=lambda x: x["label"])
@@ -517,19 +565,28 @@ def update_dropdown_assessment_group_filter(education_data: str, course_filter: 
     Input(ID_COURSE_FILTER, "value"),
     Input(ID_ASSESSMENT_GROUP_FILTER, "value")
 )
-def update_dropdown_assessment_filter(education_data: str, course_filter: int, assessment_group_filter: int):
+def update_dropdown_assessment_filter(
+    education_data: str, 
+    course_filter: int, 
+    assessment_group_filter: int
+) -> tuple[list[dict], int]:
     """
     A callback for populating the assessment group dropdown.
     The labels and values are the same. 
+    
+    :param: the education data
+    :param course_filter: the current course
+    :param assessment_group_filter: the current assessment group
+    :return: the options and start value for a dropdown
     """
     education_df = pd.read_json(StringIO(education_data))
     education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
     education_df = education_df[education_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter]
-    education_df = education_df[education_df["Total"] != 0]
+    education_df = education_df[education_df[COLUMN_TOTAL] != 0]
     assessment_ids = education_df[COLUMN_ASSESSMENT_ID].unique()
     options = []
     for assessment_id in assessment_ids:
-        totals = education_df[education_df[COLUMN_ASSESSMENT_ID] == assessment_id]["Total"].unique()
+        totals = education_df[education_df[COLUMN_ASSESSMENT_ID] == assessment_id][COLUMN_TOTAL].unique()
         points = f"{totals[0]} Points" if len(totals) == 1 else "Varies"
         assessment_id_data = education_df[education_df[COLUMN_ASSESSMENT_ID] == assessment_id].iloc[0]
         label = f"{assessment_id_data[COLUMN_ASSESSMENT_NAME]} ({points})"
