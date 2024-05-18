@@ -9,7 +9,6 @@ from dash import Input, Output, callback, dcc, html
 
 from core.constants import *
 from core.data import *
-from core.utils import *
 
 dash.register_page(
     __name__,
@@ -520,7 +519,7 @@ def render_grade_distribution_figure(
     
     # Helpful values
     course_code = f'{education_df.iloc[0][COLUMN_COURSE_DEPARTMENT]} {str(education_df.iloc[0][COLUMN_COURSE_NUMBER])}'
-    semesters_in_order = [x for x in semester_order(education_df).keys() if x in education_df[COLUMN_SEMESTER].unique()]
+    semesters_in_order = [s for s in SEMESTER_ORDER if s in education_df[COLUMN_SEMESTER].unique()]
     assessment_name = education_df.iloc[0][COLUMN_ASSESSMENT_NAME]
 
     # Plot figure

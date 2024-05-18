@@ -11,7 +11,6 @@ from nltk.corpus import stopwords
 
 from core.constants import *
 from core.data import *
-from core.utils import *
 
 dash.register_page(
     __name__,
