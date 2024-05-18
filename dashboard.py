@@ -14,7 +14,7 @@ app = dash.Dash(
         }
     ],
     external_stylesheets=[
-        dbc.themes.BOOTSTRAP
+        dbc.themes.SIMPLEX
     ],
     title="The Educator Dashboard",
     use_pages=True,
@@ -32,7 +32,7 @@ logo = html.A(
             ),
         ],
         align="center",
-        className="g-0",
+        class_name="g-0",
     ),
     href="https://jeremygrifski.com",
     style={"textDecoration": "none"},
@@ -48,7 +48,7 @@ navlinks = dbc.Nav(
         )
         for page in dash.page_registry.values()
     ],
-    pills=True,
+    pills=True
 )
 
 
@@ -61,7 +61,7 @@ app.layout = dbc.Container([
             ]
         ),
         color="dark",
-        dark="True"
+        dark=True
     ),
     dash.page_container
 ])

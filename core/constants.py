@@ -1,94 +1,127 @@
+import pandas as pd
 import plotly.express as px
 
 # Data URLS
-URL_ASSIGNMENT_SURVEY = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/assignment-survey-data.csv"
-URL_SEI_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/sei-data.csv"
-URL_SEI_COMMENTS_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/sei-comments.csv"
-URL_COURSE_EVAL_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/eval-data.csv"
-URL_CSE_2221_GRADE_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/cse-2221-grades.csv"
-URL_CSE_2231_GRADE_DATA = "https://raw.githubusercontent.com/jrg94/personal-data/08845faafa461062bd95c81703acc73c304ed792/education/cse-2231-grades.csv"
+URL_ASSESSMENTS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/assessments.csv"
+URL_ASSESSMENT_GRADES = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/grades.csv"
+URL_ASSESSMENT_GROUPS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/groups.csv"
+URL_ASSESSMENT_REVIEWS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/reviews.csv"
+URL_COURSES = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/lookup-tables/courses.csv"
+URL_COURSE_SECTIONS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/lookup-tables/sections.csv"
+URL_EVALUATION_SURVEY_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/raw-data/evaluation-survey-history.csv"
+URL_SEI_COMMENTS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/comments.csv"
+URL_SEI_COHORT_SCORES = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/cohort-scores.csv"
+URL_SEI_QUESTIONS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/questions.csv"
+URL_SEI_INSTRUCTOR_SCORES = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/instructor-scores.csv"
+URL_SEI_REPORTS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/reports.csv"
+URL_SEMESTERS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/lookup-tables/semesters.csv"
+
+# Page constants
+HOME_PAGE_PATH = "/"
+HOME_PAGE_NAME = "Home"
+HOME_PAGE_TITLE = "The Educator Dashboard"
+
+ASSESSMENT_PAGE_PATH = "/assessment"
+ASSESSMENT_PAGE_NAME = "Assessment"
+ASSESSMENT_PAGE_TITLE = f"{HOME_PAGE_TITLE}: {ASSESSMENT_PAGE_NAME}"
+
+FEEDBACK_PAGE_PATH = "/feedback"
+FEEDBACK_PAGE_NAME = "Feedback"
+FEEDBACK_PAGE_TITLE = f"{HOME_PAGE_TITLE}: {FEEDBACK_PAGE_NAME}"
+
+HISTORY_PAGE_PATH = "/history"
+HISTORY_PAGE_NAME = "History"
+HISTORY_PAGE_TITLE = f"{HOME_PAGE_TITLE}: {HISTORY_PAGE_NAME}"
 
 # Column headings
-COLUMN_RUBRIC = 'On a scale from 1 to 5, how satisfied are you with the rubric for this project?'
-COLUMN_PROJECT_REVIEW = "Which project are you reviewing (enter a # between 1 and 11)?"
-COLUMN_HOMEWORK_REVIEW = "Which homework assignment are you reviewing (enter a # between 1 and 37)?"
-COLUMN_CLASS_REVIEW = "Which of the following classes is this assignment for?"
-COLUMN_PRE_EMOTIONS = "Which of the following emotions did you experience **before** starting this project (select all that apply)?"
-COLUMN_DURING_EMOTIONS = "Which of the following emotions did you experience while completing this project (select all that apply)?"
-COLUMN_POST_EMOTIONS = "Which of the following emotions did you experience **after** completing this project (select all that apply)?"
-COOUMN_TIME = "How much time did you spend on this assignment in hours?"
-COLUMN_ASSIGNMENT_TYPE = "Are you reviewing a project or a homework assignment?"
+COLUMN_ASSESSMENT_ID = "Assessment ID"
+COLUMN_ASSESSMENT_GROUP_ID = "Assessment Group ID"
+COLUMN_ASSESSMENT_GROUP_NAME = "Assessment Group Name"
+COLUMN_ASSESSMENT_GROUP_WEIGHT = "Assessment Group Weight"
+COLUMN_ASSESSMENT_NAME = "Assessment Name"
+COLUMN_COHORT = "Cohort"
+COLUMN_COMMENT = "Comment"
+COLUMN_COURSE_DEPARTMENT = "Course Department"
+COLUMN_COURSE_ID = "Course ID"
+COLUMN_COURSE_NAME = "Course Name"
+COLUMN_COURSE_NUMBER = "Course Number"
+COLUMN_COURSE_TYPE = "Course Type"
+COLUMN_DATE_TIME = "DateTime"
+COLUMN_EDUCATOR_TITLE = "Educator Title"
+COLUMN_ENROLLMENT_TOTAL = "Enrollment Total"
+COLUMN_GRADE = "Grade"
+COLUMN_MEAN = "Mean"
+COLUMN_SECTION_BUILDING = "Section Building"
+COLUMN_SECTION_ID = "Section ID"
+COLUMN_SECTION_ROOM_NUMBER = "Section Room Number"
+COLUMN_SECTION_START_TIME = "Section Start Time"
+COLUMN_SEMESTER_ID = "Semester ID"
+COLUMN_SEMESTER_SEASON = "Semester Season"
+COLUMN_SEMESTER_YEAR = "Semester Year"
+COLUMN_QUESTION = "SEI Question"
+COLUMN_QUESTION_ID = "SEI Question ID"
+COLUMN_REPORT_ID = "SEI Report ID"
+COLUMN_TIMESTAMP = "Timestamp"
+COLUMN_TIME_TAKEN = "Time Taken"
+COLUMN_TOTAL = "Total"
 
-# Added column headings
-COLUMN_AVERAGE_TIME = "Average Time (hours)"
-COLUMN_MEDIAN_TIME = "Median Time (hours)"
-COLUMN_REVIEW_COUNT = "Number of Reviews"
-COLUMN_STANDARD_DEVIATION = "Standard Deviation (hours)"
-
-# Assignment survey filter values
-FILTER_SOFTWARE_1 = "CSE 2221: Software 1"
-FILTER_SOFTWARE_2 = "CSE 2231: Software 2"
+# Analysis headings
+COLUMN_AVERAGE = "Average"
+COLUMN_COUNT = "Count"
+COLUMN_CUMULATIVE_ENROLLMENT_TOTAL = "Cumulative Enrollment Total"
+COLUMN_CLASSROOM = "Classroom"
+COLUMN_MEDIAN = "Median"
+COLUMN_PERCENTAGE = "Percentage"
+COLUMN_PERCENT_MISSING = "Percent Missing"
+COLUMN_SEMESTER = "Semester"
+COLUMN_WORD = "Word"
 
 # Data IDs
 ID_ASSIGNMENT_SURVEY_DATA = "assignment-survey-data"
+ID_COURSE_EVAL_DATA = "course-eval-data"
+ID_EDUCATION_DATA = "education"
+ID_HISTORY_DATA = "history"
 ID_SEI_DATA = "sei-data"
 ID_SEI_COMMENTS_DATA = "sei-comments-data"
-ID_COURSE_EVAL_DATA = "course-eval-data"
-ID_CSE_2221_GRADE_DATA = "cse2221-grade-data"
-ID_CSE_2231_GRADE_DATA = "cse2231-grade-data"
 
-# Figure IDs
-ID_CSE_2221_PROJECT_TIME_FIG = "project-time"
-ID_CSE_2221_HOMEWORK_TIME_FIG = "homework-time"
+# Assessment figure IDs
+ID_ASSESSMENT_GROUP_TIME_FIG = "assessment-group-time-fig"
+ID_ASSESSMENT_TRENDS_FIG = "assessment-trends"
+ID_DETAILED_ASSESSMENT_GRADES_FIG = "detailed-assessment-grades"
+ID_GRADE_OVERVIEW_FIG = "grade-overview"
+ID_GRADE_DISTRIBUTION_FIG = "grade-distribution"
+ID_MISSING_ASSESSMENT_FIG = "missing-assessments"
+ID_VALUE_FIG = "value-to-time-ratio-fig"
 
-ID_CSE_2231_PROJECT_TIME_FIG = "cse2231-project-time"
-ID_CSE_2231_HOMEWORK_TIME_FIG = "cse2231-homework-time"
-
-ID_CSE_2221_HOMEWORK_EMOTIONS_FIG = "emotions"
-
-ID_CSE_2221_RUBRIC_OVERVIEW_FIG = "rubric-overview"
-ID_CSE_2221_RUBRIC_BREAKDOWN_FIG = "rubric-breakdown"
-ID_CSE_2221_RUBRIC_SCORES_FIG = "rubric-scores"
-
-ID_CSE_2221_GRADE_OVERVIEW_FIG = "grade-overview"
-ID_CSE_2221_GRADES_ATTENDANCE_FIG = "grade-vs-attendance"
-ID_CSE_2221_GRADES_PARTICIPATION_FIG = "grade-vs-participation"
-
-ID_CSE_2231_GRADES_OVERVIEW_FIG = "cse2231-grade-overview"
-
-ID_CSE_2221_PROJECT_GRADES_FIG = "project-calculations"
-ID_CSE_2221_HOMEWORK_GRADES_FIG = "homework-calculations"
-ID_CSE_2221_EXAM_GRADES_FIG = "exams-calculations"
-
-ID_CSE_2231_PROJECT_GRADES_FIG = "cse2231-project-calculations"
-ID_CSE_2231_HOMEWORK_GRADES_FIG = "cse2231-homework-calculations"
-ID_CSE_2231_EXAM_GRADES_FIG = "cse2231-exam-calculations"
-
-ID_CSE_2221_MISSING_PROJECTS_FIG = "missing-projects"
-ID_CSE_2221_MISSING_HOMEWORKS_FIG = "missing-homeworks"
-ID_CSE_2221_MISSING_EXAMS_FIG = "missing-exams"
-
-ID_CSE_2231_MISSING_HOMEWORKS_FIG = "cse2231-missing-homeworks"
-ID_CSE_2231_MISSING_PROJECTS_FIG = "cse2231-missing-projects"
-ID_CSE_2231_MISSING_EXAMS_FIG = "cse2231-missing-exams"
-
-ID_CSE_2221_PROJECT_TRENDS_FIG = "project-trends"
-ID_CSE_2221_HOMEWORK_TRENDS_FIG = "homework-trends"
-ID_CSE_2221_EXAM_TRENDS_FIG = "exam-trends"
-
-ID_CSE_2221_VALUE_FIG = "project-points-per-hour"
-ID_CSE_2221_EFFORT_FIG = "project-hours-per-point"
-
-ID_SEI_OVERVIEW_FIG = "sei-stats"
+# Feedback figure IDs
+ID_SEI_RATINGS_FIG = "sei-ratings"
 ID_SEI_COMMENTS_FIG = "sei-comments"
-
 ID_EVAL_COURSE_CONTENT_FIG = "course-content"
 ID_EVAL_SKILL_FIG = "skill-and-responsiveness"
 ID_EVAL_CONTRIBUTION_FIG = "contribution-to-learning"
 
-# CSS Classes
-CSS_FULL_SCREEN_FIG = "max-window"
+# History figure IDs
+ID_ROOM_COUNTS_FIG = "room-counts"
+ID_TIME_COUNTS_FIG = "time-counts"
+ID_STUDENT_COUNTS_FIG = "student-counts"
+ID_COURSE_HISTORY_LIST = "course-list"
 
+# Filter IDs
+ID_COURSE_FILTER = "course-filter"
+ID_ASSESSMENT_GROUP_FILTER = "assessment-group-filter"
+ID_ASSESSMENT_FILTER = "assessment-filter"
+
+# Category orders constants
+ASSESSMENT_ORDER = pd.read_csv(URL_ASSESSMENTS)[COLUMN_ASSESSMENT_NAME]
+COHORT_ORDER = ["Instructor", "Department", "College", "University"]
+METRIC_ORDER = [COLUMN_AVERAGE, COLUMN_MEDIAN]
+SEMESTER_ORDER = pd.read_csv(URL_SEMESTERS)[
+    [COLUMN_SEMESTER_SEASON, COLUMN_SEMESTER_YEAR]
+].astype(str).apply(" ".join, axis=1)
+QUESTION_ORDER = pd.read_csv(URL_SEI_QUESTIONS)[COLUMN_QUESTION]
+
+
+# TODO: remove these and rely on the data tables
 # Various mappings for charts
 MAPPING_SATISFACTION = {
     1: 'Very Dissatisfied',
