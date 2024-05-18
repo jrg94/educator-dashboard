@@ -366,18 +366,18 @@ def render_assessment_times_figure(
     to_plot = to_plot.sort_values(by=(COLUMN_ASSESSMENT_ID, "first"))
     to_plot.columns = to_plot.columns.map(' '.join)
     to_plot = to_plot.reset_index()
-    to_plot["Bar Labels"] = to_plot["Time Taken mean"].apply(lambda x: f"{x:.01f} hrs")
+    to_plot["Bar Labels"] = to_plot["Time Taken median"].apply(lambda x: f"{x:.01f} hrs")
 
     # Plot figure
     time_fig = go.Figure(layout=dict(template='plotly'))    
     time_fig = px.bar(
         to_plot,
         x=COLUMN_ASSESSMENT_NAME,
-        y="Time Taken mean",
+        y="Time Taken median",
         text="Bar Labels",
-        title=f"Average Time to Complete {assessment_group}",
+        title=f"Median Time to Complete {assessment_group}",
         labels={
-            "Time Taken mean": "Average Time Taken",
+            "Time Taken median": "Median Time Taken",
             "Time Taken count": "Number of Reviews"
         },
         hover_data=[
@@ -435,6 +435,9 @@ def render_value_figure(
         
     # Precompute columns 
     education_df[COLUMN_PERCENTAGE] = education_df[COLUMN_GRADE] / education_df[COLUMN_TOTAL]
+  
+    # Helpful variables
+    assessment_group = assignment_survey_df[assignment_survey_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter].iloc[0][COLUMN_ASSESSMENT_GROUP_NAME] 
     
     # Analysis
     to_plot_survey = assignment_survey_df.groupby([
@@ -463,7 +466,7 @@ def render_value_figure(
         to_plot,
         x=COLUMN_ASSESSMENT_NAME,
         y="Median % Earned Per Hour of Work",
-        title="Expected Value Of Each Assessment",
+        title=f"Median Expected Value Of {assessment_group}",
         text_auto=".0%"
     )
     value_fig.update_layout(
