@@ -374,20 +374,20 @@ def render_assessment_times_figure(
         to_plot,
         x=COLUMN_ASSESSMENT_NAME,
         y="Time Taken mean",
-        error_y="Time Taken std",
         title=f"Average Time to Complete {assessment_group}",
+        text_auto=".02",
         labels={
-            "Time Taken mean": "Average Time Taken (hrs)",
-            "Time Taken median": "Median Time Taken (hrs)",
+            "Time Taken mean": "Average Time Taken",
             "Time Taken count": "Number of Reviews"
         },
         hover_data=[
-            "Time Taken median",
             "Time Taken count"
         ]
     )
+    time_fig.update_layout(
+        yaxis_ticksuffix="hrs"
+    )
 
-    
     return time_fig
 
 
@@ -432,9 +432,9 @@ def render_value_figure(
     # Type cast
     education_df[COLUMN_GRADE] = pd.to_numeric(education_df[COLUMN_GRADE])
     education_df[COLUMN_TOTAL] = pd.to_numeric(education_df[COLUMN_TOTAL])
-    
+        
     # Precompute columns 
-    education_df[COLUMN_PERCENTAGE] = education_df[COLUMN_GRADE] / education_df[COLUMN_TOTAL] * 100
+    education_df[COLUMN_PERCENTAGE] = education_df[COLUMN_GRADE] / education_df[COLUMN_TOTAL]
     
     # Analysis
     to_plot_survey = assignment_survey_df.groupby([
@@ -463,7 +463,16 @@ def render_value_figure(
         to_plot,
         x=COLUMN_ASSESSMENT_NAME,
         y="Median % Earned Per Hour of Work",
-        title="Expected Value Of Each Assessment"
+        title="Expected Value Of Each Assessment",
+        text_auto=".0%"
+    )
+    value_fig.update_layout(
+        yaxis_tickformat=".0%",
+    )
+    value_fig.update_yaxes(
+        autorangeoptions={
+            "include": [0, 1]
+        }
     )
     
     return value_fig
@@ -525,6 +534,10 @@ def render_grade_distribution_figure(
         category_orders={
             COLUMN_SEMESTER: semesters_in_order
         }
+    )
+    distribution_fig.for_each_trace(lambda t: t.update(hovertemplate=t.hovertemplate.replace("count", "Count")))
+    distribution_fig.update_layout(
+        yaxis_title_text = "Count"
     )
     
     return distribution_fig
