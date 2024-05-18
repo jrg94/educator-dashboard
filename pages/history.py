@@ -68,7 +68,13 @@ def render_time_counts_fig(history_data: str) -> go.Figure:
     time_counts_fig = go.Figure(layout=dict(template='plotly'))
     time_counts_fig = px.histogram(
         history_df,
-        x=COLUMN_SECTION_START_TIME
+        x=COLUMN_SECTION_START_TIME,
+        text_auto=True,
+        title="Assigned Start Time Distribution",
+    )
+    time_counts_fig.for_each_trace(lambda t: t.update(hovertemplate=t.hovertemplate.replace("count", "Count")))
+    time_counts_fig.update_layout(
+        yaxis_title_text = "Count"
     )
 
     return time_counts_fig
@@ -90,13 +96,19 @@ def render_room_counts_fig(history_data: str) -> go.Figure:
     history_df[COLUMN_CLASSROOM] = history_df[COLUMN_SECTION_BUILDING] + " " + history_df[COLUMN_SECTION_ROOM_NUMBER]
     history_df = history_df.sort_values(by=COLUMN_CLASSROOM)
 
-    time_counts_fig = go.Figure(layout=dict(template='plotly'))
-    time_counts_fig = px.histogram(
+    room_counts_fig = go.Figure(layout=dict(template='plotly'))
+    room_counts_fig = px.histogram(
         history_df,
-        x=COLUMN_CLASSROOM
+        x=COLUMN_CLASSROOM,
+        text_auto=True,
+        title="Assigned Classroom Distribution"
+    )
+    room_counts_fig.for_each_trace(lambda t: t.update(hovertemplate=t.hovertemplate.replace("count", "Count")))
+    room_counts_fig.update_layout(
+        yaxis_title_text = "Count"
     )
 
-    return time_counts_fig
+    return room_counts_fig
 
 
 @callback(
@@ -124,7 +136,9 @@ def render_cumulative_enrollment_fig(history_data: str) -> go.Figure:
     time_counts_fig = px.bar(
         history_df,
         x=COLUMN_SEMESTER,
-        y=COLUMN_CUMULATIVE_ENROLLMENT_TOTAL
+        y=COLUMN_CUMULATIVE_ENROLLMENT_TOTAL,
+        text_auto=True,
+        title="Cumulative Number of Students Served Over Time"
     )
 
     return time_counts_fig
