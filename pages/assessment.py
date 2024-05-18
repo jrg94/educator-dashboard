@@ -367,6 +367,7 @@ def render_assessment_times_figure(
     to_plot = to_plot.sort_values(by=(COLUMN_ASSESSMENT_ID, "first"))
     to_plot.columns = to_plot.columns.map(' '.join)
     to_plot = to_plot.reset_index()
+    to_plot["Bar Labels"] = to_plot["Time Taken mean"].apply(lambda x: f"{x:.01f} hrs")
 
     # Plot figure
     time_fig = go.Figure(layout=dict(template='plotly'))    
@@ -374,8 +375,8 @@ def render_assessment_times_figure(
         to_plot,
         x=COLUMN_ASSESSMENT_NAME,
         y="Time Taken mean",
+        text="Bar Labels",
         title=f"Average Time to Complete {assessment_group}",
-        text_auto=".02",
         labels={
             "Time Taken mean": "Average Time Taken",
             "Time Taken count": "Number of Reviews"
