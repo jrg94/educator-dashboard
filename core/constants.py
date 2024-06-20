@@ -3,7 +3,7 @@ import plotly.express as px
 
 # Data URLS
 URL_ASSESSMENTS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/assessments.csv"
-URL_ASSESSMENT_GRADES = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/grades.csv"
+URL_ASSESSMENT_SUBMISSIONS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/submissions.csv"
 URL_ASSESSMENT_GROUPS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/groups.csv"
 URL_ASSESSMENT_REVIEWS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/reviews.csv"
 URL_COURSES = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/lookup-tables/courses.csv"
@@ -49,7 +49,7 @@ COLUMN_COURSE_TYPE = "Course Type"
 COLUMN_DATE_TIME = "DateTime"
 COLUMN_EDUCATOR_TITLE = "Educator Title"
 COLUMN_ENROLLMENT_TOTAL = "Enrollment Total"
-COLUMN_GRADE = "Grade"
+COLUMN_GRADE = "Submission Score"
 COLUMN_MEAN = "Mean"
 COLUMN_SECTION_BUILDING = "Section Building"
 COLUMN_SECTION_ID = "Section ID"
@@ -63,7 +63,7 @@ COLUMN_QUESTION_ID = "SEI Question ID"
 COLUMN_REPORT_ID = "SEI Report ID"
 COLUMN_TIMESTAMP = "Timestamp"
 COLUMN_TIME_TAKEN = "Time Taken"
-COLUMN_TOTAL = "Total"
+COLUMN_TOTAL = "Assessment Total"
 
 # Analysis headings
 COLUMN_AVERAGE = "Average"

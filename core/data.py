@@ -125,7 +125,7 @@ def load_education_data() -> dcc.Store:
     :return: the grade data as a store
     """
     # Load necessary data
-    grades_df = pd.read_csv(URL_ASSESSMENT_GRADES)
+    grades_df = pd.read_csv(URL_ASSESSMENT_SUBMISSIONS)
     course_sections_df = pd.read_csv(URL_COURSE_SECTIONS)
     assessments_df = pd.read_csv(URL_ASSESSMENTS)
     assessment_groups_df = pd.read_csv(URL_ASSESSMENT_GROUPS)
