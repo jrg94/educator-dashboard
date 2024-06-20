@@ -226,6 +226,7 @@ layout = html.Div([
             - Overhauled dashboard to make use of pages and dropdowns
             - Added information about teaching history, which includes a few plots to help students predict my schedule
             - Updated grade data in dashboard to include all submissions, not just the final grades
+            - Automated course data pulling from Canvas API
         - Spring 2024
             - Started tracking patch notes
             - Drafted and piloted a VSCode monorepo for software 2
