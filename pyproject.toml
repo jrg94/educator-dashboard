@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "the educator dashboard"
-version = "2024.05.18"
+version = "2024.06.19"
 description = "A collection of visualizations related to courses taught by myself, Jeremy Grifski"
 authors = ["jrg94 <jeremy.grifski@gmail.com>"]
 readme = "README.md"

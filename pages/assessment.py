@@ -1,4 +1,6 @@
 from io import StringIO
+from operator import itemgetter
+import re
 
 import dash
 import dash_bootstrap_components as dbc
@@ -571,6 +573,7 @@ def update_dropdown_course_filter(
         label = f"{course_data[COLUMN_COURSE_DEPARTMENT]} {course_data[COLUMN_COURSE_NUMBER]}: {course_data[COLUMN_COURSE_NAME]}"
         value = course_id
         options.append({"label": label, "value": value})
+    options.sort(key=itemgetter("label"))
     return options, options[0]["value"]
 
 
@@ -636,10 +639,11 @@ def update_dropdown_assessment_filter(
         totals = education_df[education_df[COLUMN_ASSESSMENT_ID] == assessment_id][COLUMN_TOTAL].unique()
         points = f"{totals[0]} Points" if len(totals) == 1 else "Varies"
         assessment_id_data = education_df[education_df[COLUMN_ASSESSMENT_ID] == assessment_id].iloc[0]
-        label = f"{assessment_id_data[COLUMN_ASSESSMENT_NAME]} ({points})"
+        assessment_name: str = assessment_id_data[COLUMN_ASSESSMENT_NAME]
+        label = f"{assessment_name} ({points})"
         value = assessment_id
         options.append({"label": label, "value": value})
-    options.sort(key=lambda x: x["value"])
+    options.sort(key=itemgetter("label"))
     return options, options[0]["value"]
 
 
@@ -663,7 +667,7 @@ layout = html.Div([
         assessment of students. The goal of this page is to give you an overview 
         of the way I've assessed students over the years. To browse a course, 
         use the first dropdown at the top of the screen. All of the following 
-        plots will regenerate for you. 
+        plots will regenerate for you.  
         """
     ),
     html.H2("Course Overview"),
@@ -672,7 +676,12 @@ layout = html.Div([
         To kick things off, here's a plot of the average and median grades
         grouped by assessment type (e.g., projects, homework, labs, etc.).
         This should give you an overview of the types of assessments I've
-        used in my classes. 
+        used in my classes. Note: all of the assessments on this
+        page are averaged to include the missing assignments as well as all
+        submissions, which almost certainly lowers the overall averages.
+        Likewise, some averages, such as exams, are actually inflated due to 
+        grade replacement. Future work will be done to show this nuance in more 
+        detail.
         """  
     ),
     dcc.Loading(
