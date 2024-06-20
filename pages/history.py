@@ -64,13 +64,18 @@ def render_time_counts_fig(history_data: str) -> go.Figure:
     history_df = pd.read_json(StringIO(history_data))
     history_df = history_df[history_df[COLUMN_COURSE_TYPE] == "Lecture"]
     history_df = history_df.sort_values(by=COLUMN_SECTION_START_TIME)
-
+    
     time_counts_fig = go.Figure(layout=dict(template='plotly'))
     time_counts_fig = px.histogram(
         history_df,
         x=COLUMN_SECTION_START_TIME,
+        color=COLUMN_COURSE_NAME,
         text_auto=True,
         title="Assigned Start Time Distribution",
+        category_orders={
+            COLUMN_COURSE_NAME: sorted(history_df[COLUMN_COURSE_NAME].unique()),
+            COLUMN_SECTION_START_TIME: sorted(history_df[COLUMN_SECTION_START_TIME].unique())
+        }
     )
     time_counts_fig.for_each_trace(lambda t: t.update(hovertemplate=t.hovertemplate.replace("count", "Count")))
     time_counts_fig.update_layout(
@@ -100,8 +105,13 @@ def render_room_counts_fig(history_data: str) -> go.Figure:
     room_counts_fig = px.histogram(
         history_df,
         x=COLUMN_CLASSROOM,
+        color=COLUMN_COURSE_NAME,
         text_auto=True,
-        title="Assigned Classroom Distribution"
+        title="Assigned Classroom Distribution",
+        category_orders={
+            COLUMN_COURSE_NAME: sorted(history_df[COLUMN_COURSE_NAME].unique()),
+            COLUMN_CLASSROOM: sorted(history_df[COLUMN_CLASSROOM].unique())
+        }
     )
     room_counts_fig.for_each_trace(lambda t: t.update(hovertemplate=t.hovertemplate.replace("count", "Count")))
     room_counts_fig.update_layout(
