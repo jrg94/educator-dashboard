@@ -115,9 +115,9 @@ def render_sei_comments_figure(sei_comments_history: str):
     
     # Installs needed corpus data
     try:
-        nltk.data.find('tokenizers/punkt')
+        nltk.data.find('tokenizers/punkt_tab')
     except:
-        nltk.download('punkt')
+        nltk.download('punkt_tab')
         
     try:
         nltk.data.find('corpora/stopwords')
