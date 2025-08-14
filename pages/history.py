@@ -222,6 +222,9 @@ layout = html.Div([
     ),
     dcc.Markdown(
         """
+        - Autumn 2025
+            - Reworked exams to pull from learning objective-based question banks
+            - Wrote a unified study guide that shares all learning objectives for all exams
         - Spring 2025
             - Added Carmen rubrics to portfolio project assignments
             - Fixed up Carmen automation script
