@@ -222,6 +222,16 @@ layout = html.Div([
     ),
     dcc.Markdown(
         """
+        - Autumn 2025
+            - Reworked exams to pull from learning objective-based question banks
+            - Wrote a unified study guide that shares all learning objectives for all exams
+        - Spring 2025
+            - Added Carmen rubrics to portfolio project assignments
+            - Fixed up Carmen automation script
+            - Converted git usage over to GitHub Desktop
+        - Autumn 2024
+            - Experimented with no deadlines on assignments
+            - Full launched VSCode and Git as classroom tools
         - Summer 2024
             - Overhauled dashboard to make use of pages and dropdowns
             - Added information about teaching history, which includes a few plots to help students predict my schedule
