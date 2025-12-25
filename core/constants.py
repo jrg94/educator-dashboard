@@ -2,9 +2,9 @@ import pandas as pd
 import plotly.express as px
 
 # Data URLS
-URL_ASSESSMENTS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/assessments.csv"
-URL_ASSESSMENT_SUBMISSIONS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/submissions.csv"
-URL_ASSESSMENT_GROUPS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/groups.csv"
+URL_ASSESSMENTS = "data/assessments.csv"
+URL_ASSESSMENT_SUBMISSIONS = "data/submissions.csv"
+URL_ASSESSMENT_GROUPS = "data/groups.csv"
 URL_ASSESSMENT_REVIEWS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/reviews.csv"
 URL_COURSES = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/lookup-tables/courses.csv"
 URL_COURSE_SECTIONS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/lookup-tables/sections.csv"
