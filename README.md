@@ -19,3 +19,5 @@ similar (and more current) figures on my website.
 ![SEI Scores Over Time](assets/sei-scores-over-time.png)
 
 ![Cumulative Student Count Over Time](assets/cumulative-student-count-over-time.png)
+
+![Final Exam Distribution by Semester](assets/final-exam-distribution-across-semesters.png)
