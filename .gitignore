@@ -1,4 +1,5 @@
 renders/
+data/
 venv
 *.pyc
 .DS_Store

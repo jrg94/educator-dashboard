@@ -2,19 +2,19 @@ import pandas as pd
 import plotly.express as px
 
 # Data URLS
-URL_ASSESSMENTS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/assessments.csv"
-URL_ASSESSMENT_SUBMISSIONS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/submissions.csv"
-URL_ASSESSMENT_GROUPS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/groups.csv"
-URL_ASSESSMENT_REVIEWS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/assessments/reviews.csv"
-URL_COURSES = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/lookup-tables/courses.csv"
-URL_COURSE_SECTIONS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/lookup-tables/sections.csv"
-URL_EVALUATION_SURVEY_HISTORY = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/raw-data/evaluation-survey-history.csv"
-URL_SEI_COMMENTS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/comments.csv"
-URL_SEI_COHORT_SCORES = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/cohort-scores.csv"
-URL_SEI_QUESTIONS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/questions.csv"
-URL_SEI_INSTRUCTOR_SCORES = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/instructor-scores.csv"
-URL_SEI_REPORTS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/student-evaluations-of-instruction/reports.csv"
-URL_SEMESTERS = "https://raw.githubusercontent.com/jrg94/personal-data/main/education/lookup-tables/semesters.csv"
+URL_ASSESSMENTS = "data/assessments.csv"
+URL_ASSESSMENT_SUBMISSIONS = "data/submissions.csv"
+URL_ASSESSMENT_GROUPS = "data/groups.csv"
+URL_ASSESSMENT_REVIEWS = "data/reviews.csv"
+URL_COURSES = "data/courses.csv"
+URL_COURSE_SECTIONS = "data/sections.csv"
+URL_EVALUATION_SURVEY_HISTORY = "data/evaluation-survey-history.csv"
+URL_SEI_COMMENTS = "data/comments.csv"
+URL_SEI_COHORT_SCORES = "data/cohort-scores.csv"
+URL_SEI_QUESTIONS = "data/questions.csv"
+URL_SEI_INSTRUCTOR_SCORES = "data/instructor-scores.csv"
+URL_SEI_REPORTS = "data/reports.csv"
+URL_SEMESTERS = "data/semesters.csv"
 
 # Page constants
 HOME_PAGE_PATH = "/"
