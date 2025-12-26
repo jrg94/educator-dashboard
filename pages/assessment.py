@@ -49,6 +49,9 @@ def blank_plot() -> go.Figure:
 
         }
     )
+    
+def load_education_df(education_data):
+    return pd.read_json(StringIO(education_data), dtype={COLUMN_COURSE_NUMBER: str})
 
 # Graph Callbacks
 
@@ -70,7 +73,7 @@ def render_grade_overview_figure(
     :return: the grade overview figure object
     """
     # Convert the data back into a dataframe
-    education_df = pd.read_json(StringIO(education_data))
+    education_df = load_education_df(education_data)
     
     # Filter
     education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
@@ -146,7 +149,7 @@ def render_assessment_calculations_figure(
     :return: the assessment calculations figure object
     """
     # Convert the data back into a dataframe
-    education_df = pd.read_json(StringIO(education_data))
+    education_df = load_education_df(education_data)
     
     # Filter
     education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
@@ -215,7 +218,7 @@ def render_missing_assessments_figure(
     :return: the missing assessments figure object
     """
     # Convert the data back into a dataframe
-    education_df = pd.read_json(StringIO(education_data))
+    education_df = load_education_df(education_data)
     
     # Filter
     education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
@@ -278,7 +281,7 @@ def render_assessment_trends_figure(
     :return: the grade overview figure object
     """
     # Convert the data back into a dataframe
-    education_df = pd.read_json(StringIO(education_data))
+    education_df = load_education_df(education_data)
         
     # Filter
     education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
@@ -416,7 +419,7 @@ def render_value_figure(
     """
     # Convert the data back into a dataframe
     assignment_survey_df = pd.read_json(StringIO(assignment_survey_data))
-    education_df = pd.read_json(StringIO(education_data))
+    education_df = load_education_df(education_data)
         
     # Filter
     assignment_survey_df = assignment_survey_df[assignment_survey_df[COLUMN_COURSE_ID] == course_filter]
@@ -505,7 +508,7 @@ def render_grade_distribution_figure(
     :return: the grade overview figure object
     """
     # Convert the data back into a dataframe
-    education_df = pd.read_json(StringIO(education_data))
+    education_df = load_education_df(education_data)
         
     # Filter
     education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
@@ -565,12 +568,12 @@ def update_dropdown_course_filter(
     :param education_data: the education data
     :return: the options and start value for a dropdown
     """
-    education_df = pd.read_json(StringIO(education_data))
+    education_df = load_education_df(education_data)
     course_ids = education_df[COLUMN_COURSE_ID].unique()
     options = []
     for course_id in course_ids:
         course_data = education_df[education_df[COLUMN_COURSE_ID] == course_id].iloc[0]
-        label = f"{course_data[COLUMN_COURSE_DEPARTMENT]} {course_data[COLUMN_COURSE_NUMBER]}: {course_data[COLUMN_COURSE_NAME]}"
+        label = f"{course_data[COLUMN_COURSE_DEPARTMENT]} {course_data[COLUMN_COURSE_NUMBER]}"
         value = course_id
         options.append({"label": label, "value": value})
     options.sort(key=itemgetter("label"))
@@ -595,7 +598,7 @@ def update_dropdown_assessment_group_filter(
     :param course_filter: the current course
     :return: the options and start value for a dropdown
     """
-    education_df = pd.read_json(StringIO(education_data))
+    education_df = load_education_df(education_data)
     education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
     assessment_group_ids = education_df[COLUMN_ASSESSMENT_GROUP_ID].unique()
     options = []
@@ -629,7 +632,7 @@ def update_dropdown_assessment_filter(
     :param assessment_group_filter: the current assessment group
     :return: the options and start value for a dropdown
     """
-    education_df = pd.read_json(StringIO(education_data))
+    education_df = load_education_df(education_data)
     education_df = education_df[education_df[COLUMN_COURSE_ID] == course_filter]
     education_df = education_df[education_df[COLUMN_ASSESSMENT_GROUP_ID] == assessment_group_filter]
     education_df = education_df[education_df[COLUMN_TOTAL] != 0]

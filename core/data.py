@@ -129,7 +129,7 @@ def load_education_data() -> dcc.Store:
     course_sections_df = pd.read_csv(URL_COURSE_SECTIONS)
     assessments_df = pd.read_csv(URL_ASSESSMENTS)
     assessment_groups_df = pd.read_csv(URL_ASSESSMENT_GROUPS)
-    courses_df = pd.read_csv(URL_COURSES)
+    courses_df = pd.read_csv(URL_COURSES, dtype={COLUMN_COURSE_NUMBER: str})
     semesters_df = pd.read_csv(URL_SEMESTERS)
 
     # Merge dataframes
