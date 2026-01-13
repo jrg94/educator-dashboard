@@ -198,6 +198,70 @@ def render_assessment_calculations_figure(
 
 
 @callback(
+    Output(ID_ATTENDANCE_OVER_TIME, "figure"),
+    Input(ID_EDUCATION_DATA, "data")
+)
+def render_grades_over_time_figure(
+    education_data: str 
+) -> go.Figure:
+    """
+    Plots the average grade for all assessments in an assessment group over time.
+    
+    :param education_data: the jsonified education dataframe
+    :param course_filter: the course ID
+    :param assessment_group_filter: the assessment group ID
+    :return: the grade overview figure object
+    """
+    # Convert the data back into a dataframe
+    education_df = load_education_df(education_data)
+        
+    # Filter
+    education_df = education_df[education_df["Assessment Name"] == "TH-Attendance"]
+    education_df = education_df[education_df[COLUMN_GRADE] != "EX"]
+    
+    # Type cast
+    education_df[COLUMN_GRADE] = pd.to_numeric(education_df[COLUMN_GRADE])
+    education_df[COLUMN_TOTAL] = pd.to_numeric(education_df[COLUMN_TOTAL])
+    
+    print(education_df)
+    
+    # Precompute some columns
+    education_df[COLUMN_SEMESTER] = education_df[COLUMN_SEMESTER_SEASON] + " " + education_df[COLUMN_SEMESTER_YEAR].astype(str)
+    education_df[COLUMN_PERCENTAGE] = education_df[COLUMN_GRADE] / education_df[COLUMN_TOTAL]
+    
+    # Perform analysis
+    to_plot = education_df.groupby([
+        COLUMN_SEMESTER_ID, 
+        COLUMN_SEMESTER, 
+        "Section Start Time"
+    ]).agg({
+        COLUMN_PERCENTAGE: "mean"
+    }).reset_index()
+    to_plot = to_plot.sort_values(by=COLUMN_SEMESTER_ID)
+    
+    # Plot figure
+    trend_fig = go.Figure(layout=dict(template='plotly'))    
+    trend_fig = px.line(
+        to_plot,
+        x=COLUMN_SEMESTER,
+        y=COLUMN_PERCENTAGE,
+        color="Section Start Time",
+        markers=True,
+        title=f"Average Attendance by Semester",
+        category_orders={
+            COLUMN_SEMESTER: SEMESTER_ORDER,
+            COLUMN_ASSESSMENT_NAME: ASSESSMENT_ORDER
+        },
+    ) 
+    trend_fig.update_layout(
+        yaxis_range=[0, 1.05],
+        yaxis_tickformat=".0%"
+    )
+    
+    return trend_fig
+
+
+@callback(
     Output(ID_MISSING_ASSESSMENT_FIG, "figure"),
     Input(ID_EDUCATION_DATA, "data"),
     Input(ID_ASSESSMENT_GROUP_FILTER, "value"),
@@ -772,6 +836,19 @@ layout = html.Div([
         tab, which combines the grade data with some of the feedback I've gotten
         over the years. 
         """
+    ),
+    html.H2("Miscellaneous Plots"),
+    html.P(
+        """
+        While it's technically possible to look at attendance with top hat
+        category, it breaks down in messy ways depending on how many times it
+        was assessed. Plus, I would like to disaggregate it across sections,
+        so I can see each section individually and across time. 
+        """
+    ),
+    dcc.Loading(
+        [dcc.Graph(id=ID_ATTENDANCE_OVER_TIME)],
+        type="graph"
     ),
     load_education_data(),
     load_assignment_survey_data()
